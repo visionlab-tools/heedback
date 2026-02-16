@@ -1,0 +1,81 @@
+name: Docker Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: false
+      DOCKERHUB_TOKEN:
+        required: false
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - package: api
+            dockerfile: packages/api/Dockerfile
+            image_suffix: api
+          - package: web
+            dockerfile: packages/web/Dockerfile
+            image_suffix: web
+          - package: portal
+            dockerfile: packages/portal/Dockerfile
+            image_suffix: portal
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        run: |
+          TAG=$(git tag -l 'v*' --sort=-v:refname | head -n 1)
+          VERSION=${TAG#v}
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f1-2)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+          echo "minor=$MINOR" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' }}
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/${{ github.repository }}-${{ matrix.image_suffix }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository }}-${{ matrix.image_suffix }}:${{ steps.version.outputs.minor }}
+            ghcr.io/${{ github.repository }}-${{ matrix.image_suffix }}:${{ steps.version.outputs.major }}
+            ghcr.io/${{ github.repository }}-${{ matrix.image_suffix }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

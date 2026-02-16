@@ -1,0 +1,56 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest tag
+        id: tag
+        run: |
+          LATEST=$(git tag -l 'v*' --sort=-v:refname | head -n 1)
+          if [ -z "$LATEST" ]; then
+            echo "version=0.1.0" >> "$GITHUB_OUTPUT"
+          else
+            VERSION=${LATEST#v}
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            MINOR=$(echo "$VERSION" | cut -d. -f2)
+            PATCH=$(echo "$VERSION" | cut -d. -f3)
+            PATCH=$((PATCH + 1))
+            echo "version=$MAJOR.$MINOR.$PATCH" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cd packages/api && npm version ${{ steps.tag.outputs.version }} --no-git-tag-version && cd ../..
+          git add -A
+          git commit -m "chore: bump version to v${{ steps.tag.outputs.version }} [skip ci]" || true
+          git tag "v${{ steps.tag.outputs.version }}"
+          git push origin main --follow-tags
+
+      - name: Create GitHub Release
+        run: gh release create "v${{ steps.tag.outputs.version }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    needs: release
+    uses: ./.github/workflows/docker-publish.yml
+    secrets: inherit
