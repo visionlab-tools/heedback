@@ -1,0 +1,45 @@
+{
+  "name": "@heedback/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "node --import=@swc-node/register/esm-register bin/server.ts --watch",
+    "build": "tsc",
+    "start": "node bin/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "node --import=@swc-node/register/esm-register bin/console.ts test",
+    "migration:run": "node --import=@swc-node/register/esm-register bin/console.ts migration:run",
+    "migration:rollback": "node --import=@swc-node/register/esm-register bin/console.ts migration:rollback",
+    "migration:fresh": "node --import=@swc-node/register/esm-register bin/console.ts migration:fresh",
+    "seed": "node --import=@swc-node/register/esm-register bin/console.ts db:seed"
+  },
+  "dependencies": {
+    "@adonisjs/auth": "^4.2.3",
+    "@adonisjs/core": "^6.14.1",
+    "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/lucid": "^21.3.0",
+    "@adonisjs/redis": "^9.1.0",
+    "@adonisjs/session": "^7.5.0",
+    "@adonisjs/static": "^1.1.1",
+    "@vinejs/vine": "^2.1.0",
+    "luxon": "^3.5.0",
+    "pg": "^8.13.1",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@adonisjs/tsconfig": "^1.4.0",
+    "@japa/api-client": "^2.0.3",
+    "@japa/assert": "^3.0.0",
+    "@japa/runner": "^3.1.4",
+    "@swc-node/register": "^1.10.9",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  }
+}
