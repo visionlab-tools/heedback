@@ -1,0 +1,7 @@
+{
+  "preview": "Status update on \"{{postTitle}}\"",
+  "heading": "Status Update",
+  "description": "A post you voted on has a new status:",
+  "button": "View Post",
+  "footer": "You received this because you voted on this post."
+}

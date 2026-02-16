@@ -1,0 +1,92 @@
+# Development Docker Compose
+# Only starts infrastructure services. Run app services locally with npm run dev:*
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=heedback
+      - POSTGRES_PASSWORD=heedback_secret
+      - POSTGRES_DB=heedback
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U heedback']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis 7
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # MinIO (S3-compatible storage)
+  # ---------------------------------------------------------------------------
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=heedback_minio
+      - MINIO_ROOT_PASSWORD=heedback_minio_secret
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Kuriyr + Mailpit (for dev email testing)
+  # ---------------------------------------------------------------------------
+  kuriyr:
+    image: ghcr.io/visionlab-tools/kuriyr:latest
+    ports:
+      - '4400:4400'
+    volumes:
+      - ./templates/emails:/app/templates
+      - kuriyr_data:/app/data
+    environment:
+      - KURIYR_FROM_NAME=Heedback Dev
+      - KURIYR_FROM_EMAIL=noreply@heedback.local
+      - KURIYR_DEFAULT_LOCALE=en
+      - KURIYR_PORT=4400
+      - KURIYR_SMTP_HOST=mailpit
+      - KURIYR_SMTP_PORT=1025
+      - KURIYR_API_TOKEN=dev-secret-token
+      - KURIYR_DASHBOARD_USER=admin
+      - KURIYR_DASHBOARD_PASSWORD=admin
+    depends_on:
+      - mailpit
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  kuriyr_data:

@@ -1,0 +1,8 @@
+{
+  "preview": "Sign in to {{orgName}}",
+  "heading": "Sign in to {{orgName}}",
+  "description": "Click the link below to sign in. This link is valid for 15 minutes.",
+  "button": "Sign in",
+  "footer": "If you didn't request this, you can safely ignore this email.",
+  "expire": "This link expires in 15 minutes."
+}

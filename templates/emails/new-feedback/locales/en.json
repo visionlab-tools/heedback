@@ -1,0 +1,7 @@
+{
+  "preview": "New feedback: \"{{postTitle}}\"",
+  "heading": "New Feedback Submitted",
+  "description": "A new feedback post has been submitted:",
+  "button": "View Feedback",
+  "footer": "You received this because you are an admin."
+}

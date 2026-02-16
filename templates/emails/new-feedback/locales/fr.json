@@ -1,0 +1,7 @@
+{
+  "preview": "Nouveau feedback : \"{{postTitle}}\"",
+  "heading": "Nouveau feedback soumis",
+  "description": "Un nouveau feedback a été soumis :",
+  "button": "Voir le feedback",
+  "footer": "Vous recevez cet email car vous êtes administrateur."
+}

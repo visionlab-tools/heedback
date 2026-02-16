@@ -1,0 +1,152 @@
+services:
+  # ---------------------------------------------------------------------------
+  # AdonisJS API Server
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    ports:
+      - '${API_PORT:-3333}:3333'
+    environment:
+      - NODE_ENV=production
+      - APP_KEY=${APP_KEY}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KURIYR_URL=http://kuriyr:4400
+      - KURIYR_API_TOKEN=${KURIYR_API_TOKEN}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Heedback}
+      - MAIL_FROM_EMAIL=${MAIL_FROM_EMAIL:-noreply@heedback.example.com}
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET=${S3_BUCKET:-heedback}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY:-heedback_minio}
+      - S3_SECRET_KEY=${S3_SECRET_KEY:-heedback_minio_secret}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - SUPER_ADMIN_EMAIL=${SUPER_ADMIN_EMAIL:-admin@example.com}
+      - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD:-changeme}
+      - WEB_URL=${WEB_URL:-http://localhost:3000}
+      - PORTAL_URL=${PORTAL_URL:-http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # SvelteKit Admin Dashboard
+  # ---------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+    ports:
+      - '${WEB_PORT:-3000}:3000'
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://api:3333
+      - PUBLIC_API_URL=${APP_URL:-http://localhost:3333}
+      - ORIGIN=${WEB_URL:-http://localhost:3000}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # SvelteKit Public Portal (SSR)
+  # ---------------------------------------------------------------------------
+  portal:
+    build:
+      context: .
+      dockerfile: packages/portal/Dockerfile
+    ports:
+      - '${PORTAL_PORT:-3001}:3001'
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://api:3333
+      - PUBLIC_API_URL=${APP_URL:-http://localhost:3333}
+      - ORIGIN=${PORTAL_URL:-http://localhost:3001}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-heedback}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-heedback_secret}
+      - POSTGRES_DB=${POSTGRES_DB:-heedback}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-heedback}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Redis 7
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # MinIO (S3-compatible storage)
+  # ---------------------------------------------------------------------------
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-heedback_minio}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-heedback_minio_secret}
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Kuriyr (Transactional Email Service)
+  # ---------------------------------------------------------------------------
+  kuriyr:
+    image: ghcr.io/visionlab-tools/kuriyr:latest
+    volumes:
+      - ./templates/emails:/app/templates
+      - kuriyr_data:/app/data
+    environment:
+      - KURIYR_FROM_NAME=${MAIL_FROM_NAME:-Heedback}
+      - KURIYR_FROM_EMAIL=${MAIL_FROM_EMAIL:-noreply@heedback.example.com}
+      - KURIYR_DEFAULT_LOCALE=${DEFAULT_LOCALE:-en}
+      - KURIYR_PORT=4400
+      - KURIYR_SMTP_HOST=${SMTP_HOST:-mailpit}
+      - KURIYR_SMTP_PORT=${SMTP_PORT:-1025}
+      - KURIYR_SMTP_SECURE=${SMTP_SECURE:-false}
+      - KURIYR_SMTP_USER=${SMTP_USER:-}
+      - KURIYR_SMTP_PASS=${SMTP_PASS:-}
+      - KURIYR_API_TOKEN=${KURIYR_API_TOKEN:-}
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  kuriyr_data:
