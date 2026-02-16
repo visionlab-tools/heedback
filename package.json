@@ -1,0 +1,28 @@
+{
+  "name": "heedback",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The open source customer support & product feedback suite",
+  "license": "MIT",
+  "scripts": {
+    "dev": "docker compose -f docker-compose.dev.yml up",
+    "dev:api": "cd packages/api && npm run dev",
+    "dev:web": "cd packages/web && npm run dev",
+    "dev:portal": "cd packages/portal && npm run dev",
+    "build": "npm run build:api && npm run build:web && npm run build:portal",
+    "build:api": "cd packages/api && npm run build",
+    "build:web": "cd packages/web && npm run build",
+    "build:portal": "cd packages/portal && npm run build",
+    "build:widget": "cd packages/widget && npm run build",
+    "lint": "npm run lint:api && npm run lint:web && npm run lint:portal",
+    "lint:api": "cd packages/api && npm run lint",
+    "lint:web": "cd packages/web && npm run lint",
+    "lint:portal": "cd packages/portal && npm run lint",
+    "test": "cd packages/api && npm run test",
+    "typecheck": "cd packages/api && npm run typecheck",
+    "prepare": "git config core.hooksPath .githooks || true"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
