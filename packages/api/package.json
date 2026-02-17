@@ -17,7 +17,7 @@
     "seed": "node --import=@swc-node/register/esm-register bin/console.ts db:seed"
   },
   "dependencies": {
-    "@adonisjs/auth": "^4.2.3",
+    "@adonisjs/auth": "^9.2.0",
     "@adonisjs/core": "^6.14.1",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^21.3.0",
@@ -27,6 +27,7 @@
     "@vinejs/vine": "^2.1.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
@@ -39,6 +40,7 @@
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.16.0",
+    "tsx": "^4.21.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }
