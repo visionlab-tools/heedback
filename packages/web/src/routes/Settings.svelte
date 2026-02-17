@@ -1,6 +1,7 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
   import { Button, Input, Checkbox, Alert } from '@heedback/ui-kit'
+  import { LOCALE_LABELS } from '@heedback/shared'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
@@ -9,6 +10,7 @@
   let name = $state('')
   let brandColor = $state('#6366f1')
   let defaultLocale = $state('en')
+  let supportedLocales = $state<string[]>(['en'])
   let feedbackEnabled = $state(true)
   let helpCenterEnabled = $state(true)
   let portalAuthRequired = $state(false)
@@ -22,11 +24,23 @@
       const settings = org.settings as Record<string, unknown>
       brandColor = (settings?.brandColor as string) || '#6366f1'
       defaultLocale = (settings?.defaultLocale as string) || 'en'
+      supportedLocales = (settings?.supportedLocales as string[]) || ['en']
       feedbackEnabled = (settings?.feedbackEnabled as boolean) ?? true
       helpCenterEnabled = (settings?.helpCenterEnabled as boolean) ?? true
       portalAuthRequired = (settings?.portalAuthRequired as boolean) ?? false
     }
   })
+
+  function toggleLocale(code: string) {
+    if (supportedLocales.includes(code)) {
+      if (supportedLocales.length <= 1) return
+      supportedLocales = supportedLocales.filter((l) => l !== code)
+      // Reset default if removed
+      if (defaultLocale === code) defaultLocale = supportedLocales[0]
+    } else {
+      supportedLocales = [...supportedLocales, code]
+    }
+  }
 
   async function handleSubmit(e: Event) {
     e.preventDefault()
@@ -39,6 +53,7 @@
         settings: {
           brandColor,
           defaultLocale,
+          supportedLocales,
           feedbackEnabled,
           helpCenterEnabled,
           portalAuthRequired,
@@ -68,15 +83,41 @@
   <form onsubmit={handleSubmit} class="mt-8 space-y-6">
     <Input id="name" label={$_('settings.org_name')} bind:value={name} required />
 
-    <div class="grid grid-cols-2 gap-6">
-      <div>
-        <label for="brandColor" class="block text-sm font-medium text-slate-700">{$_('settings.brand_color')}</label>
-        <div class="mt-1 flex items-center gap-2">
-          <input id="brandColor" type="color" bind:value={brandColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
-          <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
-        </div>
+    <div>
+      <label for="brandColor" class="block text-sm font-medium text-slate-700">{$_('settings.brand_color')}</label>
+      <div class="mt-1 flex items-center gap-2">
+        <input id="brandColor" type="color" bind:value={brandColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
+        <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
       </div>
-      <Input id="defaultLocale" label={$_('settings.default_locale')} bind:value={defaultLocale} />
+    </div>
+
+    <!-- Content language picker replaces the old defaultLocale text input -->
+    <div>
+      <h3 class="text-sm font-medium text-slate-700 mb-3">{$_('settings.content_languages')}</h3>
+      <div class="space-y-1">
+        {#each Object.entries(LOCALE_LABELS) as [code, label]}
+          <div class="flex items-center justify-between py-1.5">
+            <label class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={supportedLocales.includes(code)}
+                onchange={() => toggleLocale(code)}
+                class="rounded border-slate-300"
+              />
+              <span class="text-sm text-slate-700">{label} ({code})</span>
+            </label>
+            {#if supportedLocales.includes(code)}
+              <button
+                type="button"
+                onclick={() => (defaultLocale = code)}
+                class="text-xs {defaultLocale === code ? 'text-indigo-600 font-semibold' : 'text-slate-400 hover:text-slate-600'}"
+              >
+                {defaultLocale === code ? $_('settings.default') : $_('settings.set_default')}
+              </button>
+            {/if}
+          </div>
+        {/each}
+      </div>
     </div>
 
     <div class="space-y-3">
