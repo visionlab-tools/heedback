@@ -1,4 +1,4 @@
-import { mount } from 'svelte'
+import { mount, unmount } from 'svelte'
 import Widget from './components/Widget.svelte'
 
 interface HeedbackConfig {
@@ -24,18 +24,19 @@ interface HeedbackInstance {
 }
 
 let container: HTMLElement | null = null
-let widgetComponent: ReturnType<typeof mount> | null = null
+let widgetComponent: Record<string, any> | null = null
 let currentConfig: HeedbackConfig | null = null
 let currentUser: HeedbackUser | null = null
 
 const Heedback: HeedbackInstance = {
   init(config: HeedbackConfig) {
+    if (container) return // Already initialized
+
     currentConfig = config
 
-    // Create shadow container
+    // Create container
     container = document.createElement('div')
     container.id = 'heedback-widget'
-    container.style.cssText = 'position: fixed; z-index: 999999;'
     document.body.appendChild(container)
 
     // Mount Svelte widget
@@ -45,7 +46,6 @@ const Heedback: HeedbackInstance = {
         org: config.org,
         color: config.color || '#6366f1',
         position: config.position || 'bottom-right',
-        locale: config.locale || 'en',
         user: currentUser,
       },
     })
@@ -53,7 +53,21 @@ const Heedback: HeedbackInstance = {
 
   identify(user: HeedbackUser) {
     currentUser = user
-    // Widget will pick up user changes reactively
+    // Re-mount widget with new user data if already initialized
+    if (container && currentConfig) {
+      if (widgetComponent) {
+        unmount(widgetComponent)
+      }
+      widgetComponent = mount(Widget, {
+        target: container,
+        props: {
+          org: currentConfig.org,
+          color: currentConfig.color || '#6366f1',
+          position: currentConfig.position || 'bottom-right',
+          user: currentUser,
+        },
+      })
+    }
   },
 
   open() {
@@ -65,15 +79,21 @@ const Heedback: HeedbackInstance = {
   },
 
   destroy() {
+    if (widgetComponent) {
+      unmount(widgetComponent)
+      widgetComponent = null
+    }
     if (container) {
       container.remove()
       container = null
-      widgetComponent = null
     }
+    currentConfig = null
+    currentUser = null
   },
 }
 
 // Auto-init from script data attributes
+// Usage: <script src="https://your-api.com/widget.js" data-org="my-org" data-color="#6366f1"></script>
 const script = document.currentScript as HTMLScriptElement | null
 if (script) {
   const org = script.getAttribute('data-org')
@@ -84,6 +104,18 @@ if (script) {
       position: (script.getAttribute('data-position') as HeedbackConfig['position']) || 'bottom-right',
       locale: script.getAttribute('data-locale') || 'en',
     })
+
+    // Auto-identify if user data is provided
+    const userEmail = script.getAttribute('data-user-email')
+    const userName = script.getAttribute('data-user-name')
+    const userId = script.getAttribute('data-user-id')
+    if (userEmail || userName || userId) {
+      Heedback.identify({
+        id: userId || undefined,
+        email: userEmail || undefined,
+        name: userName || undefined,
+      })
+    }
   }
 }
 

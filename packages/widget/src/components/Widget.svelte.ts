@@ -3,17 +3,11 @@ import { setApiBase, widgetApi } from '../api/widget-client'
 
 export function createWidgetState(org: string) {
   let isOpen = $state(false)
-  let tab = $state<'feedback' | 'chat'>('feedback')
-  let view = $state<'list' | 'form'>('list')
+  let tab = $state<'chat' | 'help'>('chat')
   let boards = $state<any[]>([])
-
-  const positionStyles: Record<string, string> = {
-    'bottom-right': 'bottom: 20px; right: 20px;',
-    'bottom-left': 'bottom: 20px; left: 20px;',
-  }
+  let animating = $state(false)
 
   onMount(() => {
-    // Resolve API base from the script source
     const scripts = document.querySelectorAll('script[data-org]')
     const script = scripts[scripts.length - 1] as HTMLScriptElement | undefined
     if (script?.src) {
@@ -23,40 +17,42 @@ export function createWidgetState(org: string) {
       setApiBase(window.location.origin)
     }
 
-    // Load boards
     widgetApi.getBoards(org).then((data) => {
       boards = data.data
     }).catch(() => {})
   })
 
+  function open() {
+    if (animating) return
+    animating = true
+    isOpen = true
+    setTimeout(() => { animating = false }, 300)
+  }
+
+  function close() {
+    if (animating) return
+    animating = true
+    isOpen = false
+    setTimeout(() => { animating = false }, 300)
+  }
+
   function toggle() {
-    isOpen = !isOpen
+    if (isOpen) close()
+    else open()
   }
 
-  function switchToForm() {
-    view = 'form'
-  }
-
-  function switchToList() {
-    view = 'list'
-  }
-
-  function switchTab(newTab: 'feedback' | 'chat') {
+  function switchTab(newTab: 'chat' | 'help') {
     tab = newTab
-    if (newTab === 'feedback') {
-      view = 'list'
-    }
   }
 
   return {
     get isOpen() { return isOpen },
     get tab() { return tab },
-    get view() { return view },
     get boards() { return boards },
-    positionStyles,
+    get animating() { return animating },
+    open,
+    close,
     toggle,
-    switchToForm,
-    switchToList,
     switchTab,
   }
 }

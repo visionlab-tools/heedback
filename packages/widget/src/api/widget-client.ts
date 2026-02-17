@@ -69,4 +69,24 @@ export const widgetApi = {
       body: JSON.stringify(data),
     })
   },
+
+  // Help center
+  getCollections(orgSlug: string) {
+    return request<{ data: any[] }>(`/org/${orgSlug}/public/collections`)
+  },
+
+  getArticle(orgSlug: string, articleId: string) {
+    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}`)
+  },
+
+  searchArticles(orgSlug: string, query: string) {
+    return request<{ data: any[] }>(`/org/${orgSlug}/public/articles/search?q=${encodeURIComponent(query)}`)
+  },
+
+  sendArticleFeedback(orgSlug: string, articleId: string, data: { rating: number; comment?: string }) {
+    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}/feedback`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
 }
