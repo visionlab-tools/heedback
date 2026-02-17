@@ -1,9 +1,10 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { Button, Input, Checkbox, Alert } from '@heedback/ui-kit'
+  import { Button, Input, Checkbox } from '@heedback/ui-kit'
   import { LOCALE_LABELS } from '@heedback/shared'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
+  import { addToast } from '../lib/stores/toast'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
 
   let orgSlug = $state('')
@@ -15,7 +16,6 @@
   let helpCenterEnabled = $state(true)
   let portalAuthRequired = $state(false)
   let saving = $state(false)
-  let success = $state(false)
 
   currentOrg.subscribe((org) => {
     if (org) {
@@ -45,7 +45,6 @@
   async function handleSubmit(e: Event) {
     e.preventDefault()
     saving = true
-    success = false
 
     try {
       await api.put(`/organizations/${orgSlug}`, {
@@ -59,10 +58,7 @@
           portalAuthRequired,
         },
       })
-      success = true
-      setTimeout(() => (success = false), 3000)
-    } catch {
-      // Handle error
+      addToast($_('success.saved'), 'success')
     } finally {
       saving = false
     }
@@ -73,12 +69,6 @@
   <SettingsTabs />
   <h1 class="text-2xl font-semibold text-slate-900">{$_('settings.title')}</h1>
   <p class="mt-1 text-sm text-slate-500">{$_('settings.subtitle')}</p>
-
-  {#if success}
-    <div class="mt-4">
-      <Alert variant="success">{$_('settings.saved')}</Alert>
-    </div>
-  {/if}
 
   <form onsubmit={handleSubmit} class="mt-8 space-y-6">
     <Input id="name" label={$_('settings.org_name')} bind:value={name} required />

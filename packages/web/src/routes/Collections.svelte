@@ -49,8 +49,6 @@
     try {
       const data = await api.get<{ data: Collection[] }>(`/org/${orgSlug}/collections`)
       collections = data.data
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }
@@ -103,8 +101,6 @@
       showForm = false
       loading = true
       await loadCollections()
-    } catch {
-      // Handle error
     } finally {
       saving = false
     }

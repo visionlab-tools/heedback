@@ -4,6 +4,7 @@
   import { auth } from '../stores/auth'
   import { currentOrg } from '../stores/org'
   import Sidebar from './Sidebar.svelte'
+  import Toast from './Toast.svelte'
 
   let { children }: { children: Snippet } = $props()
 
@@ -26,3 +27,4 @@
     </div>
   </main>
 </div>
+<Toast />

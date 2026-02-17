@@ -174,6 +174,17 @@
   "settings_tabs.general": "Algemeen",
   "settings_tabs.widget": "Widget-integratie",
 
+  "error.bad_request": "Ongeldige aanvraag.",
+  "error.unauthorized": "Sessie verlopen. Log opnieuw in.",
+  "error.forbidden": "U heeft geen toestemming voor deze actie.",
+  "error.not_found": "De gevraagde bron is niet gevonden.",
+  "error.server": "Er is een onverwachte fout opgetreden. Probeer het opnieuw.",
+  "error.network": "Netwerkfout. Controleer uw verbinding.",
+
+  "success.saved": "Wijzigingen opgeslagen.",
+  "success.created": "Succesvol aangemaakt.",
+  "success.deleted": "Succesvol verwijderd.",
+
   "not_found.title": "404",
   "not_found.message": "Pagina niet gevonden",
   "not_found.go_home": "Naar dashboard"

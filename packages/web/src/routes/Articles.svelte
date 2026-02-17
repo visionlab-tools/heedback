@@ -27,8 +27,6 @@
     try {
       const data = await api.get<{ data: Article[] }>(`/org/${orgSlug}/articles`)
       articles = data.data
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }

@@ -174,6 +174,17 @@
   "settings_tabs.general": "Allgemein",
   "settings_tabs.widget": "Widget-Integration",
 
+  "error.bad_request": "Ungültige Anfrage.",
+  "error.unauthorized": "Sitzung abgelaufen. Bitte erneut anmelden.",
+  "error.forbidden": "Sie haben keine Berechtigung für diese Aktion.",
+  "error.not_found": "Die angeforderte Ressource wurde nicht gefunden.",
+  "error.server": "Ein unerwarteter Fehler ist aufgetreten. Bitte erneut versuchen.",
+  "error.network": "Netzwerkfehler. Überprüfen Sie Ihre Verbindung.",
+
+  "success.saved": "Änderungen gespeichert.",
+  "success.created": "Erfolgreich erstellt.",
+  "success.deleted": "Erfolgreich gelöscht.",
+
   "not_found.title": "404",
   "not_found.message": "Seite nicht gefunden",
   "not_found.go_home": "Zum Dashboard"

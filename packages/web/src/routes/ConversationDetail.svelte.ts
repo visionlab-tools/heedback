@@ -22,8 +22,6 @@ export function createConversationDetailState(id: string) {
       conversation = data.data
       messages = data.data.messages || []
       newStatus = conversation.status
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }

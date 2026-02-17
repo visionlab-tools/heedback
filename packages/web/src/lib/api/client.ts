@@ -1,9 +1,14 @@
+import { _ } from 'svelte-i18n'
+import { get } from 'svelte/store'
+import { addToast } from '../stores/toast'
+
 const API_BASE = '/api/v1'
 
 interface RequestOptions {
   method?: string
   body?: unknown
   headers?: Record<string, string>
+  silent?: boolean
 }
 
 class ApiError extends Error {
@@ -16,8 +21,19 @@ class ApiError extends Error {
   }
 }
 
+function errorMessageForStatus(status: number): string {
+  const t = get(_)
+  const keyMap: Record<number, string> = {
+    400: 'error.bad_request',
+    401: 'error.unauthorized',
+    403: 'error.forbidden',
+    404: 'error.not_found',
+  }
+  return t(keyMap[status] || 'error.server')
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, headers = {} } = options
+  const { method = 'GET', body, headers = {}, silent = false } = options
 
   const config: RequestInit = {
     method,
@@ -33,11 +49,25 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     config.body = JSON.stringify(body)
   }
 
-  const response = await fetch(`${API_BASE}${path}`, config)
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE}${path}`, config)
+  } catch {
+    if (!silent) addToast(get(_)('error.network'), 'error')
+    throw new Error('Network error')
+  }
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({ errors: [{ message: 'Unknown error' }] }))
-    throw new ApiError(response.status, data.errors || [{ message: data.message || 'Unknown error' }])
+    const apiError = new ApiError(response.status, data.errors || [{ message: data.message || 'Unknown error' }])
+
+    if (!silent) {
+      // 422 = validation error — use backend message as-is
+      const message = response.status === 422 ? apiError.message : errorMessageForStatus(response.status)
+      addToast(message, 'error')
+    }
+
+    throw apiError
   }
 
   if (response.status === 204) {
@@ -48,11 +78,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body }),
-  put: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PUT', body }),
-  patch: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  get: <T>(path: string, opts?: { silent?: boolean }) =>
+    request<T>(path, { ...opts }),
+  post: <T>(path: string, body?: unknown, opts?: { silent?: boolean }) =>
+    request<T>(path, { method: 'POST', body, ...opts }),
+  put: <T>(path: string, body?: unknown, opts?: { silent?: boolean }) =>
+    request<T>(path, { method: 'PUT', body, ...opts }),
+  patch: <T>(path: string, body?: unknown, opts?: { silent?: boolean }) =>
+    request<T>(path, { method: 'PATCH', body, ...opts }),
+  delete: <T>(path: string, opts?: { silent?: boolean }) =>
+    request<T>(path, { method: 'DELETE', ...opts }),
 }
 
 export { ApiError }

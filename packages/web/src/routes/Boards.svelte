@@ -37,8 +37,6 @@
     try {
       const data = await api.get<{ data: Board[] }>(`/org/${orgSlug}/boards`)
       boards = data.data
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }
@@ -80,8 +78,6 @@
       showForm = false
       loading = true
       await loadBoards()
-    } catch {
-      // Handle error
     } finally {
       saving = false
     }

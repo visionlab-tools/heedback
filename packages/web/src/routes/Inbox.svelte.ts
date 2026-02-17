@@ -31,8 +31,6 @@ export function createInboxState() {
       if (statusFilter) params.set('status', statusFilter)
       const data = await api.get<{ data: Conversation[] }>(`/org/${orgSlug}/conversations?${params}`)
       conversations = data.data
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }

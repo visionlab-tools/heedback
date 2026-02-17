@@ -27,7 +27,7 @@ function createAuthStore() {
 
     async init() {
       try {
-        const data = await api.get<{ user: AdminUser }>('/auth/me')
+        const data = await api.get<{ user: AdminUser }>('/auth/me', { silent: true })
         set({ user: data.user, loading: false, initialized: true })
       } catch {
         set({ user: null, loading: false, initialized: true })

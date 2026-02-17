@@ -24,8 +24,6 @@ export function createPostDetailState(id: string) {
       post = postData.data
       comments = commentsData.data
       newStatus = post.status
-    } catch {
-      // Handle error
     } finally {
       loading = false
     }
