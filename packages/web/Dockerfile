@@ -1,12 +1,12 @@
 # --- Build stage ---
-FROM node:20-alpine AS builder
+FROM oven/bun:1 AS builder
 WORKDIR /app
 
-COPY packages/web/package.json packages/web/package-lock.json* ./
-RUN npm ci
+COPY packages/web/package.json packages/web/bun.lockb* ./
+RUN bun install --frozen-lockfile
 
 COPY packages/web/ ./
-RUN npm run build
+RUN bun run build
 
 # --- Production stage (nginx for SPA) ---
 FROM nginx:alpine

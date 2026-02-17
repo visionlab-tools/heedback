@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          cd packages/api && npm version ${{ steps.tag.outputs.version }} --no-git-tag-version && cd ../..
+          cd packages/api && bunx npm version ${{ steps.tag.outputs.version }} --no-git-tag-version && cd ../..
           git add -A
           git commit -m "chore: bump version to v${{ steps.tag.outputs.version }} [skip ci]" || true
           git tag "v${{ steps.tag.outputs.version }}"

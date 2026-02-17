@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Heedback!
 2. Clone your fork
 3. Create a feature branch (`feat/my-feature`) or fix branch (`fix/my-fix`)
 4. Make your changes
-5. Run checks: `npm run typecheck && npm run lint && npm run test`
+5. Run checks: `bun run typecheck && bun run lint && bun run test`
 6. Commit with a descriptive message
 7. Push and open a Pull Request
 
@@ -19,13 +19,13 @@ Thank you for your interest in contributing to Heedback!
 docker compose -f docker-compose.dev.yml up -d
 
 # Install and run API
-cd packages/api && npm install && npm run dev
+cd packages/api && bun install && bun run dev
 
 # Install and run dashboard
-cd packages/web && npm install && npm run dev
+cd packages/web && bun install && bun run dev
 
 # Install and run portal
-cd packages/portal && npm install && npm run dev
+cd packages/portal && bun install && bun run dev
 ```
 
 ## Branch Naming
@@ -52,7 +52,7 @@ refactor: extract email service
 - TypeScript strict mode
 - No semicolons, single quotes, trailing commas
 - 2-space indentation
-- Run `npm run lint` before committing
+- Run `bun run lint` before committing
 
 ## Questions?
 

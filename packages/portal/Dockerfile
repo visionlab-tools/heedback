@@ -1,15 +1,15 @@
 # --- Build stage ---
-FROM node:20-alpine AS builder
+FROM oven/bun:1 AS builder
 WORKDIR /app
 
-COPY packages/portal/package.json packages/portal/package-lock.json* ./
-RUN npm ci
+COPY packages/portal/package.json packages/portal/bun.lockb* ./
+RUN bun install --frozen-lockfile
 
 COPY packages/portal/ ./
-RUN npm run build
+RUN bun run build
 
 # --- Production stage ---
-FROM node:20-alpine
+FROM oven/bun:1
 WORKDIR /app
 
 COPY --from=builder /app/package.json ./
@@ -25,4 +25,4 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD wget -q --spider http://localhost:3001/ || exit 1
 
-CMD ["node", "build/index.js"]
+CMD ["bun", "run", "build/index.js"]

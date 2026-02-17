@@ -39,20 +39,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: packages/api/package-lock.json
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install API dependencies
-        run: cd packages/api && npm ci
+        run: cd packages/api && bun install --frozen-lockfile
 
       - name: Type check
-        run: cd packages/api && npm run typecheck
+        run: cd packages/api && bun run typecheck
 
       - name: Lint
-        run: cd packages/api && npm run lint
+        run: cd packages/api && bun run lint
 
       - name: Run migrations
         run: cd packages/api && node ace migration:run
@@ -65,7 +61,7 @@ jobs:
           SESSION_DRIVER: memory
 
       - name: Run tests
-        run: cd packages/api && npm test
+        run: cd packages/api && bun run test
         env:
           NODE_ENV: test
           APP_KEY: test-secret-key-for-ci-only-32ch
@@ -80,17 +76,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: packages/web/package-lock.json
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: cd packages/web && npm ci
+        run: cd packages/web && bun install --frozen-lockfile
 
       - name: Build
-        run: cd packages/web && npm run build
+        run: cd packages/web && bun run build
         env:
           PUBLIC_API_URL: http://localhost:3333
 
@@ -100,16 +92,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: packages/portal/package-lock.json
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: cd packages/portal && npm ci
+        run: cd packages/portal && bun install --frozen-lockfile
 
       - name: Build
-        run: cd packages/portal && npm run build
+        run: cd packages/portal && bun run build
         env:
           PUBLIC_API_URL: http://localhost:3333

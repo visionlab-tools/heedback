@@ -1,19 +1,19 @@
 # --- Build stage ---
-FROM node:20-alpine AS builder
+FROM oven/bun:1 AS builder
 WORKDIR /app
 
-COPY packages/api/package.json packages/api/package-lock.json* ./
-RUN npm ci
+COPY packages/api/package.json packages/api/bun.lockb* ./
+RUN bun install --frozen-lockfile
 
 COPY packages/api/ ./
-RUN npm run build
+RUN bun run build
 
 # --- Production stage ---
-FROM node:20-alpine
+FROM oven/bun:1
 WORKDIR /app
 
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-RUN npm ci --production
+COPY --from=builder /app/package.json /app/bun.lockb* ./
+RUN bun install --frozen-lockfile --production
 
 COPY --from=builder /app/build ./build
 COPY packages/api/database ./database
@@ -27,4 +27,4 @@ EXPOSE 3333
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD wget -q --spider http://localhost:3333/health || exit 1
 
-CMD ["node", "build/bin/server.js"]
+CMD ["bun", "run", "build/bin/server.js"]

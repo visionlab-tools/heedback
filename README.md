@@ -68,7 +68,7 @@ heedback/
 
 ### Prerequisites
 
-- Node.js >= 20
+- [Bun](https://bun.sh/) >= 1.0
 - Docker & Docker Compose
 
 ### Local Development
@@ -78,14 +78,14 @@ heedback/
 docker compose -f docker-compose.dev.yml up -d
 
 # Install dependencies
-cd packages/api && npm install
-cd packages/web && npm install
-cd packages/portal && npm install
+cd packages/api && bun install
+cd packages/web && bun install
+cd packages/portal && bun install
 
 # Run services
-npm run dev:api     # API on :3333
-npm run dev:web     # Dashboard on :3000
-npm run dev:portal  # Portal on :3001
+bun run dev:api     # API on :3333
+bun run dev:web     # Dashboard on :3000
+bun run dev:portal  # Portal on :3001
 ```
 
 ## Configuration

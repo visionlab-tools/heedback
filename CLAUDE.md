@@ -6,7 +6,7 @@ Heedback is an open source customer support & product feedback suite. Self-hoste
 
 ## Stack
 
-- **API**: AdonisJS 6 (TypeScript, Node.js 20+) — `packages/api/`
+- **API**: AdonisJS 6 (TypeScript, Bun) — `packages/api/`
 - **Admin Dashboard**: SvelteKit + Svelte 5 + Tailwind CSS 4 — `packages/web/`
 - **Public Portal**: SvelteKit SSR + Svelte 5 + Tailwind CSS 4 — `packages/portal/`
 - **Embeddable Widget**: Svelte 5, compiled JS — `packages/widget/`
@@ -37,20 +37,20 @@ Heedback is an open source customer support & product feedback suite. Self-hoste
 
 ```bash
 # Development
-npm run dev:api          # Start API dev server
-npm run dev:web          # Start admin dashboard dev server
-npm run dev:portal       # Start portal dev server
+bun run dev:api          # Start API dev server
+bun run dev:web          # Start admin dashboard dev server
+bun run dev:portal       # Start portal dev server
 
 # Build
-npm run build            # Build all packages
-npm run build:api        # Build API only
-npm run build:web        # Build dashboard only
-npm run build:portal     # Build portal only
+bun run build            # Build all packages
+bun run build:api        # Build API only
+bun run build:web        # Build dashboard only
+bun run build:portal     # Build portal only
 
 # Quality
-npm run lint             # Lint all packages
-npm run test             # Run API tests
-npm run typecheck        # TypeScript type check
+bun run lint             # Lint all packages
+bun run test             # Run API tests
+bun run typecheck        # TypeScript type check
 
 # Docker
 docker compose up -d                     # Production

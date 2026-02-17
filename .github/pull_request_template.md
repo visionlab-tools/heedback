@@ -4,8 +4,8 @@
 
 ## Checklist
 
-- [ ] `npm run typecheck` passes
-- [ ] `npm run lint` passes
-- [ ] `npm run test` passes
+- [ ] `bun run typecheck` passes
+- [ ] `bun run lint` passes
+- [ ] `bun run test` passes
 - [ ] Migrations are included (if DB changes)
 - [ ] Documentation updated (if needed)

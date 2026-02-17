@@ -1,5 +1,5 @@
 # Development Docker Compose
-# Only starts infrastructure services. Run app services locally with npm run dev:*
+# Only starts infrastructure services. Run app services locally with bun run dev:*
 
 services:
   # ---------------------------------------------------------------------------
