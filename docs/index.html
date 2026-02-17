@@ -1529,7 +1529,7 @@
       <ul class="nav-links">
         <li><a href="#features">Features</a></li>
         <li><a href="#setup">Setup</a></li>
-        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#architecture">How it works</a></li>
         <li><a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer">Docs</a></li>
       </ul>
 
@@ -1871,7 +1871,7 @@
         <div class="setup-step reveal stagger-2">
           <div class="setup-step-number">2</div>
           <h3>Launch everything</h3>
-          <p>One command spins up the API, dashboard, portal, database, Redis, MinIO, and email service.</p>
+          <p>One command spins up the API, dashboard, portal, database, cache, file storage, and email service.</p>
           <div class="setup-code">docker compose up -d</div>
         </div>
 
@@ -1901,35 +1901,35 @@
                 <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               </div>
               <div class="arch-node-title">Dashboard</div>
-              <div class="arch-node-desc">SvelteKit + Svelte 5</div>
+              <div class="arch-node-desc">Admin interface</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
                 <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
               </div>
               <div class="arch-node-title">Portal</div>
-              <div class="arch-node-desc">SvelteKit SSR</div>
+              <div class="arch-node-desc">Public help site</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
                 <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
               </div>
               <div class="arch-node-title">Widget</div>
-              <div class="arch-node-desc">Svelte embed</div>
+              <div class="arch-node-desc">Embeddable snippet</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
                 <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
               </div>
-              <div class="arch-node-title">PostgreSQL</div>
-              <div class="arch-node-desc">Multi-tenant DB</div>
+              <div class="arch-node-title">Database</div>
+              <div class="arch-node-desc">Multi-tenant storage</div>
             </div>
             <div class="arch-node arch-center">
               <div class="arch-node-icon">
                 <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
               </div>
-              <div class="arch-node-title">AdonisJS API</div>
-              <div class="arch-node-desc">REST JSON &middot; Redis queues &middot; S3 storage</div>
+              <div class="arch-node-title">API</div>
+              <div class="arch-node-desc">REST JSON &middot; Background jobs &middot; File storage</div>
             </div>
           </div>
         </div>
@@ -1943,7 +1943,7 @@
           <div class="arch-features">
             <div class="arch-feature">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <span><strong>Multi-tenant isolation</strong> — organization_id on every row, no data leaks</span>
+              <span><strong>Multi-tenant isolation</strong> — each organization's data is fully separated, no leaks</span>
             </div>
             <div class="arch-feature">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -1951,11 +1951,11 @@
             </div>
             <div class="arch-feature">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <span><strong>Async job queue</strong> — emails, notifications, and heavy work via Bull + Redis</span>
+              <span><strong>Async job queue</strong> — emails, notifications, and heavy work processed in the background</span>
             </div>
             <div class="arch-feature">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              <span><strong>S3-compatible storage</strong> — MinIO in dev, any S3 provider in production</span>
+              <span><strong>File storage</strong> — built-in local storage for dev, plug any cloud provider in production</span>
             </div>
             <div class="arch-feature">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -2005,7 +2005,7 @@
         <li><a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#setup">Setup</a></li>
-        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#architecture">How it works</a></li>
       </ul>
     </div>
   </footer>
