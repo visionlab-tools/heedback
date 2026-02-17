@@ -89,7 +89,7 @@ export function createChangelogEditorState(id?: string) {
 
     try {
       if (isEdit) {
-        await api.patch(`/org/${orgSlug}/changelog/${id}`, payload)
+        await api.put(`/org/${orgSlug}/changelog/${id}`, payload)
       } else {
         await api.post(`/org/${orgSlug}/changelog`, payload)
       }

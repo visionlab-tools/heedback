@@ -46,6 +46,7 @@ const Heedback: HeedbackInstance = {
         org: config.org,
         color: config.color || '#6366f1',
         position: config.position || 'bottom-right',
+        locale: config.locale || 'en',
         user: currentUser,
       },
     })
@@ -64,6 +65,7 @@ const Heedback: HeedbackInstance = {
           org: currentConfig.org,
           color: currentConfig.color || '#6366f1',
           position: currentConfig.position || 'bottom-right',
+          locale: currentConfig.locale || 'en',
           user: currentUser,
         },
       })

@@ -81,7 +81,7 @@ export function createArticleEditorState(id?: string) {
 
     try {
       if (isEdit) {
-        await api.patch(`/org/${orgSlug}/articles/${id}`, payload)
+        await api.put(`/org/${orgSlug}/articles/${id}`, payload)
       } else {
         await api.post(`/org/${orgSlug}/articles`, payload)
       }

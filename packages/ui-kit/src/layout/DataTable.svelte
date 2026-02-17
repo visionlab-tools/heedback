@@ -13,18 +13,18 @@
   } = $props()
 </script>
 
-<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+  <table class="min-w-full divide-y divide-slate-200">
+    <thead class="bg-slate-50">
       <tr>
         {#each columns as col}
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase {col.align === 'right' ? 'text-right' : 'text-left'}">
+          <th class="px-6 py-3 text-xs font-medium text-slate-600 {col.align === 'right' ? 'text-right' : 'text-left'}">
             {col.label}
           </th>
         {/each}
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200">
+    <tbody class="divide-y divide-slate-200">
       {@render children()}
     </tbody>
   </table>

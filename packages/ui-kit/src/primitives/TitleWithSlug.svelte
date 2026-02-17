@@ -51,24 +51,24 @@
 </script>
 
 <div>
-  <label for="title" class="block text-sm font-medium text-gray-700">{titleLabel}</label>
+  <label for="title" class="block text-sm font-medium text-slate-700">{titleLabel}</label>
   <input
     id="title"
     type="text"
     {required}
     bind:value={title}
     oninput={onTitleInput}
-    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+    class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
   />
 
   <!-- Slug shown below the title, editable inline -->
-  <div class="mt-1.5 flex items-center gap-1 text-sm text-gray-400">
+  <div class="mt-1.5 flex items-center gap-1 text-sm text-slate-400">
     <span>{slugPrefix}</span>
     <input
       bind:value={slug}
       oninput={onSlugInput}
       placeholder="auto-generated"
-      class="bg-transparent border-none outline-none p-0 text-sm text-gray-500 focus:text-gray-700 w-full"
+      class="bg-transparent border-none outline-none p-0 text-sm text-slate-500 focus:text-slate-700 w-full"
     />
   </div>
 </div>

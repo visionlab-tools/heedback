@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../lib/i18n'
   import { renderMarkdown } from '../utils/markdown'
   import { createChatViewState } from './ChatView.svelte.ts'
 
@@ -6,10 +7,12 @@
     org,
     user = null,
     color = '#6366f1',
+    locale = 'en',
   }: {
     org: string
     user?: any
     color?: string
+    locale?: string
   } = $props()
 
   const state = createChatViewState(org, user)
@@ -24,19 +27,19 @@
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
       </div>
-      <h3 class="hb-chat-welcome-title">Start a conversation</h3>
-      <p class="hb-chat-welcome-text">We typically reply within a few minutes.</p>
+      <h3 class="hb-chat-welcome-title">{t(locale, 'chat.welcome_title')}</h3>
+      <p class="hb-chat-welcome-text">{t(locale, 'chat.welcome_text')}</p>
     </div>
 
     <form onsubmit={state.handleStart} class="hb-chat-form">
       <input
         type="text"
-        placeholder="Subject (optional)"
+        placeholder={t(locale, 'chat.subject_placeholder')}
         bind:value={state.subject}
         class="hb-chat-input"
       />
       <textarea
-        placeholder="How can we help?"
+        placeholder={t(locale, 'chat.message_placeholder')}
         bind:value={state.newMessage}
         rows={4}
         class="hb-chat-textarea"
@@ -49,13 +52,13 @@
       >
         {#if state.sending}
           <span class="hb-chat-spinner"></span>
-          Sending...
+          {t(locale, 'chat.sending')}
         {:else}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
-          Start Conversation
+          {t(locale, 'chat.start')}
         {/if}
       </button>
     </form>
@@ -70,7 +73,7 @@
           style={msg.senderType !== 'admin' ? `background: ${color}; color: white;` : ''}
         >
           {#if msg.senderType === 'admin'}
-            <span class="hb-chat-bubble-sender">Support</span>
+            <span class="hb-chat-bubble-sender">{t(locale, 'chat.support')}</span>
           {/if}
           <div class="hb-chat-bubble-body">{@html renderMarkdown(msg.body)}</div>
           <span class="hb-chat-bubble-time">{state.formatTime(msg.createdAt)}</span>
@@ -83,7 +86,7 @@
       <div class="hb-chat-reply-row">
         <input
           type="text"
-          placeholder="Type a message..."
+          placeholder={t(locale, 'chat.reply_placeholder')}
           bind:value={state.newMessage}
           class="hb-chat-reply-input"
         />

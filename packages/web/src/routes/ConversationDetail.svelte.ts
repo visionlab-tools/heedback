@@ -31,7 +31,7 @@ export function createConversationDetailState(id: string) {
 
   async function handleStatusChange() {
     if (!conversation || newStatus === conversation.status) return
-    await api.patch(`/org/${orgSlug}/conversations/${id}`, { status: newStatus })
+    await api.put(`/org/${orgSlug}/conversations/${id}`, { status: newStatus })
     conversation.status = newStatus
   }
 

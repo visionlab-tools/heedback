@@ -79,6 +79,26 @@ Components:
 - **Layout**: `PageHeader`, `EmptyState`, `DataTable`, `LoadingSpinner`
 - **Navigation**: `Nav`, `NavItem`
 
+## Internationalization (i18n)
+
+Two kinds of locales:
+- **UI locales** (fixed): `en`, `fr`, `nl`, `es`, `de` — defined in `@heedback/shared` as `UI_LOCALES`
+- **Content locales** (org-defined): stored in `org.settings.supportedLocales: string[]`, any BCP-47 code
+
+Libraries:
+- **Admin (`packages/web`)**: `svelte-i18n` — JSON files in `src/lib/i18n/{locale}.json`, `$_()` in `.svelte` files, `localStorage` persistence
+- **Portal (`packages/portal`)**: `svelte-i18n` — URL-based routing (`/[locale]/help`), Accept-Language detection at root
+- **Widget (`packages/widget`)**: inline `t(locale, key)` in `src/lib/i18n.ts` — no runtime loading, minimal bundle
+
+Key utilities in `@heedback/shared`:
+- `pickTranslation(translations, locale, fallback?)` — select best translation with fallback chain
+- `LOCALE_LABELS` — human-readable names for common locale codes
+- `UI_LOCALES` — the 5 supported admin/portal UI languages
+
+Content editors (articles, changelog, collections) use `LocaleTabs.svelte` + per-locale `TranslationDraft[]` pattern.
+
+API public endpoints accept `?locale=` query param to filter translations.
+
 ## Database Models (Multi-tenant)
 
 Core models with `organization_id`:

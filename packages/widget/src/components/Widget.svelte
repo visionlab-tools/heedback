@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '../lib/i18n'
   import ChatView from './ChatView.svelte'
   import HelpView from './HelpView.svelte'
   import { createWidgetState } from './Widget.svelte.ts'
@@ -7,11 +8,13 @@
     org,
     color = '#6366f1',
     position = 'bottom-right',
+    locale = 'en',
     user = null,
   }: {
     org: string
     color?: string
     position?: string
+    locale?: string
     user?: any
   } = $props()
 
@@ -32,16 +35,16 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span class="hb-header-title">Support</span>
+            <span class="hb-header-title">{t(locale, 'header.title')}</span>
           </div>
-          <button class="hb-close-btn" onclick={state.close} aria-label="Close">
+          <button class="hb-close-btn" onclick={state.close} aria-label={t(locale, 'trigger.close')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
         </div>
-        <p class="hb-header-subtitle">How can we help you today?</p>
+        <p class="hb-header-subtitle">{t(locale, 'header.subtitle')}</p>
 
         <!-- Tabs -->
         <div class="hb-tabs">
@@ -53,7 +56,7 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
-            Chat
+            {t(locale, 'tabs.chat')}
           </button>
           <button
             class="hb-tab"
@@ -65,7 +68,7 @@
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
               <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            Help
+            {t(locale, 'tabs.help')}
           </button>
         </div>
       </div>
@@ -73,9 +76,9 @@
       <!-- Content -->
       <div class="hb-content">
         {#if state.tab === 'chat'}
-          <ChatView {org} {user} {color} />
+          <ChatView {org} {user} {color} {locale} />
         {:else}
-          <HelpView {org} />
+          <HelpView {org} {locale} />
         {/if}
       </div>
     </div>
@@ -87,7 +90,7 @@
     class:hb-trigger-open={state.isOpen}
     style="background: linear-gradient(135deg, {color}, {color}dd);"
     onclick={state.toggle}
-    aria-label={state.isOpen ? 'Close' : 'Open support'}
+    aria-label={state.isOpen ? t(locale, 'trigger.close') : t(locale, 'trigger.open')}
   >
     {#if state.isOpen}
       <svg class="hb-trigger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

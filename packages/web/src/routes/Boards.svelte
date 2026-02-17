@@ -73,7 +73,7 @@
     }
     try {
       if (editingId) {
-        await api.patch(`/org/${orgSlug}/boards/${editingId}`, payload)
+        await api.put(`/org/${orgSlug}/boards/${editingId}`, payload)
       } else {
         await api.post(`/org/${orgSlug}/boards`, payload)
       }

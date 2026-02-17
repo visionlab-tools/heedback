@@ -33,7 +33,7 @@ export function createPostDetailState(id: string) {
 
   async function handleStatusChange() {
     if (!post || newStatus === post.status) return
-    await api.patch(`/org/${orgSlug}/posts/${id}`, { status: newStatus })
+    await api.put(`/org/${orgSlug}/posts/${id}`, { status: newStatus })
     post.status = newStatus
   }
 

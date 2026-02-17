@@ -48,7 +48,7 @@
     success = false
 
     try {
-      await api.patch(`/org/${orgSlug}`, {
+      await api.put(`/organizations/${orgSlug}`, {
         name,
         settings: {
           brandColor,

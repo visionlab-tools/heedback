@@ -71,16 +71,19 @@ export const widgetApi = {
   },
 
   // Help center
-  getCollections(orgSlug: string) {
-    return request<{ data: any[] }>(`/org/${orgSlug}/public/collections`)
+  getCollections(orgSlug: string, locale?: string) {
+    const qs = locale ? `?locale=${locale}` : ''
+    return request<{ data: any[] }>(`/org/${orgSlug}/public/collections${qs}`)
   },
 
-  getArticle(orgSlug: string, articleId: string) {
-    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}`)
+  getArticle(orgSlug: string, articleId: string, locale?: string) {
+    const qs = locale ? `?locale=${locale}` : ''
+    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}${qs}`)
   },
 
-  searchArticles(orgSlug: string, query: string) {
-    return request<{ data: any[] }>(`/org/${orgSlug}/public/articles/search?q=${encodeURIComponent(query)}`)
+  searchArticles(orgSlug: string, query: string, locale?: string) {
+    const localeParam = locale ? `&locale=${locale}` : ''
+    return request<{ data: any[] }>(`/org/${orgSlug}/public/articles/search?q=${encodeURIComponent(query)}${localeParam}`)
   },
 
   sendArticleFeedback(orgSlug: string, articleId: string, data: { rating: number; comment?: string }) {

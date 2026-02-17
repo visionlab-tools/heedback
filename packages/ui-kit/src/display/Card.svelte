@@ -1,5 +1,5 @@
 <!--
-  Surface card — optionally interactive (hover border highlight).
+  Surface card — optionally interactive (hover shadow).
 -->
 <script lang="ts">
   import type { Snippet } from 'svelte'
@@ -19,8 +19,8 @@
   const paddings = { sm: 'p-4', md: 'p-6' }
 
   let classes = $derived(
-    `bg-white rounded-xl border border-gray-200 ${paddings[padding]}` +
-    (interactive ? ' hover:border-indigo-300 transition-colors' : ''),
+    `bg-white rounded-lg border border-slate-200 shadow-sm ${paddings[padding]}` +
+    (interactive ? ' hover:shadow-md transition-shadow' : ''),
   )
 </script>
 

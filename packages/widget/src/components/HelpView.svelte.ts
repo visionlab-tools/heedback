@@ -1,7 +1,7 @@
 import { onMount } from 'svelte'
 import { widgetApi } from '../api/widget-client'
 
-export function createHelpViewState(org: string) {
+export function createHelpViewState(org: string, locale: string) {
   let collections = $state<any[]>([])
   let loading = $state(true)
   let search = $state('')
@@ -15,7 +15,7 @@ export function createHelpViewState(org: string) {
   async function loadCollections() {
     loading = true
     try {
-      const data = await widgetApi.getCollections(org)
+      const data = await widgetApi.getCollections(org, locale)
       collections = data.data
     } catch {
       collections = []
@@ -36,7 +36,7 @@ export function createHelpViewState(org: string) {
       searching = true
       view = 'search'
       try {
-        const data = await widgetApi.searchArticles(org, search)
+        const data = await widgetApi.searchArticles(org, search, locale)
         searchResults = data.data
       } catch {
         searchResults = []
@@ -49,7 +49,7 @@ export function createHelpViewState(org: string) {
   async function openArticle(articleId: string) {
     loading = true
     try {
-      const data = await widgetApi.getArticle(org, articleId)
+      const data = await widgetApi.getArticle(org, articleId, locale)
       selectedArticle = data.data
       view = 'article'
     } catch {

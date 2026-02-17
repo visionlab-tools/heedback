@@ -1,7 +1,16 @@
 <script lang="ts">
+  import { t } from '../lib/i18n'
   import { createPostListState } from './PostList.svelte.ts'
 
-  let { org, onNewPost }: { org: string; onNewPost: () => void } = $props()
+  let {
+    org,
+    locale = 'en',
+    onNewPost,
+  }: {
+    org: string
+    locale?: string
+    onNewPost: () => void
+  } = $props()
 
   const state = createPostListState(org)
 </script>
@@ -9,7 +18,7 @@
 <div>
   <input
     type="search"
-    placeholder="Search existing feedback..."
+    placeholder={t(locale, 'posts.search_placeholder')}
     bind:value={state.search}
     oninput={state.handleSearch}
     style="
@@ -38,14 +47,14 @@
       font-weight: 600;
     "
   >
-    + New Feedback
+    {t(locale, 'posts.new')}
   </button>
 
   {#if state.loading}
-    <p style="text-align: center; color: #9ca3af; margin-top: 20px; font-size: 13px;">Loading...</p>
+    <p style="text-align: center; color: #9ca3af; margin-top: 20px; font-size: 13px;">{t(locale, 'posts.loading')}</p>
   {:else if state.posts.length === 0}
     <p style="text-align: center; color: #9ca3af; margin-top: 20px; font-size: 13px;">
-      {state.search ? 'No results found.' : 'No feedback yet. Be the first!'}
+      {state.search ? t(locale, 'posts.no_results') : t(locale, 'posts.empty')}
     </p>
   {:else}
     <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">

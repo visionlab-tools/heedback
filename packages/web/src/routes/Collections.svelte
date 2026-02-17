@@ -96,7 +96,7 @@
 
     try {
       if (editingId) {
-        await api.patch(`/org/${orgSlug}/collections/${editingId}`, payload)
+        await api.put(`/org/${orgSlug}/collections/${editingId}`, payload)
       } else {
         await api.post(`/org/${orgSlug}/collections`, payload)
       }

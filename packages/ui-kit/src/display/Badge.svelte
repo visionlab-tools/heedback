@@ -15,16 +15,16 @@
   } = $props()
 
   const variants: Record<Variant, string> = {
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    info: 'bg-blue-100 text-blue-800',
-    danger: 'bg-red-100 text-red-800',
-    neutral: 'bg-gray-100 text-gray-800',
-    purple: 'bg-purple-100 text-purple-800',
-    orange: 'bg-orange-100 text-orange-800',
+    success: 'bg-green-100 text-green-700',
+    warning: 'bg-yellow-100 text-yellow-700',
+    info: 'bg-blue-100 text-blue-700',
+    danger: 'bg-red-100 text-red-700',
+    neutral: 'bg-slate-100 text-slate-700',
+    purple: 'bg-purple-100 text-purple-700',
+    orange: 'bg-orange-100 text-orange-700',
   }
 </script>
 
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {variants[variant]}">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {variants[variant]}">
   {@render children()}
 </span>

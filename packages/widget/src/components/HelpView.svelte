@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { t } from '../lib/i18n'
   import { renderMarkdown } from '../utils/markdown'
   import { createHelpViewState } from './HelpView.svelte.ts'
 
-  let { org }: { org: string } = $props()
+  let { org, locale = 'en' }: { org: string; locale?: string } = $props()
 
-  const state = createHelpViewState(org)
+  const state = createHelpViewState(org, locale)
 </script>
 
 <div class="hb-help">
@@ -15,7 +16,7 @@
         <path d="M19 12H5"></path>
         <path d="M12 19l-7-7 7-7"></path>
       </svg>
-      Back
+      {t(locale, 'help.back')}
     </button>
     <h2 class="hb-help-article-title">{state.selectedArticle.title}</h2>
     <div class="hb-help-article-body">
@@ -30,7 +31,7 @@
       </svg>
       <input
         type="search"
-        placeholder="Search help articles..."
+        placeholder={t(locale, 'help.search_placeholder')}
         bind:value={state.search}
         oninput={state.handleSearch}
         class="hb-help-search"
@@ -40,12 +41,12 @@
     {#if state.loading || state.searching}
       <div class="hb-help-loading">
         <div class="hb-help-spinner"></div>
-        <span>Loading...</span>
+        <span>{t(locale, 'help.loading')}</span>
       </div>
     {:else if state.view === 'search'}
       <!-- Search results -->
       {#if state.searchResults.length === 0}
-        <div class="hb-help-empty">No articles found.</div>
+        <div class="hb-help-empty">{t(locale, 'help.no_results')}</div>
       {:else}
         <div class="hb-help-list">
           {#each state.searchResults as article}
@@ -64,7 +65,7 @@
     {:else}
       <!-- Collections list -->
       {#if state.collections.length === 0}
-        <div class="hb-help-empty">No help articles available yet.</div>
+        <div class="hb-help-empty">{t(locale, 'help.empty')}</div>
       {:else}
         <div class="hb-help-collections">
           {#each state.collections as collection}
