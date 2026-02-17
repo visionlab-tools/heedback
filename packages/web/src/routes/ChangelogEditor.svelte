@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createChangelogEditorState, allLabels } from './ChangelogEditor.svelte.ts'
 
   let { id }: { id?: string } = $props()
@@ -23,6 +24,14 @@
   {/if}
 
   <form onsubmit={state.handleSubmit} class="mt-8 space-y-6">
+    {#if state.orgLocales.length > 1}
+      <LocaleTabs
+        locales={state.orgLocales}
+        active={state.activeLocale}
+        onchange={state.setActiveLocale}
+      />
+    {/if}
+
     <TitleWithSlug bind:title={state.title} bind:slug={state.slug} required />
 
     <Textarea id="body" label={$_('changelog_editor.content')} bind:value={state.body} rows={15} mono />

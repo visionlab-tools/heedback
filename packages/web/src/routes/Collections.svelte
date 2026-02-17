@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n'
   import { FolderOpen } from 'lucide-svelte'
   import { Button, Input, Textarea, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
+  import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -16,20 +17,29 @@
     children?: Collection[]
   }
 
+  interface TranslationDraft { locale: string; name: string; description: string }
+
   let collections = $state<Collection[]>([])
   let loading = $state(true)
   let orgSlug = $state('')
+  let orgLocales = $state<string[]>(['en'])
   let showForm = $state(false)
   let editingId = $state<string | null>(null)
 
-  let formName = $state('')
   let formSlug = $state('')
-  let formDescription = $state('')
   let formIcon = $state('')
+  let formTranslations = $state<TranslationDraft[]>([{ locale: 'en', name: '', description: '' }])
+  let activeLocale = $state('en')
   let saving = $state(false)
 
+  // Index into the active locale's draft
+  let activeIndex = $derived(formTranslations.findIndex((t) => t.locale === activeLocale))
+
   currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
+    if (!org) return
+    orgSlug = org.slug
+    const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
+    if (locales?.length) orgLocales = locales
   })
 
   onMount(loadCollections)
@@ -50,21 +60,27 @@
     return collection.translations[0]?.name || $_('common.untitled')
   }
 
+  function initTranslations(existing?: Collection['translations']) {
+    formTranslations = orgLocales.map((loc) => {
+      const server = existing?.find((t) => t.locale === loc)
+      return { locale: loc, name: server?.name ?? '', description: server?.description ?? '' }
+    })
+    activeLocale = orgLocales[0]
+  }
+
   function openCreate() {
     editingId = null
-    formName = ''
     formSlug = ''
-    formDescription = ''
     formIcon = ''
+    initTranslations()
     showForm = true
   }
 
   function openEdit(collection: Collection) {
     editingId = collection.id
-    formName = collection.translations[0]?.name || ''
     formSlug = collection.slug
-    formDescription = collection.translations[0]?.description || ''
     formIcon = collection.icon || ''
+    initTranslations(collection.translations)
     showForm = true
   }
 
@@ -72,11 +88,11 @@
     e.preventDefault()
     saving = true
 
-    const payload = {
-      slug: formSlug,
-      icon: formIcon || null,
-      translations: [{ locale: 'en', name: formName, description: formDescription || null }],
-    }
+    const translations = formTranslations
+      .filter((t) => t.name.trim())
+      .map((t) => ({ locale: t.locale, name: t.name, description: t.description || null }))
+
+    const payload = { slug: formSlug, icon: formIcon || null, translations }
 
     try {
       if (editingId) {
@@ -115,12 +131,29 @@
         <h2 class="text-lg font-semibold text-slate-900 mb-4">
           {editingId ? $_('collections.edit') : $_('collections.new')}
         </h2>
+
+        {#if orgLocales.length > 1}
+          <LocaleTabs locales={orgLocales} active={activeLocale} onchange={(l) => (activeLocale = l)} />
+        {/if}
+
         <form onsubmit={handleSubmit} class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <TitleWithSlug titleLabel={$_('common.name')} bind:title={formName} bind:slug={formSlug} required />
-            <Input id="icon" label={$_('collections.icon')} bind:value={formIcon} placeholder="📚" />
-          </div>
-          <Textarea id="description" label={$_('common.description')} bind:value={formDescription} rows={2} />
+          {#if activeIndex >= 0}
+            <div class="grid grid-cols-2 gap-4">
+              <TitleWithSlug
+                titleLabel={$_('common.name')}
+                bind:title={formTranslations[activeIndex].name}
+                bind:slug={formSlug}
+                required
+              />
+              <Input id="icon" label={$_('collections.icon')} bind:value={formIcon} placeholder="📚" />
+            </div>
+            <Textarea
+              id="description"
+              label={$_('common.description')}
+              bind:value={formTranslations[activeIndex].description}
+              rows={2}
+            />
+          {/if}
           <div class="flex gap-3">
             <Button type="submit" loading={saving} size="sm">
               {saving ? $_('common.saving') : editingId ? $_('common.update') : $_('common.create')}

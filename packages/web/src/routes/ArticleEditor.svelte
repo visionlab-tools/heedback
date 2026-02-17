@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createArticleEditorState } from './ArticleEditor.svelte.ts'
 
   let { id }: { id?: string } = $props()
@@ -23,17 +24,24 @@
   {/if}
 
   <form onsubmit={state.handleSubmit} class="mt-8 space-y-6">
+    {#if state.orgLocales.length > 1}
+      <LocaleTabs
+        locales={state.orgLocales}
+        active={state.activeLocale}
+        onchange={state.setActiveLocale}
+      />
+    {/if}
+
     <TitleWithSlug bind:title={state.title} bind:slug={state.slug} required />
 
     <Textarea id="body" label={$_('article_editor.content')} bind:value={state.body} rows={20} mono />
 
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 gap-6">
       <Select id="status" label={$_('common.status')} bind:value={state.status}>
         <option value="draft">{$_('article_editor.status_draft')}</option>
         <option value="published">{$_('article_editor.status_published')}</option>
         <option value="archived">{$_('article_editor.status_archived')}</option>
       </Select>
-      <Input id="locale" label={$_('article_editor.locale')} bind:value={state.locale} />
       <Input id="seoTitle" label={$_('article_editor.seo_title')} bind:value={state.seoTitle} />
     </div>
 
