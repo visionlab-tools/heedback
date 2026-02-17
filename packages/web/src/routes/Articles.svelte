@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { _ } from 'svelte-i18n'
   import { Button, Badge, PageHeader, EmptyState, DataTable, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
@@ -34,7 +35,7 @@
   })
 
   function getTitle(article: Article): string {
-    return article.translations[0]?.title || 'Untitled'
+    return article.translations[0]?.title || $_('common.untitled')
   }
 
   type BadgeVariant = 'success' | 'warning' | 'neutral'
@@ -46,42 +47,43 @@
     }
     return map[status] || 'neutral'
   }
+
+  // Reactive so column headers update when locale changes
+  let columns = $derived([
+    { label: $_('articles.col_title') },
+    { label: $_('articles.col_status') },
+    { label: $_('articles.col_collection') },
+    { label: $_('common.actions'), align: 'right' as const },
+  ])
 </script>
 
 <div>
-  <PageHeader title="Articles" subtitle="Manage your help center articles.">
+  <PageHeader title={$_('articles.title')} subtitle={$_('articles.subtitle')}>
     {#snippet actions()}
-      <Button href="/articles/new" size="sm">New Article</Button>
+      <Button href="/articles/new" size="sm">{$_('articles.new')}</Button>
     {/snippet}
   </PageHeader>
 
   {#if loading}
     <LoadingSpinner />
   {:else if articles.length === 0}
-    <EmptyState message="No articles yet. Create your first article to get started." />
+    <EmptyState message={$_('articles.empty')} />
   {:else}
-    <div class="mt-8">
-      <DataTable columns={[
-        { label: 'Title' },
-        { label: 'Status' },
-        { label: 'Collection' },
-        { label: 'Actions', align: 'right' },
-      ]}>
-        {#each articles as article}
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm font-medium text-gray-900">{getTitle(article)}</td>
-            <td class="px-6 py-4">
-              <Badge variant={statusVariant(article.status)}>{article.status}</Badge>
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-500">
-              {article.collection?.translations?.[0]?.name || '—'}
-            </td>
-            <td class="px-6 py-4 text-right">
-              <Button href="/articles/{article.id}/edit" variant="ghost" size="sm">Edit</Button>
-            </td>
-          </tr>
-        {/each}
-      </DataTable>
-    </div>
+    <DataTable {columns}>
+      {#each articles as article}
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="px-6 py-4 text-sm font-medium text-slate-900">{getTitle(article)}</td>
+          <td class="px-6 py-4">
+            <Badge variant={statusVariant(article.status)}>{article.status}</Badge>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500">
+            {article.collection?.translations?.[0]?.name || '—'}
+          </td>
+          <td class="px-6 py-4 text-right">
+            <Button href="/articles/{article.id}/edit" variant="ghost" size="sm">{$_('common.edit')}</Button>
+          </td>
+        </tr>
+      {/each}
+    </DataTable>
   {/if}
 </div>

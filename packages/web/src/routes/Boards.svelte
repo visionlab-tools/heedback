@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
@@ -87,7 +88,7 @@
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this board?')) return
+    if (!confirm($_('boards.confirm_delete'))) return
     await api.delete(`/org/${orgSlug}/boards/${id}`)
     loading = true
     await loadBoards()
@@ -95,26 +96,26 @@
 </script>
 
 <div>
-  <PageHeader title="Boards" subtitle="Manage feedback boards.">
+  <PageHeader title={$_('boards.title')} subtitle={$_('boards.subtitle')}>
     {#snippet actions()}
-      <Button onclick={openCreate} size="sm">New Board</Button>
+      <Button onclick={openCreate} size="sm">{$_('boards.new')}</Button>
     {/snippet}
   </PageHeader>
 
   {#if showForm}
     <Card padding="md">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">
-        {editingId ? 'Edit Board' : 'New Board'}
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">
+        {editingId ? $_('boards.edit') : $_('boards.new')}
       </h2>
       <form onsubmit={handleSubmit} class="space-y-4">
-        <TitleWithSlug titleLabel="Name" bind:title={formName} bind:slug={formSlug} required />
-        <Textarea id="desc" label="Description" bind:value={formDescription} rows={2} />
-        <Checkbox label="Public board" bind:checked={formIsPublic} />
+        <TitleWithSlug titleLabel={$_('common.name')} bind:title={formName} bind:slug={formSlug} required />
+        <Textarea id="desc" label={$_('common.description')} bind:value={formDescription} rows={2} />
+        <Checkbox label={$_('boards.public_board')} bind:checked={formIsPublic} />
         <div class="flex gap-3">
           <Button type="submit" loading={saving} size="sm">
-            {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
+            {saving ? $_('common.saving') : editingId ? $_('common.update') : $_('common.create')}
           </Button>
-          <Button variant="secondary" onclick={() => (showForm = false)} size="sm">Cancel</Button>
+          <Button variant="secondary" onclick={() => (showForm = false)} size="sm">{$_('common.cancel')}</Button>
         </div>
       </form>
     </Card>
@@ -123,19 +124,19 @@
   {#if loading}
     <LoadingSpinner />
   {:else if boards.length === 0}
-    <EmptyState message="No boards yet." />
+    <EmptyState message={$_('boards.empty')} />
   {:else}
-    <div class="mt-8 space-y-3">
+    <div class="space-y-3">
       {#each boards as board}
         <Card padding="sm">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-medium text-gray-900">{board.name}</p>
-              <p class="text-sm text-gray-500">/{board.slug} · {board.postCount || 0} posts · {board.isPublic ? 'Public' : 'Private'}</p>
+              <p class="font-medium text-slate-900">{board.name}</p>
+              <p class="text-sm text-slate-500">/{board.slug} · {$_('boards.posts_count', { values: { count: board.postCount || 0 } })} · {board.isPublic ? $_('common.public') : $_('common.private')}</p>
             </div>
             <div class="flex items-center gap-2">
-              <Button variant="ghost" onclick={() => openEdit(board)} size="sm">Edit</Button>
-              <Button variant="danger" onclick={() => handleDelete(board.id)} size="sm">Delete</Button>
+              <Button variant="ghost" onclick={() => openEdit(board)} size="sm">{$_('common.edit')}</Button>
+              <Button variant="danger" onclick={() => handleDelete(board.id)} size="sm">{$_('common.delete')}</Button>
             </div>
           </div>
         </Card>

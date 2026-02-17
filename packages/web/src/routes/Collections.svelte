@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { _ } from 'svelte-i18n'
   import { FolderOpen } from 'lucide-svelte'
   import { Button, Input, Textarea, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
@@ -46,7 +47,7 @@
   }
 
   function getName(collection: Collection): string {
-    return collection.translations[0]?.name || 'Untitled'
+    return collection.translations[0]?.name || $_('common.untitled')
   }
 
   function openCreate() {
@@ -94,7 +95,7 @@
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this collection?')) return
+    if (!confirm($_('collections.confirm_delete'))) return
     await api.delete(`/org/${orgSlug}/collections/${id}`)
     loading = true
     await loadCollections()
@@ -102,29 +103,29 @@
 </script>
 
 <div>
-  <PageHeader title="Collections" subtitle="Organize your help center articles into collections.">
+  <PageHeader title={$_('collections.title')} subtitle={$_('collections.subtitle')}>
     {#snippet actions()}
-      <Button onclick={openCreate} size="sm">New Collection</Button>
+      <Button onclick={openCreate} size="sm">{$_('collections.new')}</Button>
     {/snippet}
   </PageHeader>
 
   {#if showForm}
-    <div class="mt-6">
+    <div class="mb-6">
       <Card padding="md">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">
-          {editingId ? 'Edit Collection' : 'New Collection'}
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">
+          {editingId ? $_('collections.edit') : $_('collections.new')}
         </h2>
         <form onsubmit={handleSubmit} class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
-            <TitleWithSlug titleLabel="Name" bind:title={formName} bind:slug={formSlug} required />
-            <Input id="icon" label="Icon" bind:value={formIcon} placeholder="📚" />
+            <TitleWithSlug titleLabel={$_('common.name')} bind:title={formName} bind:slug={formSlug} required />
+            <Input id="icon" label={$_('collections.icon')} bind:value={formIcon} placeholder="📚" />
           </div>
-          <Textarea id="description" label="Description" bind:value={formDescription} rows={2} />
+          <Textarea id="description" label={$_('common.description')} bind:value={formDescription} rows={2} />
           <div class="flex gap-3">
             <Button type="submit" loading={saving} size="sm">
-              {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
+              {saving ? $_('common.saving') : editingId ? $_('common.update') : $_('common.create')}
             </Button>
-            <Button variant="secondary" onclick={() => (showForm = false)} size="sm">Cancel</Button>
+            <Button variant="secondary" onclick={() => (showForm = false)} size="sm">{$_('common.cancel')}</Button>
           </div>
         </form>
       </Card>
@@ -134,9 +135,9 @@
   {#if loading}
     <LoadingSpinner />
   {:else if collections.length === 0}
-    <EmptyState message="No collections yet." />
+    <EmptyState message={$_('collections.empty')} />
   {:else}
-    <div class="mt-8 space-y-3">
+    <div class="space-y-3">
       {#each collections as collection}
         <Card padding="sm">
           <div class="flex items-center justify-between">
@@ -147,13 +148,13 @@
                 <FolderOpen size={20} class="text-slate-400" />
               {/if}
               <div>
-                <p class="font-medium text-gray-900">{getName(collection)}</p>
-                <p class="text-sm text-gray-500">/{collection.slug} · {collection.articleCount || 0} articles</p>
+                <p class="font-medium text-slate-900">{getName(collection)}</p>
+                <p class="text-sm text-slate-500">/{collection.slug} · {$_('collections.articles_count', { values: { count: collection.articleCount || 0 } })}</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <Button variant="ghost" onclick={() => openEdit(collection)} size="sm">Edit</Button>
-              <Button variant="danger" onclick={() => handleDelete(collection.id)} size="sm">Delete</Button>
+              <Button variant="ghost" onclick={() => openEdit(collection)} size="sm">{$_('common.edit')}</Button>
+              <Button variant="danger" onclick={() => handleDelete(collection.id)} size="sm">{$_('common.delete')}</Button>
             </div>
           </div>
         </Card>

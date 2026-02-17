@@ -1,24 +1,27 @@
 <script lang="ts">
+  import { _ } from 'svelte-i18n'
   import { Button, Input, Alert } from '@heedback/ui-kit'
   import { createLoginState } from './Login.svelte.ts'
 
   const state = createLoginState()
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50">
-  <div class="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-sm border border-gray-200">
+<div class="min-h-screen flex items-center justify-center bg-slate-50">
+  <div class="max-w-sm w-full p-8 bg-white rounded-lg shadow-sm border border-slate-200">
     <div class="text-center">
-      <h1 class="text-3xl font-bold text-indigo-600">Heedback</h1>
-      <p class="mt-2 text-sm text-gray-600">Sign in to your admin dashboard</p>
+      <h1 class="text-2xl font-bold text-slate-900">{$_('login.title')}</h1>
+      <p class="mt-2 text-sm text-slate-500">{$_('login.subtitle')}</p>
     </div>
 
     {#if state.error}
-      <Alert variant="error">{state.error}</Alert>
+      <div class="mt-6">
+        <Alert variant="error">{state.error}</Alert>
+      </div>
     {/if}
 
-    <form onsubmit={state.handleSubmit} class="space-y-6">
+    <form onsubmit={state.handleSubmit} class="mt-8 space-y-4">
       <Input
-        label="Email"
+        label={$_('login.email')}
         id="email"
         type="email"
         bind:value={state.email}
@@ -27,15 +30,15 @@
       />
 
       <Input
-        label="Password"
+        label={$_('login.password')}
         id="password"
         type="password"
         bind:value={state.password}
         required
       />
 
-      <Button type="submit" disabled={state.loading} size="md">
-        {state.loading ? 'Signing in...' : 'Sign in'}
+      <Button type="submit" disabled={state.loading} size="md" fullWidth>
+        {state.loading ? $_('login.loading') : $_('login.submit')}
       </Button>
     </form>
   </div>

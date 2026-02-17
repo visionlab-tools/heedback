@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _ } from 'svelte-i18n'
   import { PageHeader } from '@heedback/ui-kit'
   import { currentOrg } from '../lib/stores/org'
   import CodeSnippet from '../lib/components/CodeSnippet.svelte'
@@ -46,13 +47,13 @@
 
 <div class="max-w-3xl">
   <SettingsTabs />
-  <PageHeader title="Widget Integration" subtitle="Add the Heedback chat widget to your website in minutes." />
+  <PageHeader title={$_('settings_widget.title')} subtitle={$_('settings_widget.subtitle')} />
 
   <!-- Quick start -->
-  <section class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900">Quick Start</h2>
-    <p class="mt-1 text-sm text-gray-600">
-      Paste this snippet before the closing <code class="px-1.5 py-0.5 bg-gray-100 rounded text-xs font-mono">&lt;/body&gt;</code> tag of your website.
+  <section>
+    <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.quick_start')}</h2>
+    <p class="mt-1 text-sm text-slate-600">
+      {@html $_('settings_widget.quick_start_desc')}
     </p>
     <div class="mt-4">
       <CodeSnippet code={autoInitSnippet} />
@@ -61,51 +62,51 @@
 
   <!-- Configuration -->
   <section class="mt-10">
-    <h2 class="text-lg font-semibold text-gray-900">Configuration Options</h2>
-    <div class="mt-4 overflow-hidden rounded-lg border border-gray-200">
+    <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.config_options')}</h2>
+    <div class="mt-4 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
       <table class="min-w-full text-sm">
-        <thead class="bg-gray-50">
+        <thead class="bg-slate-50">
           <tr>
-            <th class="px-4 py-2.5 text-left font-medium text-gray-700">Attribute</th>
-            <th class="px-4 py-2.5 text-left font-medium text-gray-700">Default</th>
-            <th class="px-4 py-2.5 text-left font-medium text-gray-700">Description</th>
+            <th class="px-4 py-2.5 text-left text-xs font-medium text-slate-600">{$_('settings_widget.col_attribute')}</th>
+            <th class="px-4 py-2.5 text-left text-xs font-medium text-slate-600">{$_('settings_widget.col_default')}</th>
+            <th class="px-4 py-2.5 text-left text-xs font-medium text-slate-600">{$_('settings_widget.col_description')}</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-org</td>
-            <td class="px-4 py-2.5 text-gray-500">—</td>
-            <td class="px-4 py-2.5 text-gray-700">Your organization slug (required)</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_org')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-color</td>
-            <td class="px-4 py-2.5 font-mono text-xs text-gray-500">#6366f1</td>
-            <td class="px-4 py-2.5 text-gray-700">Brand color for the widget header</td>
+            <td class="px-4 py-2.5 font-mono text-xs text-slate-500">#6366f1</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_color')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-position</td>
-            <td class="px-4 py-2.5 font-mono text-xs text-gray-500">bottom-right</td>
-            <td class="px-4 py-2.5 text-gray-700">Widget position: bottom-right or bottom-left</td>
+            <td class="px-4 py-2.5 font-mono text-xs text-slate-500">bottom-right</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_position')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-locale</td>
-            <td class="px-4 py-2.5 font-mono text-xs text-gray-500">en</td>
-            <td class="px-4 py-2.5 text-gray-700">Default language locale</td>
+            <td class="px-4 py-2.5 font-mono text-xs text-slate-500">en</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_locale')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-id</td>
-            <td class="px-4 py-2.5 text-gray-500">—</td>
-            <td class="px-4 py-2.5 text-gray-700">Pre-identify a logged-in user</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_id')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-email</td>
-            <td class="px-4 py-2.5 text-gray-500">—</td>
-            <td class="px-4 py-2.5 text-gray-700">User email for identification</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_email')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-name</td>
-            <td class="px-4 py-2.5 text-gray-500">—</td>
-            <td class="px-4 py-2.5 text-gray-700">User display name</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_name')}</td>
           </tr>
         </tbody>
       </table>
@@ -114,9 +115,9 @@
 
   <!-- Advanced: Manual API -->
   <section class="mt-10">
-    <h2 class="text-lg font-semibold text-gray-900">Advanced: JavaScript API</h2>
-    <p class="mt-1 text-sm text-gray-600">
-      For full control, use the JavaScript API to initialize, identify users, and toggle the widget programmatically.
+    <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.advanced')}</h2>
+    <p class="mt-1 text-sm text-slate-600">
+      {$_('settings_widget.advanced_desc')}
     </p>
     <div class="mt-4">
       <CodeSnippet code={manualSnippet} language="javascript" />
@@ -125,35 +126,35 @@
 
   <!-- API methods -->
   <section class="mt-10 mb-8">
-    <h2 class="text-lg font-semibold text-gray-900">API Methods</h2>
-    <div class="mt-4 overflow-hidden rounded-lg border border-gray-200">
+    <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.api_methods')}</h2>
+    <div class="mt-4 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
       <table class="min-w-full text-sm">
-        <thead class="bg-gray-50">
+        <thead class="bg-slate-50">
           <tr>
-            <th class="px-4 py-2.5 text-left font-medium text-gray-700">Method</th>
-            <th class="px-4 py-2.5 text-left font-medium text-gray-700">Description</th>
+            <th class="px-4 py-2.5 text-left text-xs font-medium text-slate-600">{$_('settings_widget.col_method')}</th>
+            <th class="px-4 py-2.5 text-left text-xs font-medium text-slate-600">{$_('settings_widget.col_description')}</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">Heedback.init(config)</td>
-            <td class="px-4 py-2.5 text-gray-700">Initialize the widget with configuration</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.method_init')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">Heedback.identify(user)</td>
-            <td class="px-4 py-2.5 text-gray-700">Identify a logged-in user</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.method_identify')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">Heedback.open()</td>
-            <td class="px-4 py-2.5 text-gray-700">Open the widget panel</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.method_open')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">Heedback.close()</td>
-            <td class="px-4 py-2.5 text-gray-700">Close the widget panel</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.method_close')}</td>
           </tr>
-          <tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">Heedback.destroy()</td>
-            <td class="px-4 py-2.5 text-gray-700">Remove the widget from the page</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.method_destroy')}</td>
           </tr>
         </tbody>
       </table>

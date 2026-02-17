@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _ } from 'svelte-i18n'
   import { Button, Input, Checkbox, Alert } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
@@ -55,37 +56,37 @@
 
 <div class="max-w-2xl">
   <SettingsTabs />
-  <h1 class="text-2xl font-bold text-gray-900">General Settings</h1>
-  <p class="mt-1 text-sm text-gray-500">Configure your organization settings.</p>
+  <h1 class="text-2xl font-semibold text-slate-900">{$_('settings.title')}</h1>
+  <p class="mt-1 text-sm text-slate-500">{$_('settings.subtitle')}</p>
 
   {#if success}
     <div class="mt-4">
-      <Alert variant="success">Settings saved.</Alert>
+      <Alert variant="success">{$_('settings.saved')}</Alert>
     </div>
   {/if}
 
   <form onsubmit={handleSubmit} class="mt-8 space-y-6">
-    <Input id="name" label="Organization Name" bind:value={name} required />
+    <Input id="name" label={$_('settings.org_name')} bind:value={name} required />
 
     <div class="grid grid-cols-2 gap-6">
       <div>
-        <label for="brandColor" class="block text-sm font-medium text-gray-700">Brand Color</label>
+        <label for="brandColor" class="block text-sm font-medium text-slate-700">{$_('settings.brand_color')}</label>
         <div class="mt-1 flex items-center gap-2">
-          <input id="brandColor" type="color" bind:value={brandColor} class="h-10 w-10 rounded border border-gray-300 cursor-pointer" />
-          <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
+          <input id="brandColor" type="color" bind:value={brandColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
+          <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
         </div>
       </div>
-      <Input id="defaultLocale" label="Default Locale" bind:value={defaultLocale} />
+      <Input id="defaultLocale" label={$_('settings.default_locale')} bind:value={defaultLocale} />
     </div>
 
     <div class="space-y-3">
-      <Checkbox label="Enable Help Center" bind:checked={helpCenterEnabled} />
-      <Checkbox label="Enable Feedback Board" bind:checked={feedbackEnabled} />
-      <Checkbox label="Require authentication on portal" bind:checked={portalAuthRequired} />
+      <Checkbox label={$_('settings.enable_help_center')} bind:checked={helpCenterEnabled} />
+      <Checkbox label={$_('settings.enable_feedback')} bind:checked={feedbackEnabled} />
+      <Checkbox label={$_('settings.require_auth')} bind:checked={portalAuthRequired} />
     </div>
 
     <Button type="submit" loading={saving}>
-      {saving ? 'Saving...' : 'Save Settings'}
+      {saving ? $_('common.saving') : $_('settings.save')}
     </Button>
   </form>
 </div>

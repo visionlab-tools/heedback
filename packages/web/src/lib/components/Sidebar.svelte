@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _ } from 'svelte-i18n'
   import { auth } from '../stores/auth'
   import { currentOrg } from '../stores/org'
   import { getPath } from '../router.svelte.ts'
@@ -23,9 +24,12 @@
 <aside class="w-64 bg-slate-950 flex flex-col shrink-0">
   <!-- Brand -->
   <div class="px-5 py-5 border-b border-white/10">
-    <h1 class="text-lg font-bold tracking-tight text-white">Heedback</h1>
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+      <h1 class="text-xl font-bold tracking-tight text-white">{$_('login.title')}</h1>
+    </div>
     {#if org}
-      <p class="text-xs text-slate-400 mt-0.5">{org.name}</p>
+      <p class="text-xs text-slate-400 mt-1 ml-4">{org.name}</p>
     {/if}
   </div>
 
