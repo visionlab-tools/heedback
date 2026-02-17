@@ -79,14 +79,15 @@ export default class CollectionsController {
     return response.ok({ message: 'Collections reordered successfully' })
   }
 
-  async publicIndex({ params, response }: HttpContext) {
+  async publicIndex({ params, request, response }: HttpContext) {
     const org = await Organization.query().where('slug', params.orgSlug).first()
 
     if (!org) {
       return response.notFound({ message: 'Organization not found' })
     }
 
-    const collections = await this.collectionService.listPublished(org.id)
+    const locale = request.qs().locale as string | undefined
+    const collections = await this.collectionService.listPublished(org.id, locale)
 
     return response.ok({
       data: collections.map((c) => c.serialize()),

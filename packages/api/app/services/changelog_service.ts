@@ -271,7 +271,7 @@ export default class ChangelogService {
     return true
   }
 
-  async listPublished(orgSlug: string, page: number = 1, limit: number = 20) {
+  async listPublished(orgSlug: string, page: number = 1, limit: number = 20, locale?: string) {
     const org = await Organization.query().where('slug', orgSlug).first()
 
     if (!org) return null
@@ -279,7 +279,9 @@ export default class ChangelogService {
     const entries = await ChangelogEntry.query()
       .where('organization_id', org.id)
       .where('status', 'published')
-      .preload('translations')
+      .preload('translations', (q) => {
+        if (locale) q.where('locale', locale)
+      })
       .preload('author')
       .orderBy('published_at', 'desc')
       .paginate(page, Math.min(limit, 100))
@@ -287,7 +289,7 @@ export default class ChangelogService {
     return entries
   }
 
-  async showPublished(orgSlug: string, entryId: string) {
+  async showPublished(orgSlug: string, entryId: string, locale?: string) {
     const org = await Organization.query().where('slug', orgSlug).first()
 
     if (!org) return null
@@ -296,7 +298,9 @@ export default class ChangelogService {
       .where('id', entryId)
       .where('organization_id', org.id)
       .where('status', 'published')
-      .preload('translations')
+      .preload('translations', (q) => {
+        if (locale) q.where('locale', locale)
+      })
       .preload('author')
       .first()
 

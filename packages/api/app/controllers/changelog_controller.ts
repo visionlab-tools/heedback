@@ -134,6 +134,7 @@ export default class ChangelogController {
       params.orgSlug,
       Number(qs.page) || 1,
       Number(qs.limit) || 20,
+      qs.locale as string | undefined,
     )
 
     if (!entries) {
@@ -143,8 +144,9 @@ export default class ChangelogController {
     return response.ok(entries.serialize())
   }
 
-  async publicShow({ params, response }: HttpContext) {
-    const entry = await this.changelogService.showPublished(params.orgSlug, params.entryId)
+  async publicShow({ params, request, response }: HttpContext) {
+    const locale = request.qs().locale as string | undefined
+    const entry = await this.changelogService.showPublished(params.orgSlug, params.entryId, locale)
 
     if (!entry) {
       return response.notFound({ message: 'Changelog entry not found' })

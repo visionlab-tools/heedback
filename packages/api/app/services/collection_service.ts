@@ -203,14 +203,19 @@ export default class CollectionService {
 
   /**
    * List published root collections for an organization (public endpoint).
+   * When locale is provided, only returns translations matching that locale.
    */
-  async listPublished(orgId: string): Promise<Collection[]> {
+  async listPublished(orgId: string, locale?: string): Promise<Collection[]> {
     return Collection.query()
       .where('organization_id', orgId)
       .where('is_published', true)
-      .preload('translations')
+      .preload('translations', (q) => {
+        if (locale) q.where('locale', locale)
+      })
       .preload('children', (query) => {
-        query.where('is_published', true).preload('translations')
+        query.where('is_published', true).preload('translations', (q) => {
+          if (locale) q.where('locale', locale)
+        })
       })
       .whereNull('parent_id')
       .orderBy('sort_order', 'asc')
