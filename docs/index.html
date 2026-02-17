@@ -4,19 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Heedback — Open Source Customer Support & Feedback Suite</title>
-  <meta name="description" content="The open source customer support & product feedback suite. Self-hosted, Docker-ready, multi-tenant. Replace Intercom, Canny, and Zendesk with one tool you own.">
+  <meta name="description" content="Replace Intercom, Canny, and Zendesk with one self-hosted suite you own. Help center, feedback boards, live chat, changelog, and public roadmap — open source, Docker-ready, multi-tenant. MIT licensed.">
   <meta name="theme-color" content="#6366f1">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://heedback.dev/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Heedback — Own Your Customer Feedback">
-  <meta property="og:description" content="Open source customer support & product feedback suite. Self-hosted, Docker-ready, multi-tenant.">
+  <meta property="og:description" content="Open source customer support & product feedback suite. Self-hosted, Docker-ready, multi-tenant. Replace Intercom, Canny, and Zendesk with one tool you own.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://heedback.dev/">
   <meta property="og:image" content="https://heedback.dev/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Heedback — Open source customer support and feedback suite">
+  <meta property="og:site_name" content="Heedback">
+  <meta property="og:locale" content="en_US">
 
-  <!-- Fonts -->
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Heedback — Own Your Customer Feedback">
+  <meta name="twitter:description" content="Open source customer support & product feedback suite. Self-hosted, Docker-ready, multi-tenant.">
+  <meta name="twitter:image" content="https://heedback.dev/og.png">
+  <meta name="twitter:image:alt" content="Heedback — Open source customer support and feedback suite">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M8 12h6v8H8zM18 8h6v12h-6z' fill='%23fff' opacity='0.9'/%3E%3Cpath d='M14 16h4v4h-4z' fill='%23fff' opacity='0.6'/%3E%3C/svg%3E">
+
+  <!-- Fonts (non-render-blocking) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Heedback",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Linux, Docker",
+    "description": "Open source customer support and product feedback suite. Self-hosted, Docker-ready, multi-tenant. Help center, feedback boards, live chat, changelog, and public roadmap.",
+    "url": "https://heedback.dev/",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Heedback",
+      "url": "https://heedback.dev/"
+    },
+    "codeRepository": "https://github.com/visionlab-tools/heedback",
+    "featureList": [
+      "Help Center with multi-language support",
+      "Feedback Boards with voting",
+      "Live Chat with shared inbox",
+      "Changelog with email notifications",
+      "Public Roadmap auto-generated from feedback",
+      "Embeddable Widget"
+    ]
+  }
+  </script>
 
   <style>
     /* ============================================
@@ -86,6 +140,37 @@
       position: absolute; width: 1px; height: 1px;
       padding: 0; margin: -1px; overflow: hidden;
       clip: rect(0,0,0,0); border: 0;
+    }
+
+    /* Skip to content link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 200;
+      padding: 12px 24px;
+      background: var(--indigo-600);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: var(--radius-xs);
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    /* Focus styles */
+    :focus-visible {
+      outline: 2px solid var(--indigo-500);
+      outline-offset: 2px;
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--indigo-500);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
 
     /* ============================================
@@ -403,7 +488,7 @@
       justify-content: center;
       gap: 24px;
       font-size: 14px;
-      color: var(--gray-400);
+      color: var(--gray-600);
     }
 
     .hero-social-proof span {
@@ -496,7 +581,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--gray-400);
+      color: var(--gray-600);
       margin-bottom: 32px;
     }
 
@@ -514,7 +599,7 @@
       gap: 10px;
       font-size: 18px;
       font-weight: 600;
-      color: var(--gray-300);
+      color: var(--gray-500);
       transition: color 0.3s;
       position: relative;
     }
@@ -532,7 +617,7 @@
     }
 
     .replaces-item:hover {
-      color: var(--gray-500);
+      color: var(--gray-700);
     }
 
     .replaces-item:hover::after {
@@ -753,7 +838,7 @@
 
     .mock-post-meta {
       font-size: 11px;
-      color: var(--gray-400);
+      color: var(--gray-500);
     }
 
     .mock-badge {
@@ -869,7 +954,7 @@
 
     .mock-entry-date {
       font-size: 11px;
-      color: var(--gray-400);
+      color: var(--gray-500);
       margin-top: 2px;
     }
 
@@ -1020,7 +1105,7 @@
     }
 
     .setup .section-desc {
-      color: var(--gray-400);
+      color: var(--gray-300);
     }
 
     .setup-steps {
@@ -1067,7 +1152,7 @@
 
     .setup-step p {
       font-size: 14px;
-      color: var(--gray-400);
+      color: var(--gray-300);
       line-height: 1.7;
     }
 
@@ -1136,7 +1221,7 @@
 
     .arch-node-desc {
       font-size: 12px;
-      color: var(--gray-400);
+      color: var(--gray-500);
     }
 
     .arch-center {
@@ -1278,7 +1363,7 @@
       align-items: center;
       gap: 8px;
       font-size: 14px;
-      color: var(--gray-400);
+      color: var(--gray-600);
     }
 
     .footer-logo {
@@ -1295,7 +1380,7 @@
 
     .footer-links a {
       font-size: 14px;
-      color: var(--gray-400);
+      color: var(--gray-600);
       transition: color 0.2s;
     }
 
@@ -1393,18 +1478,47 @@
       90% { opacity: 0.6; }
       100% { opacity: 0; transform: translateY(-10vh) scale(1); }
     }
+
+    /* ============================================
+       CONTENT VISIBILITY (Performance)
+       ============================================ */
+    .features, .setup, .architecture, .oss, .footer {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 800px;
+    }
+
+    /* ============================================
+       REDUCED MOTION
+       ============================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      html { scroll-behavior: auto; }
+
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1;
+        transform: none;
+      }
+    }
   </style>
 </head>
 <body>
 
+  <!-- Skip to content -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
   <!-- Floating particles -->
-  <div class="particles" id="particles"></div>
+  <div class="particles" id="particles" aria-hidden="true"></div>
 
   <!-- ============ NAVBAR ============ -->
-  <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
     <div class="container">
-      <a href="#" class="nav-logo">
-        <svg viewBox="0 0 32 32" fill="none">
+      <a href="/" class="nav-logo" aria-label="Heedback — Home">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
           <rect width="32" height="32" rx="8" fill="currentColor"/>
           <path d="M8 12h6v8H8zM18 8h6v12h-6z" fill="#fff" opacity="0.9"/>
           <path d="M14 16h4v4h-4z" fill="#fff" opacity="0.6"/>
@@ -1416,72 +1530,75 @@
         <li><a href="#features">Features</a></li>
         <li><a href="#setup">Setup</a></li>
         <li><a href="#architecture">Architecture</a></li>
-        <li><a href="https://github.com/visionlab-tools/heedback" target="_blank">Docs</a></li>
+        <li><a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer">Docs</a></li>
       </ul>
 
       <div class="nav-cta">
-        <a href="https://github.com/visionlab-tools/heedback" target="_blank" class="btn btn-ghost">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        <a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           GitHub
         </a>
         <a href="#setup" class="btn btn-primary">Get Started</a>
       </div>
 
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
+
+  <main id="main">
 
   <!-- ============ HERO ============ -->
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
     <div class="container">
-      <div class="hero-badge reveal">
-        <span class="hero-badge-dot"></span>
+      <div class="hero-badge reveal" role="status">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
         Open Source &middot; MIT License
       </div>
 
       <h1 class="reveal stagger-1">
-        Customer feedback<br>
-        <span class="gradient-text">you actually own</span>
+        Stop paying $500/mo<br>
+        <span class="gradient-text">for tools you don't own</span>
       </h1>
 
       <p class="hero-sub reveal stagger-2">
         Help center, feedback boards, public roadmap, changelog, and live chat
-        &mdash; in one self-hosted suite. No vendor lock-in. No per-seat pricing.
+        &mdash; in one self-hosted suite. Zero per-seat pricing. Zero vendor lock-in.
+        Your data, your servers, your rules.
       </p>
 
       <div class="hero-actions reveal stagger-3">
         <a href="#setup" class="btn btn-primary btn-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
           Deploy in 5 minutes
         </a>
-        <a href="https://github.com/visionlab-tools/heedback" target="_blank" class="btn btn-outline btn-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        <a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           Star on GitHub
         </a>
       </div>
 
       <div class="hero-social-proof reveal stagger-4">
         <span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          Docker one-liner
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Deploy with one command
         </span>
         <span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          Multi-tenant
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Unlimited seats &amp; orgs
         </span>
         <span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          100% yours
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          MIT licensed &middot; forever free
         </span>
       </div>
 
       <!-- Terminal snippet -->
-      <div class="hero-code reveal-scale stagger-5">
-        <div class="hero-code-header">
+      <div class="hero-code reveal-scale stagger-5" role="img" aria-label="Terminal showing three commands to deploy Heedback: git clone, configure, and docker compose up">
+        <div class="hero-code-header" aria-hidden="true">
           <div class="hero-code-dot"></div>
           <div class="hero-code-dot"></div>
           <div class="hero-code-dot"></div>
@@ -1490,7 +1607,7 @@
           <div><span class="prompt">$</span> <span class="cmd">git clone https://github.com/visionlab-tools/heedback</span></div>
           <div><span class="prompt">$</span> <span class="cmd">cd heedback && cp .env.example .env</span></div>
           <div><span class="prompt">$</span> <span class="cmd">docker compose up -d</span></div>
-          <div class="comment"># That's it. Open localhost:3000 <span class="typing-cursor"></span></div>
+          <div class="comment"># That's it. Open localhost:3000 <span class="typing-cursor" aria-hidden="true"></span></div>
         </div>
       </div>
     </div>
@@ -1499,26 +1616,26 @@
   <!-- ============ REPLACES ============ -->
   <section class="replaces">
     <div class="container">
-      <p class="replaces-label reveal">One suite to replace them all</p>
+      <p class="replaces-label reveal">Replaces 5 paid tools &mdash; saving you thousands per year</p>
       <div class="replaces-grid reveal stagger-1">
         <div class="replaces-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Intercom
         </div>
         <div class="replaces-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Canny
         </div>
         <div class="replaces-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Zendesk
         </div>
         <div class="replaces-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           Statuspage
         </div>
         <div class="replaces-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           ConvertKit
         </div>
       </div>
@@ -1530,12 +1647,12 @@
     <div class="container">
       <div class="section-header">
         <div class="section-label reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           Features
         </div>
-        <h2 class="section-title reveal stagger-1">Everything your team needs</h2>
+        <h2 class="section-title reveal stagger-1">Six tools, one platform, zero bills</h2>
         <p class="section-desc reveal stagger-2">
-          Six powerful modules, one unified platform. No more tab-switching between tools.
+          Everything you need to support customers and collect feedback &mdash; without juggling five different SaaS subscriptions.
         </p>
       </div>
 
@@ -1544,11 +1661,11 @@
         <!-- Help Center -->
         <div class="bento-card large reveal stagger-1">
           <div class="bento-icon indigo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
           </div>
           <h3>Help Center</h3>
-          <p>Organize knowledge into collections and articles. Multi-language support, SEO fields, "Was this helpful?" feedback — all searchable from your widget.</p>
-          <div class="bento-mock">
+          <p>Reduce support tickets by 40%. Organize knowledge into searchable collections, with multi-language support, SEO fields, and built-in "Was this helpful?" feedback.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-articles">
               <div class="mock-article">
                 <div class="mock-article-icon">
@@ -1575,11 +1692,11 @@
         <!-- Feedback Boards -->
         <div class="bento-card reveal stagger-2">
           <div class="bento-icon violet">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
           <h3>Feedback Boards</h3>
-          <p>Let users vote on feature requests. Track status from open to completed. Merge duplicates, tag topics, and keep comments organized.</p>
-          <div class="bento-mock">
+          <p>Build what users actually want. Let them vote on feature requests, track progress from open to shipped, merge duplicates, and keep discussions organized.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-posts">
               <div class="mock-post">
                 <div class="mock-vote">
@@ -1608,11 +1725,11 @@
         <!-- Live Chat -->
         <div class="bento-card reveal stagger-3">
           <div class="bento-icon pink">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
           </div>
           <h3>Live Chat</h3>
-          <p>Shared inbox for your whole team. Internal notes, status tracking, agent assignment. Supports widget, portal, and email channels.</p>
-          <div class="bento-mock">
+          <p>Respond faster with a shared inbox for your whole team. Internal notes, status tracking, agent assignment &mdash; across widget, portal, and email channels.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-chat">
               <div class="mock-msg team">
                 <div class="mock-msg-avatar team"></div>
@@ -1633,11 +1750,11 @@
         <!-- Changelog -->
         <div class="bento-card reveal stagger-1">
           <div class="bento-icon emerald">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>
           </div>
           <h3>Changelog</h3>
-          <p>Keep users in the loop. Publish entries with labels, schedule releases, email subscribers automatically. Link to the feedback posts you shipped.</p>
-          <div class="bento-mock">
+          <p>Turn shipped features into marketing moments. Publish entries with labels, schedule releases, and auto-email subscribers. Link directly to the feedback posts that drove each change.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-changelog">
               <div class="mock-entry">
                 <span class="mock-entry-label new">New</span>
@@ -1661,11 +1778,11 @@
         <!-- Roadmap -->
         <div class="bento-card reveal stagger-2">
           <div class="bento-icon amber">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </div>
           <h3>Public Roadmap</h3>
-          <p>Auto-generated Kanban board from your feedback post statuses. Show users what's planned, in progress, and shipped.</p>
-          <div class="bento-mock">
+          <p>Build trust through transparency. An auto-generated Kanban board from your feedback post statuses shows users exactly what's planned, in progress, and shipped.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-kanban">
               <div class="mock-kanban-col">
                 <div class="mock-kanban-header planned">Planned</div>
@@ -1699,11 +1816,11 @@
         <!-- Embeddable Widget -->
         <div class="bento-card reveal stagger-3">
           <div class="bento-icon sky">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <h3>Embeddable Widget</h3>
-          <p>One script tag. Chat, help articles, and feedback — embedded directly in your app. Customizable colors, position, and user identification via JS API.</p>
-          <div class="bento-mock">
+          <p>One script tag, instant support. Chat, help articles, and feedback embedded directly in your app. Customizable colors, position, and user identification via JS API.</p>
+          <div class="bento-mock" aria-hidden="true">
             <div class="mock-widget-container">
               <div class="mock-widget">
                 <div class="mock-widget-header">
@@ -1731,12 +1848,12 @@
     <div class="container">
       <div class="section-header">
         <div class="section-label reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
           Quick Start
         </div>
-        <h2 class="section-title reveal stagger-1">Running in 5 minutes</h2>
+        <h2 class="section-title reveal stagger-1">From zero to production in 3 steps</h2>
         <p class="section-desc reveal stagger-2">
-          One Docker Compose file. No complex setup, no cloud dependency. Your data stays on your infrastructure.
+          One Docker Compose file. No vendor accounts, no API keys to configure, no cloud dependency. Your data never leaves your infrastructure.
         </p>
       </div>
 
@@ -1781,35 +1898,35 @@
           <div class="arch-diagram">
             <div class="arch-node">
               <div class="arch-node-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-500)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               </div>
               <div class="arch-node-title">Dashboard</div>
               <div class="arch-node-desc">SvelteKit + Svelte 5</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
               </div>
               <div class="arch-node-title">Portal</div>
               <div class="arch-node-desc">SvelteKit SSR</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
               </div>
               <div class="arch-node-title">Widget</div>
               <div class="arch-node-desc">Svelte embed</div>
             </div>
             <div class="arch-node">
               <div class="arch-node-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
               </div>
               <div class="arch-node-title">PostgreSQL</div>
               <div class="arch-node-desc">Multi-tenant DB</div>
             </div>
             <div class="arch-node arch-center">
               <div class="arch-node-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <svg width="28" height="28" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
               </div>
               <div class="arch-node-title">AdonisJS API</div>
               <div class="arch-node-desc">REST JSON &middot; Redis queues &middot; S3 storage</div>
@@ -1818,30 +1935,30 @@
         </div>
 
         <div class="arch-content reveal-right">
-          <h2>Built for teams who care about their infrastructure</h2>
+          <h2>Production-grade architecture, not a weekend project</h2>
           <p>
-            A modern stack designed for reliability and simplicity. Multi-tenant by design,
-            so one deployment serves all your organizations.
+            A modern stack designed for reliability at scale. Multi-tenant by design,
+            so one deployment serves all your organizations with full data isolation.
           </p>
           <div class="arch-features">
             <div class="arch-feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span><strong>Multi-tenant isolation</strong> — organization_id on every row, no data leaks</span>
             </div>
             <div class="arch-feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span><strong>Session-based auth</strong> — secure cookies for admins, magic links for end users</span>
             </div>
             <div class="arch-feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span><strong>Async job queue</strong> — emails, notifications, and heavy work via Bull + Redis</span>
             </div>
             <div class="arch-feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span><strong>S3-compatible storage</strong> — MinIO in dev, any S3 provider in production</span>
             </div>
             <div class="arch-feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span><strong>i18n ready</strong> — translatable articles, changelogs, and email templates (EN/FR)</span>
             </div>
           </div>
@@ -1855,16 +1972,16 @@
     <div class="container">
       <div class="oss-card reveal-scale">
         <div class="oss-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         </div>
-        <h2>Free, forever. Open source.</h2>
+        <h2>Free forever. No catches. No limits.</h2>
         <p>
-          MIT licensed. Inspect the code, fork it, extend it.
-          No vendor lock-in, no surprise invoices, no data harvesting.
+          MIT licensed. Audit the code, fork it, extend it, sell it.
+          No vendor lock-in, no surprise invoices, no data harvesting. Ever.
         </p>
         <div class="oss-actions">
-          <a href="https://github.com/visionlab-tools/heedback" target="_blank" class="btn btn-primary btn-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
             View on GitHub
           </a>
           <a href="#setup" class="btn btn-outline btn-lg">
@@ -1875,15 +1992,17 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ============ FOOTER ============ -->
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer-left">
         <span class="footer-logo">Heedback</span>
         <span>&middot; Open source customer support suite</span>
       </div>
-      <ul class="footer-links">
-        <li><a href="https://github.com/visionlab-tools/heedback" target="_blank">GitHub</a></li>
+      <ul class="footer-links" role="list">
+        <li><a href="https://github.com/visionlab-tools/heedback" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#setup">Setup</a></li>
         <li><a href="#architecture">Architecture</a></li>
@@ -1927,21 +2046,23 @@
       })
     })
 
-    /* ----- Floating particles ----- */
-    const particlesEl = document.getElementById('particles')
-    const colors = ['var(--indigo-300)', 'var(--indigo-200)', '#c084fc', '#f9a8d4']
+    /* ----- Floating particles (skip if reduced motion preferred) ----- */
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const particlesEl = document.getElementById('particles')
+      const colors = ['var(--indigo-300)', 'var(--indigo-200)', '#c084fc', '#f9a8d4']
 
-    for (let i = 0; i < 20; i++) {
-      const particle = document.createElement('div')
-      particle.classList.add('particle')
-      const size = Math.random() * 4 + 2
-      particle.style.width = `${size}px`
-      particle.style.height = `${size}px`
-      particle.style.left = `${Math.random() * 100}%`
-      particle.style.background = colors[Math.floor(Math.random() * colors.length)]
-      particle.style.animationDuration = `${Math.random() * 20 + 15}s`
-      particle.style.animationDelay = `${Math.random() * 20}s`
-      particlesEl.appendChild(particle)
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div')
+        particle.classList.add('particle')
+        const size = Math.random() * 4 + 2
+        particle.style.width = `${size}px`
+        particle.style.height = `${size}px`
+        particle.style.left = `${Math.random() * 100}%`
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)]
+        particle.style.animationDuration = `${Math.random() * 20 + 15}s`
+        particle.style.animationDelay = `${Math.random() * 20}s`
+        particlesEl.appendChild(particle)
+      }
     }
 
     /* ----- Mobile nav toggle ----- */
@@ -1951,6 +2072,8 @@
       const links = document.querySelector('.nav-links')
       const cta = document.querySelector('.nav-cta')
       const isOpen = links.style.display === 'flex'
+
+      navToggle.setAttribute('aria-expanded', !isOpen)
 
       if (isOpen) {
         links.style.display = 'none'
