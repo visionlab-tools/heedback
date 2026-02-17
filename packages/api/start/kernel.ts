@@ -6,8 +6,10 @@ import server from '@adonisjs/core/services/server'
  */
 server.use([
   () => import('@adonisjs/cors/cors_middleware'),
+  () => import('@adonisjs/core/bodyparser_middleware'),
   () => import('@adonisjs/static/static_middleware'),
   () => import('#middleware/container_bindings_middleware'),
+  () => import('@adonisjs/auth/initialize_auth_middleware'),
 ])
 
 /**

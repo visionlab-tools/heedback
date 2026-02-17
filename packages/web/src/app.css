@@ -1,13 +1,16 @@
 @import 'tailwindcss';
 
+/* Scan ui-kit components so their Tailwind classes get generated */
+@source "../../ui-kit/src";
+
 :root {
   --color-primary: #6366f1;
   --color-primary-hover: #4f46e5;
-  --color-bg: #f9fafb;
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
-  --color-border: #e5e7eb;
-  --color-text: #111827;
-  --color-text-secondary: #6b7280;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
 }
 
 body {
@@ -20,4 +23,6 @@ body {
     sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

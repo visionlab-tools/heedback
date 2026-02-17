@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -94,69 +95,53 @@
 </script>
 
 <div>
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Boards</h1>
-      <p class="mt-1 text-sm text-gray-500">Manage feedback boards.</p>
-    </div>
-    <button onclick={openCreate} class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
-      New Board
-    </button>
-  </div>
+  <PageHeader title="Boards" subtitle="Manage feedback boards.">
+    {#snippet actions()}
+      <Button onclick={openCreate} size="sm">New Board</Button>
+    {/snippet}
+  </PageHeader>
 
   {#if showForm}
-    <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <Card padding="md">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">
         {editingId ? 'Edit Board' : 'New Board'}
       </h2>
       <form onsubmit={handleSubmit} class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-            <input id="name" type="text" bind:value={formName} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
-          </div>
-          <div>
-            <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
-            <input id="slug" type="text" bind:value={formSlug} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
-          </div>
+          <Input id="name" label="Name" bind:value={formName} required />
+          <Input id="slug" label="Slug" bind:value={formSlug} required />
         </div>
-        <div>
-          <label for="desc" class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea id="desc" bind:value={formDescription} rows={2} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
-        </div>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" bind:checked={formIsPublic} class="rounded border-gray-300" />
-          <span class="text-sm text-gray-700">Public board</span>
-        </label>
+        <Textarea id="desc" label="Description" bind:value={formDescription} rows={2} />
+        <Checkbox label="Public board" bind:checked={formIsPublic} />
         <div class="flex gap-3">
-          <button type="submit" disabled={saving} class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+          <Button type="submit" loading={saving} size="sm">
             {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
-          </button>
-          <button type="button" onclick={() => (showForm = false)} class="px-4 py-2 text-sm text-gray-600">Cancel</button>
+          </Button>
+          <Button variant="secondary" onclick={() => (showForm = false)} size="sm">Cancel</Button>
         </div>
       </form>
-    </div>
+    </Card>
   {/if}
 
   {#if loading}
-    <div class="mt-8 text-center text-gray-500">Loading...</div>
+    <LoadingSpinner />
   {:else if boards.length === 0}
-    <div class="mt-8 text-center py-12 bg-white rounded-xl border border-gray-200">
-      <p class="text-gray-500">No boards yet.</p>
-    </div>
+    <EmptyState message="No boards yet." />
   {:else}
     <div class="mt-8 space-y-3">
       {#each boards as board}
-        <div class="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-          <div>
-            <p class="font-medium text-gray-900">{board.name}</p>
-            <p class="text-sm text-gray-500">/{board.slug} · {board.postCount || 0} posts · {board.isPublic ? 'Public' : 'Private'}</p>
+        <Card padding="sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-medium text-gray-900">{board.name}</p>
+              <p class="text-sm text-gray-500">/{board.slug} · {board.postCount || 0} posts · {board.isPublic ? 'Public' : 'Private'}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <Button variant="ghost" onclick={() => openEdit(board)} size="sm">Edit</Button>
+              <Button variant="danger" onclick={() => handleDelete(board.id)} size="sm">Delete</Button>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick={() => openEdit(board)} class="text-sm text-indigo-600 hover:text-indigo-800">Edit</button>
-            <button onclick={() => handleDelete(board.id)} class="text-sm text-red-600 hover:text-red-800">Delete</button>
-          </div>
-        </div>
+        </Card>
       {/each}
     </div>
   {/if}

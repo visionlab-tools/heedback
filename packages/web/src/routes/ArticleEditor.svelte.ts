@@ -1,4 +1,4 @@
-import { navigate } from 'svelte-routing'
+import { navigate } from '../lib/router.svelte.ts'
 import { api } from '../lib/api/client'
 import { currentOrg } from '../lib/stores/org'
 

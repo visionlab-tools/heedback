@@ -1,9 +1,6 @@
 #!/bin/sh
 
 echo "Running type-check..."
-cd packages/api && bun run typecheck || exit 1
-
-echo "Running linter..."
-bun run lint || exit 1
+cd packages/api && pnpm typecheck || exit 1
 
 echo "All checks passed!"

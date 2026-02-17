@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { FolderOpen } from 'lucide-svelte'
+  import { Button, Input, Textarea, Card, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -100,77 +102,62 @@
 </script>
 
 <div>
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Collections</h1>
-      <p class="mt-1 text-sm text-gray-500">Organize your help center articles into collections.</p>
-    </div>
-    <button
-      onclick={openCreate}
-      class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-    >
-      New Collection
-    </button>
-  </div>
+  <PageHeader title="Collections" subtitle="Organize your help center articles into collections.">
+    {#snippet actions()}
+      <Button onclick={openCreate} size="sm">New Collection</Button>
+    {/snippet}
+  </PageHeader>
 
   {#if showForm}
-    <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">
-        {editingId ? 'Edit Collection' : 'New Collection'}
-      </h2>
-      <form onsubmit={handleSubmit} class="space-y-4">
-        <div class="grid grid-cols-3 gap-4">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-            <input id="name" type="text" bind:value={formName} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
+    <div class="mt-6">
+      <Card padding="md">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          {editingId ? 'Edit Collection' : 'New Collection'}
+        </h2>
+        <form onsubmit={handleSubmit} class="space-y-4">
+          <div class="grid grid-cols-3 gap-4">
+            <Input id="name" label="Name" bind:value={formName} required />
+            <Input id="slug" label="Slug" bind:value={formSlug} required />
+            <Input id="icon" label="Icon" bind:value={formIcon} placeholder="📚" />
           </div>
-          <div>
-            <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
-            <input id="slug" type="text" bind:value={formSlug} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
+          <Textarea id="description" label="Description" bind:value={formDescription} rows={2} />
+          <div class="flex gap-3">
+            <Button type="submit" loading={saving} size="sm">
+              {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
+            </Button>
+            <Button variant="secondary" onclick={() => (showForm = false)} size="sm">Cancel</Button>
           </div>
-          <div>
-            <label for="icon" class="block text-sm font-medium text-gray-700">Icon</label>
-            <input id="icon" type="text" bind:value={formIcon} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="📚" />
-          </div>
-        </div>
-        <div>
-          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea id="description" bind:value={formDescription} rows={2} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
-        </div>
-        <div class="flex gap-3">
-          <button type="submit" disabled={saving} class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50">
-            {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
-          </button>
-          <button type="button" onclick={() => (showForm = false)} class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
-            Cancel
-          </button>
-        </div>
-      </form>
+        </form>
+      </Card>
     </div>
   {/if}
 
   {#if loading}
-    <div class="mt-8 text-center text-gray-500">Loading...</div>
+    <LoadingSpinner />
   {:else if collections.length === 0}
-    <div class="mt-8 text-center py-12 bg-white rounded-xl border border-gray-200">
-      <p class="text-gray-500">No collections yet.</p>
-    </div>
+    <EmptyState message="No collections yet." />
   {:else}
     <div class="mt-8 space-y-3">
       {#each collections as collection}
-        <div class="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span class="text-xl">{collection.icon || '📁'}</span>
-            <div>
-              <p class="font-medium text-gray-900">{getName(collection)}</p>
-              <p class="text-sm text-gray-500">/{collection.slug} · {collection.articleCount || 0} articles</p>
+        <Card padding="sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              {#if collection.icon}
+                <span class="text-xl">{collection.icon}</span>
+              {:else}
+                <FolderOpen size={20} class="text-slate-400" />
+              {/if}
+              <div>
+                <p class="font-medium text-gray-900">{getName(collection)}</p>
+                <p class="text-sm text-gray-500">/{collection.slug} · {collection.articleCount || 0} articles</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <Button variant="ghost" onclick={() => openEdit(collection)} size="sm">Edit</Button>
+              <Button variant="danger" onclick={() => handleDelete(collection.id)} size="sm">Delete</Button>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick={() => openEdit(collection)} class="text-sm text-indigo-600 hover:text-indigo-800">Edit</button>
-            <button onclick={() => handleDelete(collection.id)} class="text-sm text-red-600 hover:text-red-800">Delete</button>
-          </div>
-        </div>
+        </Card>
       {/each}
     </div>
   {/if}

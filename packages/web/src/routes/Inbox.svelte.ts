@@ -38,14 +38,15 @@ export function createInboxState() {
     }
   }
 
-  function statusBadgeClass(status: string): string {
-    const map: Record<string, string> = {
-      open: 'bg-blue-100 text-blue-800',
-      assigned: 'bg-yellow-100 text-yellow-800',
-      resolved: 'bg-green-100 text-green-800',
-      closed: 'bg-gray-100 text-gray-800',
+  type BadgeVariant = 'info' | 'warning' | 'success' | 'neutral'
+
+  function statusVariant(status: string): BadgeVariant {
+    const map: Record<string, BadgeVariant> = {
+      open: 'info',
+      assigned: 'warning',
+      resolved: 'success',
     }
-    return map[status] || 'bg-gray-100 text-gray-800'
+    return map[status] || 'neutral'
   }
 
   function channelLabel(channel: string): string {
@@ -75,7 +76,7 @@ export function createInboxState() {
     get statusFilter() { return statusFilter },
     set statusFilter(v: string) { statusFilter = v },
     loadConversations,
-    statusBadgeClass,
+    statusVariant,
     channelLabel,
     timeAgo,
   }

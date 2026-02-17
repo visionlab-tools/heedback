@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, type Snippet } from 'svelte'
-  import { navigate } from 'svelte-routing'
+  import { navigate } from '../router.svelte.ts'
   import { auth } from '../stores/auth'
   import { currentOrg } from '../stores/org'
   import Sidebar from './Sidebar.svelte'
@@ -18,10 +18,10 @@
   })
 </script>
 
-<div class="flex h-screen bg-gray-50">
+<div class="flex h-screen bg-slate-50">
   <Sidebar />
   <main class="flex-1 overflow-auto">
-    <div class="p-8">
+    <div class="mx-auto max-w-7xl px-8 py-8">
       {@render children()}
     </div>
   </main>

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Router, Route } from 'svelte-routing'
+  import AppRouter from './lib/components/Router.svelte'
+  import type { RouteDefinition } from './lib/components/Router.svelte'
   import Layout from './lib/components/Layout.svelte'
   import Login from './routes/Login.svelte'
   import Dashboard from './routes/Dashboard.svelte'
@@ -14,26 +15,30 @@
   import Inbox from './routes/Inbox.svelte'
   import ConversationDetail from './routes/ConversationDetail.svelte'
   import Settings from './routes/Settings.svelte'
+  import SettingsWidget from './routes/SettingsWidget.svelte'
   import NotFound from './routes/NotFound.svelte'
+
+  /* Routes are matched top-to-bottom; first match wins.
+     More specific paths (e.g. /articles/new) must come before parameterized ones. */
+  const routes: RouteDefinition[] = [
+    { path: '/login', component: Login },
+    { path: '/', component: Dashboard, layout: Layout },
+    { path: '/articles', component: Articles, layout: Layout },
+    { path: '/articles/new', component: ArticleEditor, layout: Layout },
+    { path: '/articles/:id/edit', component: ArticleEditor, layout: Layout },
+    { path: '/collections', component: Collections, layout: Layout },
+    { path: '/inbox', component: Inbox, layout: Layout },
+    { path: '/inbox/:id', component: ConversationDetail, layout: Layout },
+    { path: '/boards', component: Boards, layout: Layout },
+    { path: '/posts', component: Posts, layout: Layout },
+    { path: '/posts/:id', component: PostDetail, layout: Layout },
+    { path: '/changelog', component: Changelog, layout: Layout },
+    { path: '/changelog/new', component: ChangelogEditor, layout: Layout },
+    { path: '/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
+    { path: '/settings', component: Settings, layout: Layout },
+    { path: '/settings/widget', component: SettingsWidget, layout: Layout },
+    { path: '*', component: NotFound, layout: Layout },
+  ]
 </script>
 
-<Router>
-  <Route path="/login" component={Login} />
-  <Layout>
-    <Route path="/" component={Dashboard} />
-    <Route path="/articles" component={Articles} />
-    <Route path="/articles/new" component={ArticleEditor} />
-    <Route path="/articles/:id/edit" component={ArticleEditor} />
-    <Route path="/collections" component={Collections} />
-    <Route path="/inbox" component={Inbox} />
-    <Route path="/inbox/:id" component={ConversationDetail} />
-    <Route path="/boards" component={Boards} />
-    <Route path="/posts" component={Posts} />
-    <Route path="/posts/:id" component={PostDetail} />
-    <Route path="/changelog" component={Changelog} />
-    <Route path="/changelog/new" component={ChangelogEditor} />
-    <Route path="/changelog/:id/edit" component={ChangelogEditor} />
-    <Route path="/settings" component={Settings} />
-    <Route component={NotFound} />
-  </Layout>
-</Router>
+<AppRouter {routes} />

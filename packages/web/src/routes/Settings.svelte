@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { Button, Input, Checkbox, Alert } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
+  import SettingsTabs from '../lib/components/SettingsTabs.svelte'
 
   let orgSlug = $state('')
   let name = $state('')
@@ -53,20 +54,18 @@
 </script>
 
 <div class="max-w-2xl">
-  <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+  <SettingsTabs />
+  <h1 class="text-2xl font-bold text-gray-900">General Settings</h1>
   <p class="mt-1 text-sm text-gray-500">Configure your organization settings.</p>
 
   {#if success}
-    <div class="mt-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
-      Settings saved.
+    <div class="mt-4">
+      <Alert variant="success">Settings saved.</Alert>
     </div>
   {/if}
 
   <form onsubmit={handleSubmit} class="mt-8 space-y-6">
-    <div>
-      <label for="name" class="block text-sm font-medium text-gray-700">Organization Name</label>
-      <input id="name" type="text" bind:value={name} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
-    </div>
+    <Input id="name" label="Organization Name" bind:value={name} required />
 
     <div class="grid grid-cols-2 gap-6">
       <div>
@@ -76,29 +75,17 @@
           <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
         </div>
       </div>
-      <div>
-        <label for="defaultLocale" class="block text-sm font-medium text-gray-700">Default Locale</label>
-        <input id="defaultLocale" type="text" bind:value={defaultLocale} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
-      </div>
+      <Input id="defaultLocale" label="Default Locale" bind:value={defaultLocale} />
     </div>
 
     <div class="space-y-3">
-      <label class="flex items-center gap-3">
-        <input type="checkbox" bind:checked={helpCenterEnabled} class="rounded border-gray-300" />
-        <span class="text-sm text-gray-700">Enable Help Center</span>
-      </label>
-      <label class="flex items-center gap-3">
-        <input type="checkbox" bind:checked={feedbackEnabled} class="rounded border-gray-300" />
-        <span class="text-sm text-gray-700">Enable Feedback Board</span>
-      </label>
-      <label class="flex items-center gap-3">
-        <input type="checkbox" bind:checked={portalAuthRequired} class="rounded border-gray-300" />
-        <span class="text-sm text-gray-700">Require authentication on portal</span>
-      </label>
+      <Checkbox label="Enable Help Center" bind:checked={helpCenterEnabled} />
+      <Checkbox label="Enable Feedback Board" bind:checked={feedbackEnabled} />
+      <Checkbox label="Require authentication on portal" bind:checked={portalAuthRequired} />
     </div>
 
-    <button type="submit" disabled={saving} class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+    <Button type="submit" loading={saving}>
       {saving ? 'Saving...' : 'Save Settings'}
-    </button>
+    </Button>
   </form>
 </div>

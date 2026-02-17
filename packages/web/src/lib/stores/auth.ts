@@ -27,17 +27,17 @@ function createAuthStore() {
 
     async init() {
       try {
-        const data = await api.get<{ data: AdminUser }>('/auth/me')
-        set({ user: data.data, loading: false, initialized: true })
+        const data = await api.get<{ user: AdminUser }>('/auth/me')
+        set({ user: data.user, loading: false, initialized: true })
       } catch {
         set({ user: null, loading: false, initialized: true })
       }
     },
 
     async login(email: string, password: string) {
-      const data = await api.post<{ data: AdminUser }>('/auth/login', { email, password })
-      update((state) => ({ ...state, user: data.data }))
-      return data.data
+      const data = await api.post<{ user: AdminUser }>('/auth/login', { email, password })
+      update((state) => ({ ...state, user: data.user }))
+      return data.user
     },
 
     async logout() {

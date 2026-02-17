@@ -1,4 +1,4 @@
-import { navigate } from 'svelte-routing'
+import { navigate } from '../lib/router.svelte.ts'
 import { auth } from '../lib/stores/auth'
 
 export function createLoginState() {

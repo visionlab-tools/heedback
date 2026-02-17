@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Card, PageHeader } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -20,25 +21,22 @@
 </script>
 
 <div>
-  <h1 class="text-2xl font-bold text-gray-900">
-    {org?.name || 'Dashboard'}
-  </h1>
-  <p class="mt-1 text-sm text-gray-500">Welcome to your Heedback dashboard.</p>
+  <PageHeader title={org?.name || 'Dashboard'} subtitle="Welcome to your Heedback dashboard." />
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <Card padding="md">
       <p class="text-sm font-medium text-gray-500">Articles</p>
       <p class="text-3xl font-bold text-gray-900 mt-2">{stats.articles}</p>
-    </div>
+    </Card>
 
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <Card padding="md">
       <p class="text-sm font-medium text-gray-500">Feedback Posts</p>
       <p class="text-3xl font-bold text-gray-900 mt-2">{stats.posts}</p>
-    </div>
+    </Card>
 
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <Card padding="md">
       <p class="text-sm font-medium text-gray-500">Changelog Subscribers</p>
       <p class="text-3xl font-bold text-gray-900 mt-2">{stats.subscribers}</p>
-    </div>
+    </Card>
   </div>
 </div>

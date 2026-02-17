@@ -7,9 +7,10 @@ Heedback is an open source customer support & product feedback suite. Self-hoste
 ## Stack
 
 - **API**: AdonisJS 6 (TypeScript, Bun) — `packages/api/`
-- **Admin Dashboard**: SvelteKit + Svelte 5 + Tailwind CSS 4 — `packages/web/`
+- **Admin Dashboard**: Svelte 5 SPA + Vite + Tailwind CSS 4 + Lucide icons — `packages/web/` (custom router, no SvelteKit)
 - **Public Portal**: SvelteKit SSR + Svelte 5 + Tailwind CSS 4 — `packages/portal/`
 - **Embeddable Widget**: Svelte 5, compiled JS — `packages/widget/`
+- **UI Kit**: Svelte 5 component library (raw `.svelte` exports, no build step) — `packages/ui-kit/`
 - **Shared Types**: TypeScript — `packages/shared/`
 - **Database**: PostgreSQL 16 (multi-tenant by column: `organization_id`)
 - **Cache/Queue/Sessions**: Redis 7
@@ -61,11 +62,22 @@ docker compose -f docker-compose.dev.yml up -d  # Dev infrastructure
 
 ```
 packages/api/          → AdonisJS 6 REST API
-packages/web/          → SvelteKit admin dashboard
+packages/web/          → Svelte 5 SPA admin dashboard (custom router)
+packages/ui-kit/       → Shared Svelte 5 UI components (@heedback/ui-kit)
 packages/portal/       → SvelteKit public portal (SSR)
 packages/widget/       → Svelte embeddable widget
 packages/shared/       → Shared TS types & utils
 ```
+
+## UI Kit (`packages/ui-kit/`)
+
+Shared component library consumed via `@heedback/ui-kit` workspace dependency. Exports raw `.svelte` files — the consumer's Vite compiles them. No build step.
+
+Components:
+- **Primitives**: `Button`, `Input`, `Textarea`, `Select`, `Checkbox`
+- **Display**: `Badge`, `Alert`, `Card`
+- **Layout**: `PageHeader`, `EmptyState`, `DataTable`, `LoadingSpinner`
+- **Navigation**: `Nav`, `NavItem`
 
 ## Database Models (Multi-tenant)
 

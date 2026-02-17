@@ -1,6 +1,5 @@
 import { assert } from '@japa/assert'
 import { apiClient } from '@japa/api-client'
-import app from '@adonisjs/core/services/app'
 import { processCLIArgs, configure, run } from '@japa/runner'
 
 processCLIArgs(process.argv.splice(2))

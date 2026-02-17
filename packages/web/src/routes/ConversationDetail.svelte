@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Button, Badge, Select, Textarea, Checkbox, LoadingSpinner } from '@heedback/ui-kit'
   import Markdown from '../lib/components/Markdown.svelte'
   import { createConversationDetailState } from './ConversationDetail.svelte.ts'
 
@@ -12,7 +13,7 @@
 
 <div class="max-w-4xl">
   {#if state.loading}
-    <div class="text-center text-gray-500">Loading...</div>
+    <LoadingSpinner />
   {:else if state.conversation}
     <div class="flex items-start justify-between">
       <div>
@@ -25,19 +26,19 @@
           · {state.conversation.messageCount} messages
         </p>
       </div>
-      <button onclick={state.handleDelete} class="text-sm text-red-600 hover:text-red-800">Delete</button>
+      <Button variant="danger" onclick={state.handleDelete} size="sm">Delete</Button>
     </div>
 
     <div class="mt-4 flex items-center gap-4">
-      <select bind:value={state.newStatus} onchange={state.handleStatusChange} class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+      <Select bind:value={state.newStatus} onchange={state.handleStatusChange}>
         <option value="open">Open</option>
         <option value="assigned">Assigned</option>
         <option value="resolved">Resolved</option>
         <option value="closed">Closed</option>
-      </select>
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {state.statusBadgeClass(state.conversation.status)}">
+      </Select>
+      <Badge variant={state.statusVariant(state.conversation.status)}>
         {state.conversation.status}
-      </span>
+      </Badge>
     </div>
 
     <!-- Messages thread -->
@@ -50,10 +51,10 @@
                 {msg.senderType === 'admin' ? 'You' : state.conversation.endUser?.name || 'User'}
               </span>
               {#if msg.isInternal}
-                <span class="text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">Internal</span>
+                <Badge variant="warning">Internal</Badge>
               {/if}
               {#if msg.senderType === 'system'}
-                <span class="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">System</span>
+                <Badge variant="neutral">System</Badge>
               {/if}
             </div>
             <span class="text-xs text-gray-400">{state.formatTime(msg.createdAt)}</span>
@@ -65,24 +66,12 @@
 
     <!-- Reply form -->
     <form onsubmit={state.handleSend} class="mt-6">
-      <textarea
-        bind:value={state.newMessage}
-        rows={3}
-        placeholder="Type your reply..."
-        class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-      ></textarea>
+      <Textarea bind:value={state.newMessage} rows={3} placeholder="Type your reply..." />
       <div class="mt-3 flex items-center gap-4">
-        <button
-          type="submit"
-          disabled={state.sending || !state.newMessage.trim()}
-          class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={state.sending || !state.newMessage.trim()} size="sm">
           {state.sending ? 'Sending...' : 'Send Reply'}
-        </button>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" bind:checked={state.isInternal} class="rounded border-gray-300" />
-          <span class="text-sm text-gray-600">Internal note</span>
-        </label>
+        </Button>
+        <Checkbox label="Internal note" bind:checked={state.isInternal} />
       </div>
     </form>
   {/if}

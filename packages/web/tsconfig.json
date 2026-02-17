@@ -9,7 +9,12 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "paths": {
+      "@heedback/ui-kit": ["../ui-kit/src/index.ts"]
+    }
   },
   "include": ["src/**/*", "src/**/*.svelte"]
 }

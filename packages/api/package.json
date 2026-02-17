@@ -5,8 +5,9 @@
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "node --import=@swc-node/register/esm-register bin/server.ts --watch",
+    "dev": "node --import=tsx/esm bin/server.ts --watch",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node bin/server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
