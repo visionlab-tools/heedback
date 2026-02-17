@@ -12,6 +12,7 @@ export interface Organization {
 export interface OrganizationSettings {
   portalAuthRequired: boolean
   defaultLocale: string
+  supportedLocales: string[]
   brandColor: string
   chatEnabled: boolean
   feedbackEnabled: boolean
@@ -44,10 +45,7 @@ export interface UpdateOrganizationPayload {
   settings?: Partial<OrganizationSettings>
 }
 
-// Forward reference — defined in admin-user.ts
-export interface AdminUser {
-  id: string
-  email: string
-  name: string
-  avatarUrl: string | null
-}
+import type { AdminUser } from './admin-user.js'
+
+// Re-export so existing consumers that import AdminUser from organization still work
+export type { AdminUser } from './admin-user.js'

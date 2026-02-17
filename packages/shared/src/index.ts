@@ -1,4 +1,5 @@
 export * from './types/organization.js'
+export * from './types/i18n.js'
 export * from './types/admin-user.js'
 export * from './types/end-user.js'
 export * from './types/help-center.js'
