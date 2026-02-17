@@ -18,6 +18,7 @@
     { href: '/', label: 'Dashboard', icon: '📊' },
     { href: '/articles', label: 'Articles', icon: '📝' },
     { href: '/collections', label: 'Collections', icon: '📁' },
+    { href: '/inbox', label: 'Inbox', icon: '📨' },
     { href: '/boards', label: 'Boards', icon: '💬' },
     { href: '/posts', label: 'Posts', icon: '📌' },
     { href: '/changelog', label: 'Changelog', icon: '📢' },

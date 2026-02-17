@@ -74,3 +74,4 @@ Core models with `organization_id`:
 - Collection, CollectionTranslation, Article, ArticleTranslation, ArticleFeedback
 - Board, Post, Vote, Comment, Tag, PostTag
 - ChangelogEntry, ChangelogEntryTranslation, ChangelogLabel, ChangelogPost, ChangelogSubscriber
+- Conversation, Message

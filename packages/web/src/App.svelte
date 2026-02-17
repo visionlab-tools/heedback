@@ -11,6 +11,8 @@
   import PostDetail from './routes/PostDetail.svelte'
   import Changelog from './routes/Changelog.svelte'
   import ChangelogEditor from './routes/ChangelogEditor.svelte'
+  import Inbox from './routes/Inbox.svelte'
+  import ConversationDetail from './routes/ConversationDetail.svelte'
   import Settings from './routes/Settings.svelte'
   import NotFound from './routes/NotFound.svelte'
 </script>
@@ -23,6 +25,8 @@
     <Route path="/articles/new" component={ArticleEditor} />
     <Route path="/articles/:id/edit" component={ArticleEditor} />
     <Route path="/collections" component={Collections} />
+    <Route path="/inbox" component={Inbox} />
+    <Route path="/inbox/:id" component={ConversationDetail} />
     <Route path="/boards" component={Boards} />
     <Route path="/posts" component={Posts} />
     <Route path="/posts/:id" component={PostDetail} />

@@ -10,7 +10,7 @@ Self-hosted, Docker-ready, multi-tenant.
 - **Public Roadmap** — Kanban view of planned/in-progress/completed features
 - **Changelog** — Release notes with labels, email notifications, scheduled publishing
 - **Embeddable Widget** — Feedback form, vote, and changelog popup for your app
-- **Chat & Inbox** *(v2)* — Real-time support with shared inbox
+- **Chat & Inbox** — Conversations with users, shared inbox for the team
 
 ## Stack
 

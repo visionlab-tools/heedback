@@ -12,6 +12,7 @@ const CommentsController = () => import('#controllers/comments_controller')
 const TagsController = () => import('#controllers/tags_controller')
 const RoadmapController = () => import('#controllers/roadmap_controller')
 const ChangelogController = () => import('#controllers/changelog_controller')
+const ConversationsController = () => import('#controllers/conversations_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -194,6 +195,25 @@ router
       })
       .prefix('/org/:orgSlug')
       .use(middleware.org())
+
+    /*
+    |--------------------------------------------------------------------------
+    | Chat: conversations (inbox)
+    |--------------------------------------------------------------------------
+    */
+    router
+      .group(() => {
+        router.get('/conversations', [ConversationsController, 'index'])
+        router.get('/conversations/:conversationId', [ConversationsController, 'show'])
+        router.put('/conversations/:conversationId', [ConversationsController, 'update'])
+        router.delete('/conversations/:conversationId', [ConversationsController, 'destroy'])
+        router.post('/conversations/:conversationId/messages', [
+          ConversationsController,
+          'sendMessage',
+        ])
+      })
+      .prefix('/org/:orgSlug')
+      .use(middleware.org())
   })
   .prefix('/api/v1')
   .use(middleware.auth())
@@ -229,5 +249,18 @@ router
         ChangelogController,
         'unsubscribe',
       ])
+
+    /*
+    | Public chat / conversations
+    */
+    router.post('/org/:orgSlug/public/conversations', [ConversationsController, 'publicStore'])
+    router.get('/org/:orgSlug/public/conversations/:conversationId', [
+      ConversationsController,
+      'publicShow',
+    ])
+    router.post('/org/:orgSlug/public/conversations/:conversationId/messages', [
+      ConversationsController,
+      'publicReply',
+    ])
   })
   .prefix('/api/v1')

@@ -3,6 +3,7 @@
   import { setApiBase, widgetApi } from '../api/widget-client'
   import FeedbackForm from './FeedbackForm.svelte'
   import PostList from './PostList.svelte'
+  import ChatView from './ChatView.svelte'
 
   let {
     org,
@@ -19,6 +20,7 @@
   } = $props()
 
   let isOpen = $state(false)
+  let tab = $state<'feedback' | 'chat'>('feedback')
   let view = $state<'list' | 'form'>('list')
   let boards = $state<any[]>([])
 
@@ -76,10 +78,41 @@
       "
     >
       <!-- Header -->
-      <div style="padding: 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: 600; font-size: 16px;">Feedback</span>
+      <div style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 0;">
+          <button
+            onclick={() => { tab = 'feedback'; view = 'list' }}
+            style="
+              padding: 6px 14px;
+              border: none;
+              cursor: pointer;
+              font-size: 13px;
+              font-weight: 600;
+              border-radius: 6px 0 0 6px;
+              background: {tab === 'feedback' ? color : '#f3f4f6'};
+              color: {tab === 'feedback' ? 'white' : '#6b7280'};
+            "
+          >
+            Feedback
+          </button>
+          <button
+            onclick={() => { tab = 'chat' }}
+            style="
+              padding: 6px 14px;
+              border: none;
+              cursor: pointer;
+              font-size: 13px;
+              font-weight: 600;
+              border-radius: 0 6px 6px 0;
+              background: {tab === 'chat' ? color : '#f3f4f6'};
+              color: {tab === 'chat' ? 'white' : '#6b7280'};
+            "
+          >
+            Chat
+          </button>
+        </div>
         <div style="display: flex; gap: 8px;">
-          {#if view === 'form'}
+          {#if tab === 'feedback' && view === 'form'}
             <button onclick={switchToList} style="background: none; border: none; cursor: pointer; color: #6b7280; font-size: 13px;">
               &larr; Back
             </button>
@@ -92,10 +125,14 @@
 
       <!-- Content -->
       <div style="flex: 1; overflow-y: auto; padding: 16px;">
-        {#if view === 'list'}
-          <PostList {org} onNewPost={switchToForm} />
+        {#if tab === 'feedback'}
+          {#if view === 'list'}
+            <PostList {org} onNewPost={switchToForm} />
+          {:else}
+            <FeedbackForm {org} {boards} onSubmitted={switchToList} />
+          {/if}
         {:else}
-          <FeedbackForm {org} {boards} onSubmitted={switchToList} />
+          <ChatView {org} {user} />
         {/if}
       </div>
     </div>

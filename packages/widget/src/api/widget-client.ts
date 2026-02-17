@@ -48,4 +48,25 @@ export const widgetApi = {
   getBoards(orgSlug: string) {
     return request<{ data: any[] }>(`/org/${orgSlug}/boards`)
   },
+
+  startConversation(
+    orgSlug: string,
+    data: { subject?: string; body: string; channel?: string; endUserEmail?: string; endUserName?: string }
+  ) {
+    return request<{ data: any }>(`/org/${orgSlug}/public/conversations`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  getConversation(orgSlug: string, conversationId: string) {
+    return request<{ data: any }>(`/org/${orgSlug}/public/conversations/${conversationId}`)
+  },
+
+  replyToConversation(orgSlug: string, conversationId: string, data: { body: string }) {
+    return request<{ data: any }>(`/org/${orgSlug}/public/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
 }

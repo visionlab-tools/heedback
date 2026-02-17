@@ -12,6 +12,7 @@
       <a href="/feedback" class="hover:text-gray-900">Feedback</a>
       <a href="/roadmap" class="hover:text-gray-900">Roadmap</a>
       <a href="/changelog" class="hover:text-gray-900">Changelog</a>
+      <a href="/contact" class="hover:text-gray-900">Contact</a>
     </nav>
   </div>
 </header>
