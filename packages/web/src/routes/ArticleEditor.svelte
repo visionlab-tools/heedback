@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Button, Input, Textarea, Select, Alert } from '@heedback/ui-kit'
+  import { Button, Input, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
   import { createArticleEditorState } from './ArticleEditor.svelte.ts'
 
   let { id }: { id?: string } = $props()
@@ -22,10 +22,7 @@
   {/if}
 
   <form onsubmit={state.handleSubmit} class="mt-8 space-y-6">
-    <div class="grid grid-cols-2 gap-6">
-      <Input id="title" label="Title" bind:value={state.title} required />
-      <Input id="slug" label="Slug" bind:value={state.slug} required />
-    </div>
+    <TitleWithSlug bind:title={state.title} bind:slug={state.slug} required />
 
     <Textarea id="body" label="Content (Markdown)" bind:value={state.body} rows={20} mono />
 

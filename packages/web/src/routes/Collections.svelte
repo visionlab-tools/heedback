@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { FolderOpen } from 'lucide-svelte'
-  import { Button, Input, Textarea, Card, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
+  import { Button, Input, Textarea, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -115,9 +115,8 @@
           {editingId ? 'Edit Collection' : 'New Collection'}
         </h2>
         <form onsubmit={handleSubmit} class="space-y-4">
-          <div class="grid grid-cols-3 gap-4">
-            <Input id="name" label="Name" bind:value={formName} required />
-            <Input id="slug" label="Slug" bind:value={formSlug} required />
+          <div class="grid grid-cols-2 gap-4">
+            <TitleWithSlug titleLabel="Name" bind:title={formName} bind:slug={formSlug} required />
             <Input id="icon" label="Icon" bind:value={formIcon} placeholder="📚" />
           </div>
           <Textarea id="description" label="Description" bind:value={formDescription} rows={2} />

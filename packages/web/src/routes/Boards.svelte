@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
+  import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
 
@@ -107,10 +107,7 @@
         {editingId ? 'Edit Board' : 'New Board'}
       </h2>
       <form onsubmit={handleSubmit} class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <Input id="name" label="Name" bind:value={formName} required />
-          <Input id="slug" label="Slug" bind:value={formSlug} required />
-        </div>
+        <TitleWithSlug titleLabel="Name" bind:title={formName} bind:slug={formSlug} required />
         <Textarea id="desc" label="Description" bind:value={formDescription} rows={2} />
         <Checkbox label="Public board" bind:checked={formIsPublic} />
         <div class="flex gap-3">
