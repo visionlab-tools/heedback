@@ -1,18 +1,12 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { v4 as uuid } from 'uuid'
-import Board from '#models/board'
 import { createBoardValidator, updateBoardValidator } from '#validators/board_validator'
+import BoardService from '#services/board_service'
 
 export default class BoardsController {
-  /**
-   * GET /api/v1/org/:orgSlug/boards
-   * Lists all boards for the organization
-   */
+  private boardService = new BoardService()
+
   async index({ organization, response }: HttpContext) {
-    const boards = await Board.query()
-      .where('organization_id', organization.id)
-      .withCount('posts')
-      .orderBy('sort_order', 'asc')
+    const boards = await this.boardService.list(organization.id)
 
     return response.ok({
       data: boards.map((b) => ({
@@ -22,131 +16,64 @@ export default class BoardsController {
     })
   }
 
-  /**
-   * POST /api/v1/org/:orgSlug/boards
-   * Creates a new board
-   */
   async store({ organization, request, response }: HttpContext) {
     const payload = await request.validateUsing(createBoardValidator)
 
-    const existing = await Board.query()
-      .where('organization_id', organization.id)
-      .where('slug', payload.slug)
-      .first()
-
-    if (existing) {
-      return response.conflict({ message: 'A board with this slug already exists' })
+    try {
+      const board = await this.boardService.create(organization.id, payload)
+      return response.created({ data: board.serialize() })
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('slug already exists')) {
+        return response.conflict({ message: e.message })
+      }
+      throw e
     }
-
-    const board = await Board.create({
-      id: uuid(),
-      organizationId: organization.id,
-      name: payload.name,
-      slug: payload.slug,
-      description: payload.description ?? null,
-      color: payload.color ?? null,
-      isPublic: payload.isPublic ?? true,
-      sortOrder: payload.sortOrder ?? 0,
-    })
-
-    return response.created({
-      data: board.serialize(),
-    })
   }
 
-  /**
-   * GET /api/v1/org/:orgSlug/boards/:boardId
-   * Shows a single board with its posts
-   */
   async show({ organization, params, request, response }: HttpContext) {
     const qs = request.qs()
 
-    const board = await Board.query()
-      .where('id', params.boardId)
-      .where('organization_id', organization.id)
-      .first()
+    const result = await this.boardService.show(organization.id, params.boardId, {
+      page: Number(qs.page) || 1,
+      limit: Number(qs.limit) || 20,
+      sortBy: qs.sortBy,
+    })
 
-    if (!board) {
+    if (!result) {
       return response.notFound({ message: 'Board not found' })
     }
 
-    const page = Number(qs.page) || 1
-    const limit = Math.min(Number(qs.limit) || 20, 100)
-    const sortBy = qs.sortBy === 'recent' ? 'created_at' : 'vote_count'
-
-    const posts = await board
-      .related('posts')
-      .query()
-      .preload('tags')
-      .preload('endUser')
-      .orderBy(sortBy, 'desc')
-      .paginate(page, limit)
-
     return response.ok({
-      board: board.serialize(),
-      posts: posts.serialize(),
+      board: result.board.serialize(),
+      posts: result.posts.serialize(),
     })
   }
 
-  /**
-   * PUT /api/v1/org/:orgSlug/boards/:boardId
-   * Updates a board
-   */
   async update({ organization, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(updateBoardValidator)
 
-    const board = await Board.query()
-      .where('id', params.boardId)
-      .where('organization_id', organization.id)
-      .first()
+    try {
+      const board = await this.boardService.update(organization.id, params.boardId, payload)
 
-    if (!board) {
-      return response.notFound({ message: 'Board not found' })
-    }
-
-    if (payload.slug && payload.slug !== board.slug) {
-      const existing = await Board.query()
-        .where('organization_id', organization.id)
-        .where('slug', payload.slug)
-        .whereNot('id', board.id)
-        .first()
-
-      if (existing) {
-        return response.conflict({ message: 'A board with this slug already exists' })
+      if (!board) {
+        return response.notFound({ message: 'Board not found' })
       }
+
+      return response.ok({ data: board.serialize() })
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('slug already exists')) {
+        return response.conflict({ message: e.message })
+      }
+      throw e
     }
-
-    board.merge({
-      name: payload.name ?? board.name,
-      slug: payload.slug ?? board.slug,
-      description: payload.description !== undefined ? payload.description : board.description,
-      color: payload.color !== undefined ? payload.color : board.color,
-      isPublic: payload.isPublic ?? board.isPublic,
-      sortOrder: payload.sortOrder ?? board.sortOrder,
-    })
-
-    await board.save()
-
-    return response.ok({
-      data: board.serialize(),
-    })
   }
 
-  /**
-   * DELETE /api/v1/org/:orgSlug/boards/:boardId
-   * Deletes a board
-   */
   async destroy({ organization, params, response }: HttpContext) {
-    const board = await Board.query()
-      .where('id', params.boardId)
-      .where('organization_id', organization.id)
-      .first()
+    const board = await this.boardService.delete(organization.id, params.boardId)
 
     if (!board) {
       return response.notFound({ message: 'Board not found' })
     }
-
-    await board.delete()
 
     return response.ok({ message: 'Board deleted successfully' })
   }

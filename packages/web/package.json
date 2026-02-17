@@ -11,6 +11,7 @@
     "typecheck": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
+    "marked": "^17.0.2",
     "svelte-routing": "^2.13.0"
   },
   "devDependencies": {

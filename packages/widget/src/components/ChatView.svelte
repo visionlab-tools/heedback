@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { widgetApi } from '../api/widget-client'
+  import { renderMarkdown } from '../utils/markdown'
+  import { createChatViewState } from './ChatView.svelte.ts'
 
   let {
     org,
@@ -9,88 +10,17 @@
     user?: any
   } = $props()
 
-  let conversationId = $state<string | null>(null)
-  let messages = $state<any[]>([])
-  let newMessage = $state('')
-  let sending = $state(false)
-  let loading = $state(false)
-  let subject = $state('')
-  let started = $state(false)
-
-  async function handleStart(e: Event) {
-    e.preventDefault()
-    if (!newMessage.trim()) return
-    sending = true
-    try {
-      const data = await widgetApi.startConversation(org, {
-        subject: subject || undefined,
-        body: newMessage,
-        channel: 'widget',
-        endUserEmail: user?.email,
-        endUserName: user?.name,
-      })
-      conversationId = data.data.id
-      started = true
-      messages = [
-        {
-          id: 'initial',
-          senderType: 'end_user',
-          body: newMessage,
-          createdAt: new Date().toISOString(),
-        },
-      ]
-      newMessage = ''
-      subject = ''
-    } catch {
-      // Handle error
-    } finally {
-      sending = false
-    }
-  }
-
-  async function handleReply(e: Event) {
-    e.preventDefault()
-    if (!newMessage.trim() || !conversationId || sending) return
-    sending = true
-    try {
-      const data = await widgetApi.replyToConversation(org, conversationId, {
-        body: newMessage,
-      })
-      messages = [...messages, data.data]
-      newMessage = ''
-    } catch {
-      // Handle error
-    } finally {
-      sending = false
-    }
-  }
-
-  async function refreshMessages() {
-    if (!conversationId) return
-    loading = true
-    try {
-      const data = await widgetApi.getConversation(org, conversationId)
-      messages = data.data.messages || []
-    } catch {
-      // Handle error
-    } finally {
-      loading = false
-    }
-  }
-
-  function formatTime(dateStr: string): string {
-    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  }
+  const state = createChatViewState(org, user)
 </script>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
-  {#if !started}
+  {#if !state.started}
     <!-- New conversation form -->
-    <form onsubmit={handleStart} style="display: flex; flex-direction: column; gap: 10px;">
+    <form onsubmit={state.handleStart} style="display: flex; flex-direction: column; gap: 10px;">
       <input
         type="text"
         placeholder="Subject (optional)"
-        bind:value={subject}
+        bind:value={state.subject}
         style="
           padding: 8px 12px;
           border: 1px solid #e5e7eb;
@@ -101,7 +31,7 @@
       />
       <textarea
         placeholder="How can we help?"
-        bind:value={newMessage}
+        bind:value={state.newMessage}
         rows={4}
         style="
           padding: 8px 12px;
@@ -115,7 +45,7 @@
       ></textarea>
       <button
         type="submit"
-        disabled={sending || !newMessage.trim()}
+        disabled={state.sending || !state.newMessage.trim()}
         style="
           padding: 10px;
           background-color: #6366f1;
@@ -125,16 +55,16 @@
           cursor: pointer;
           font-size: 13px;
           font-weight: 600;
-          opacity: {sending || !newMessage.trim() ? '0.5' : '1'};
+          opacity: {state.sending || !state.newMessage.trim() ? '0.5' : '1'};
         "
       >
-        {sending ? 'Sending...' : 'Start Conversation'}
+        {state.sending ? 'Sending...' : 'Start Conversation'}
       </button>
     </form>
   {:else}
     <!-- Conversation thread -->
     <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-      {#each messages as msg}
+      {#each state.messages as msg}
         <div
           style="
             padding: 8px 12px;
@@ -147,9 +77,9 @@
               : 'background: #6366f1; color: white; align-self: flex-end; border-bottom-right-radius: 4px;'}
           "
         >
-          <p style="margin: 0; white-space: pre-wrap;">{msg.body}</p>
+          <div style="margin: 0;">{@html renderMarkdown(msg.body)}</div>
           <span style="font-size: 10px; opacity: 0.7; display: block; margin-top: 4px;">
-            {formatTime(msg.createdAt)}
+            {state.formatTime(msg.createdAt)}
           </span>
         </div>
       {/each}
@@ -158,8 +88,8 @@
     <!-- Refresh + reply -->
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <button
-        onclick={refreshMessages}
-        disabled={loading}
+        onclick={state.refreshMessages}
+        disabled={state.loading}
         style="
           padding: 6px;
           background: none;
@@ -170,13 +100,13 @@
           color: #6b7280;
         "
       >
-        {loading ? 'Refreshing...' : 'Refresh messages'}
+        {state.loading ? 'Refreshing...' : 'Refresh messages'}
       </button>
-      <form onsubmit={handleReply} style="display: flex; gap: 8px;">
+      <form onsubmit={state.handleReply} style="display: flex; gap: 8px;">
         <input
           type="text"
           placeholder="Type a message..."
-          bind:value={newMessage}
+          bind:value={state.newMessage}
           style="
             flex: 1;
             padding: 8px 12px;
@@ -188,7 +118,7 @@
         />
         <button
           type="submit"
-          disabled={sending || !newMessage.trim()}
+          disabled={state.sending || !state.newMessage.trim()}
           style="
             padding: 8px 14px;
             background-color: #6366f1;
@@ -198,7 +128,7 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            opacity: {sending || !newMessage.trim() ? '0.5' : '1'};
+            opacity: {state.sending || !state.newMessage.trim() ? '0.5' : '1'};
           "
         >
           Send

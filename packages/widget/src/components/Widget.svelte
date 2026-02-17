@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { setApiBase, widgetApi } from '../api/widget-client'
   import FeedbackForm from './FeedbackForm.svelte'
   import PostList from './PostList.svelte'
   import ChatView from './ChatView.svelte'
+  import { createWidgetState } from './Widget.svelte.ts'
 
   let {
     org,
@@ -19,48 +18,11 @@
     user?: any
   } = $props()
 
-  let isOpen = $state(false)
-  let tab = $state<'feedback' | 'chat'>('feedback')
-  let view = $state<'list' | 'form'>('list')
-  let boards = $state<any[]>([])
-
-  const positionStyles: Record<string, string> = {
-    'bottom-right': 'bottom: 20px; right: 20px;',
-    'bottom-left': 'bottom: 20px; left: 20px;',
-  }
-
-  onMount(() => {
-    // Resolve API base from the script source
-    const scripts = document.querySelectorAll('script[data-org]')
-    const script = scripts[scripts.length - 1] as HTMLScriptElement | undefined
-    if (script?.src) {
-      const url = new URL(script.src)
-      setApiBase(url.origin)
-    } else {
-      setApiBase(window.location.origin)
-    }
-
-    // Load boards
-    widgetApi.getBoards(org).then((data) => {
-      boards = data.data
-    }).catch(() => {})
-  })
-
-  function toggle() {
-    isOpen = !isOpen
-  }
-
-  function switchToForm() {
-    view = 'form'
-  }
-
-  function switchToList() {
-    view = 'list'
-  }
+  const state = createWidgetState(org)
 </script>
 
-<div style={positionStyles[position] || positionStyles['bottom-right']}>
-  {#if isOpen}
+<div style={state.positionStyles[position] || state.positionStyles['bottom-right']}>
+  {#if state.isOpen}
     <div
       style="
         width: 380px;
@@ -81,7 +43,7 @@
       <div style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; gap: 0;">
           <button
-            onclick={() => { tab = 'feedback'; view = 'list' }}
+            onclick={() => state.switchTab('feedback')}
             style="
               padding: 6px 14px;
               border: none;
@@ -89,14 +51,14 @@
               font-size: 13px;
               font-weight: 600;
               border-radius: 6px 0 0 6px;
-              background: {tab === 'feedback' ? color : '#f3f4f6'};
-              color: {tab === 'feedback' ? 'white' : '#6b7280'};
+              background: {state.tab === 'feedback' ? color : '#f3f4f6'};
+              color: {state.tab === 'feedback' ? 'white' : '#6b7280'};
             "
           >
             Feedback
           </button>
           <button
-            onclick={() => { tab = 'chat' }}
+            onclick={() => state.switchTab('chat')}
             style="
               padding: 6px 14px;
               border: none;
@@ -104,20 +66,20 @@
               font-size: 13px;
               font-weight: 600;
               border-radius: 0 6px 6px 0;
-              background: {tab === 'chat' ? color : '#f3f4f6'};
-              color: {tab === 'chat' ? 'white' : '#6b7280'};
+              background: {state.tab === 'chat' ? color : '#f3f4f6'};
+              color: {state.tab === 'chat' ? 'white' : '#6b7280'};
             "
           >
             Chat
           </button>
         </div>
         <div style="display: flex; gap: 8px;">
-          {#if tab === 'feedback' && view === 'form'}
-            <button onclick={switchToList} style="background: none; border: none; cursor: pointer; color: #6b7280; font-size: 13px;">
+          {#if state.tab === 'feedback' && state.view === 'form'}
+            <button onclick={state.switchToList} style="background: none; border: none; cursor: pointer; color: #6b7280; font-size: 13px;">
               &larr; Back
             </button>
           {/if}
-          <button onclick={toggle} style="background: none; border: none; cursor: pointer; color: #6b7280; font-size: 18px;">
+          <button onclick={state.toggle} style="background: none; border: none; cursor: pointer; color: #6b7280; font-size: 18px;">
             &times;
           </button>
         </div>
@@ -125,11 +87,11 @@
 
       <!-- Content -->
       <div style="flex: 1; overflow-y: auto; padding: 16px;">
-        {#if tab === 'feedback'}
-          {#if view === 'list'}
-            <PostList {org} onNewPost={switchToForm} />
+        {#if state.tab === 'feedback'}
+          {#if state.view === 'list'}
+            <PostList {org} onNewPost={state.switchToForm} />
           {:else}
-            <FeedbackForm {org} {boards} onSubmitted={switchToList} />
+            <FeedbackForm {org} boards={state.boards} onSubmitted={state.switchToList} />
           {/if}
         {:else}
           <ChatView {org} {user} />
@@ -140,7 +102,7 @@
 
   <!-- Trigger button -->
   <button
-    onclick={toggle}
+    onclick={state.toggle}
     style="
       width: 56px;
       height: 56px;

@@ -1,22 +1,15 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import AdminUser from '#models/admin_user'
 import { loginValidator } from '#validators/auth_validator'
-import { DateTime } from 'luxon'
+import AuthService from '#services/auth_service'
 
 export default class AuthController {
-  /**
-   * POST /api/v1/auth/login
-   * Authenticates an admin user via session
-   */
+  private authService = new AuthService()
+
   async login({ request, auth, response }: HttpContext) {
     const { email, password } = await request.validateUsing(loginValidator)
 
-    const user = await AdminUser.verifyCredentials(email, password)
-
+    const user = await this.authService.login(email, password)
     await auth.use('web').login(user)
-
-    user.lastLoginAt = DateTime.now()
-    await user.save()
 
     return response.ok({
       message: 'Logged in successfully',
@@ -24,10 +17,6 @@ export default class AuthController {
     })
   }
 
-  /**
-   * POST /api/v1/auth/logout
-   * Logs out the current session
-   */
   async logout({ auth, response }: HttpContext) {
     await auth.use('web').logout()
 
@@ -36,19 +25,11 @@ export default class AuthController {
     })
   }
 
-  /**
-   * GET /api/v1/auth/me
-   * Returns the currently authenticated user
-   */
   async me({ auth, response }: HttpContext) {
-    const user = auth.user!
-
-    await user.load('orgMemberships', (query) => {
-      query.preload('organization')
-    })
+    const user = await this.authService.getProfile(auth.user!.id)
 
     return response.ok({
-      user: user.serialize(),
+      user: user!.serialize(),
     })
   }
 }

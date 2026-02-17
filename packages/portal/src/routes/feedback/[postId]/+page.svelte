@@ -1,19 +1,11 @@
 <script lang="ts">
   import type { PageData } from './$types'
+  import Markdown from '$lib/components/Markdown.svelte'
+  import { createFeedbackPostState } from './+page.svelte.ts'
 
   let { data }: { data: PageData } = $props()
 
-  function statusBadgeClass(status: string): string {
-    const map: Record<string, string> = {
-      open: 'bg-blue-100 text-blue-800',
-      under_review: 'bg-yellow-100 text-yellow-800',
-      planned: 'bg-purple-100 text-purple-800',
-      in_progress: 'bg-orange-100 text-orange-800',
-      completed: 'bg-green-100 text-green-800',
-      closed: 'bg-gray-100 text-gray-800',
-    }
-    return map[status] || 'bg-gray-100 text-gray-800'
-  }
+  const state = createFeedbackPostState()
 </script>
 
 <svelte:head>
@@ -32,7 +24,7 @@
 
     <div class="flex-1">
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {statusBadgeClass(data.post.status)}">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {state.statusBadgeClass(data.post.status)}">
           {data.post.status.replace('_', ' ')}
         </span>
         {#if data.post.board}
@@ -46,8 +38,8 @@
         by {data.post.author?.name || 'Anonymous'}
       </p>
 
-      <div class="mt-4 text-gray-800 whitespace-pre-wrap">
-        {data.post.body}
+      <div class="mt-4">
+        <Markdown content={data.post.body} />
       </div>
 
       {#if data.post.tags?.length}
@@ -74,7 +66,7 @@
               <span class="ml-1 text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">Team</span>
             {/if}
           </div>
-          <p class="mt-1 text-gray-700">{comment.body}</p>
+          <div class="mt-1"><Markdown content={comment.body} /></div>
         </div>
       {/each}
     </div>

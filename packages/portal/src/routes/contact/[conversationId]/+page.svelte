@@ -1,36 +1,11 @@
 <script lang="ts">
   import type { PageData } from './$types'
+  import Markdown from '$lib/components/Markdown.svelte'
+  import { createConversationPageState } from './+page.svelte.ts'
 
   let { data }: { data: PageData } = $props()
 
-  let newMessage = $state('')
-  let sending = $state(false)
-  let messages = $state<any[]>(data.conversation?.messages || [])
-
-  async function handleReply(e: Event) {
-    e.preventDefault()
-    if (!newMessage.trim() || sending) return
-    sending = true
-    try {
-      const res = await fetch(`/api/contact/${data.conversation.id}/reply`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body: newMessage }),
-      })
-      if (!res.ok) throw new Error('Failed to send')
-      const result = await res.json()
-      messages = [...messages, result.data]
-      newMessage = ''
-    } catch {
-      // Handle error
-    } finally {
-      sending = false
-    }
-  }
-
-  function formatTime(dateStr: string): string {
-    return new Date(dateStr).toLocaleString()
-  }
+  const state = createConversationPageState(data)
 </script>
 
 <svelte:head>
@@ -52,33 +27,33 @@
     </div>
 
     <div class="mt-8 space-y-4">
-      {#each messages as msg}
+      {#each state.messages as msg}
         <div class="p-4 rounded-xl border {msg.senderType === 'admin' ? 'border-indigo-200 bg-indigo-50 ml-8' : 'border-gray-200 bg-white mr-8'}">
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium {msg.senderType === 'admin' ? 'text-indigo-700' : 'text-gray-900'}">
               {msg.senderType === 'admin' ? 'Support' : 'You'}
             </span>
-            <span class="text-xs text-gray-400">{formatTime(msg.createdAt)}</span>
+            <span class="text-xs text-gray-400">{state.formatTime(msg.createdAt)}</span>
           </div>
-          <p class="mt-1 text-gray-800 whitespace-pre-wrap">{msg.body}</p>
+          <div class="mt-1"><Markdown content={msg.body} /></div>
         </div>
       {/each}
     </div>
 
     {#if data.conversation.status !== 'closed'}
-      <form onsubmit={handleReply} class="mt-6">
+      <form onsubmit={state.handleReply} class="mt-6">
         <textarea
-          bind:value={newMessage}
+          bind:value={state.newMessage}
           rows={3}
           placeholder="Type your reply..."
           class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
         ></textarea>
         <button
           type="submit"
-          disabled={sending || !newMessage.trim()}
+          disabled={state.sending || !state.newMessage.trim()}
           class="mt-3 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50"
         >
-          {sending ? 'Sending...' : 'Send Reply'}
+          {state.sending ? 'Sending...' : 'Send Reply'}
         </button>
       </form>
     {:else}

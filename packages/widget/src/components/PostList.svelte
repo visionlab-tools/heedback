@@ -1,54 +1,17 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { widgetApi } from '../api/widget-client'
+  import { createPostListState } from './PostList.svelte.ts'
 
   let { org, onNewPost }: { org: string; onNewPost: () => void } = $props()
 
-  let posts = $state<any[]>([])
-  let loading = $state(true)
-  let search = $state('')
-
-  onMount(loadPosts)
-
-  async function loadPosts() {
-    loading = true
-    try {
-      const data = await widgetApi.searchPosts(org, search)
-      posts = data.data.slice(0, 20)
-    } catch {
-      posts = []
-    } finally {
-      loading = false
-    }
-  }
-
-  async function handleVote(postId: string) {
-    try {
-      await widgetApi.vote(org, postId)
-      const post = posts.find((p) => p.id === postId)
-      if (post) {
-        post.voteCount++
-        post.hasVoted = true
-        posts = [...posts]
-      }
-    } catch {
-      // Already voted or error
-    }
-  }
-
-  let searchTimeout: ReturnType<typeof setTimeout>
-  function handleSearch() {
-    clearTimeout(searchTimeout)
-    searchTimeout = setTimeout(loadPosts, 300)
-  }
+  const state = createPostListState(org)
 </script>
 
 <div>
   <input
     type="search"
     placeholder="Search existing feedback..."
-    bind:value={search}
-    oninput={handleSearch}
+    bind:value={state.search}
+    oninput={state.handleSearch}
     style="
       width: 100%;
       padding: 8px 12px;
@@ -78,15 +41,15 @@
     + New Feedback
   </button>
 
-  {#if loading}
+  {#if state.loading}
     <p style="text-align: center; color: #9ca3af; margin-top: 20px; font-size: 13px;">Loading...</p>
-  {:else if posts.length === 0}
+  {:else if state.posts.length === 0}
     <p style="text-align: center; color: #9ca3af; margin-top: 20px; font-size: 13px;">
-      {search ? 'No results found.' : 'No feedback yet. Be the first!'}
+      {state.search ? 'No results found.' : 'No feedback yet. Be the first!'}
     </p>
   {:else}
     <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-      {#each posts as post}
+      {#each state.posts as post}
         <div
           style="
             display: flex;
@@ -98,7 +61,7 @@
           "
         >
           <button
-            onclick={() => handleVote(post.id)}
+            onclick={() => state.handleVote(post.id)}
             style="
               display: flex;
               flex-direction: column;

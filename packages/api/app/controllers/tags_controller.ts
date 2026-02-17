@@ -1,112 +1,55 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { v4 as uuid } from 'uuid'
-import Tag from '#models/tag'
 import { createTagValidator, updateTagValidator } from '#validators/tag_validator'
+import TagService from '#services/tag_service'
 
 export default class TagsController {
-  /**
-   * GET /api/v1/org/:orgSlug/tags
-   * Lists all tags for the organization
-   */
-  async index({ organization, response }: HttpContext) {
-    const tags = await Tag.query()
-      .where('organization_id', organization.id)
-      .withCount('posts')
-      .orderBy('name', 'asc')
+  private tagService = new TagService()
 
-    return response.ok({
-      data: tags.map((t) => ({
-        ...t.serialize(),
-        postCount: Number(t.$extras.posts_count),
-      })),
-    })
+  async index({ organization, response }: HttpContext) {
+    const data = await this.tagService.list(organization.id)
+
+    return response.ok({ data })
   }
 
-  /**
-   * POST /api/v1/org/:orgSlug/tags
-   * Creates a new tag
-   */
   async store({ organization, request, response }: HttpContext) {
     const payload = await request.validateUsing(createTagValidator)
 
-    const existing = await Tag.query()
-      .where('organization_id', organization.id)
-      .where('slug', payload.slug)
-      .first()
-
-    if (existing) {
-      return response.conflict({ message: 'A tag with this slug already exists' })
+    try {
+      const tag = await this.tagService.create(organization.id, payload)
+      return response.created({ data: tag.serialize() })
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('slug already exists')) {
+        return response.conflict({ message: e.message })
+      }
+      throw e
     }
-
-    const tag = await Tag.create({
-      id: uuid(),
-      organizationId: organization.id,
-      name: payload.name,
-      slug: payload.slug,
-      color: payload.color ?? null,
-    })
-
-    return response.created({
-      data: tag.serialize(),
-    })
   }
 
-  /**
-   * PUT /api/v1/org/:orgSlug/tags/:tagId
-   * Updates a tag
-   */
   async update({ organization, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(updateTagValidator)
 
-    const tag = await Tag.query()
-      .where('id', params.tagId)
-      .where('organization_id', organization.id)
-      .first()
+    try {
+      const tag = await this.tagService.update(organization.id, params.tagId, payload)
 
-    if (!tag) {
-      return response.notFound({ message: 'Tag not found' })
-    }
-
-    if (payload.slug && payload.slug !== tag.slug) {
-      const existing = await Tag.query()
-        .where('organization_id', organization.id)
-        .where('slug', payload.slug)
-        .whereNot('id', tag.id)
-        .first()
-
-      if (existing) {
-        return response.conflict({ message: 'A tag with this slug already exists' })
+      if (!tag) {
+        return response.notFound({ message: 'Tag not found' })
       }
+
+      return response.ok({ data: tag.serialize() })
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('slug already exists')) {
+        return response.conflict({ message: e.message })
+      }
+      throw e
     }
-
-    tag.merge({
-      name: payload.name ?? tag.name,
-      slug: payload.slug ?? tag.slug,
-      color: payload.color !== undefined ? payload.color : tag.color,
-    })
-
-    await tag.save()
-
-    return response.ok({
-      data: tag.serialize(),
-    })
   }
 
-  /**
-   * DELETE /api/v1/org/:orgSlug/tags/:tagId
-   * Deletes a tag
-   */
   async destroy({ organization, params, response }: HttpContext) {
-    const tag = await Tag.query()
-      .where('id', params.tagId)
-      .where('organization_id', organization.id)
-      .first()
+    const result = await this.tagService.delete(organization.id, params.tagId)
 
-    if (!tag) {
+    if (!result) {
       return response.notFound({ message: 'Tag not found' })
     }
-
-    await tag.delete()
 
     return response.ok({ message: 'Tag deleted successfully' })
   }
