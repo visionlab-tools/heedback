@@ -187,5 +187,16 @@
 
   "not_found.title": "404",
   "not_found.message": "Page not found",
-  "not_found.go_home": "Go to Dashboard"
+  "not_found.go_home": "Go to Dashboard",
+
+  "create_org.title": "Create your organization",
+  "create_org.subtitle": "Set up your workspace to get started.",
+  "create_org.name": "Organization name",
+  "create_org.color": "Brand color",
+  "create_org.locale": "Default language",
+  "create_org.logo": "Logo",
+  "create_org.logo_hint": "PNG or JPG, max 2 MB",
+  "create_org.submit": "Create organization",
+  "create_org.creating": "Creating...",
+  "create_org.new": "New organization"
 }

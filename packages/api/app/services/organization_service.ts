@@ -40,6 +40,7 @@ export default class OrganizationService {
       logoUrl?: string | null
       websiteUrl?: string | null
       billingEmail?: string | null
+      settings?: Record<string, unknown> | null
     },
   ): Promise<Organization> {
     const existing = await Organization.query().where('slug', data.slug).first()
@@ -54,6 +55,7 @@ export default class OrganizationService {
       logoUrl: data.logoUrl ?? null,
       websiteUrl: data.websiteUrl ?? null,
       billingEmail: data.billingEmail ?? null,
+      settings: data.settings ?? null,
       plan: 'free',
     })
 

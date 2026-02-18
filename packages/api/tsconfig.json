@@ -9,6 +9,7 @@
       "#middleware/*": ["./app/middleware/*.js"],
       "#validators/*": ["./app/validators/*.js"],
       "#services/*": ["./app/services/*.js"],
+      "#helpers/*": ["./app/helpers/*.js"],
       "#exceptions/*": ["./app/exceptions/*.js"],
       "#providers/*": ["./providers/*.js"],
       "#config/*": ["./config/*.js"],

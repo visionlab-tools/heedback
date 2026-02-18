@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { resolveStorageUrl } from '#helpers/storage'
 import OrgMember from '#models/org_member'
 import Collection from '#models/collection'
 import Board from '#models/board'
@@ -51,6 +52,16 @@ export default class Organization extends BaseModel {
   | Relationships
   |--------------------------------------------------------------------------
   */
+
+  /**
+   * Resolve logoUrl storage key to a full public URL at serialization time.
+   * The DB stores only the S3 key so endpoint changes don't break stored data.
+   */
+  override serialize() {
+    const json = super.serialize()
+    json.logoUrl = resolveStorageUrl(this.logoUrl)
+    return json
+  }
 
   @hasMany(() => OrgMember, { foreignKey: 'organizationId' })
   declare members: HasMany<typeof OrgMember>

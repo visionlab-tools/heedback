@@ -9,9 +9,10 @@ export const createOrganizationValidator = vine.compile(
       .minLength(1)
       .maxLength(255)
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    logoUrl: vine.string().url().maxLength(2048).optional().nullable(),
+    logoUrl: vine.string().maxLength(2048).optional().nullable(),
     websiteUrl: vine.string().url().maxLength(2048).optional().nullable(),
     billingEmail: vine.string().email().maxLength(255).optional().nullable(),
+    settings: vine.object({}).allowUnknownProperties().optional().nullable(),
   })
 )
 
@@ -25,7 +26,7 @@ export const updateOrganizationValidator = vine.compile(
       .maxLength(255)
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       .optional(),
-    logoUrl: vine.string().url().maxLength(2048).optional().nullable(),
+    logoUrl: vine.string().maxLength(2048).optional().nullable(),
     websiteUrl: vine.string().url().maxLength(2048).optional().nullable(),
     billingEmail: vine.string().email().maxLength(255).optional().nullable(),
     settings: vine.object({}).allowUnknownProperties().optional().nullable(),

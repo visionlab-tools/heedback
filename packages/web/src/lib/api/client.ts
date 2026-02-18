@@ -77,6 +77,33 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   return response.json()
 }
 
+async function uploadFile(file: File): Promise<{ key: string }> {
+  const form = new FormData()
+  form.append('file', file)
+
+  let response: Response
+  try {
+    // No Content-Type header — the browser sets the multipart boundary
+    response = await fetch(`${API_BASE}/uploads`, {
+      method: 'POST',
+      credentials: 'include',
+      body: form,
+    })
+  } catch {
+    addToast(get(_)('error.network'), 'error')
+    throw new Error('Network error')
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({ errors: [{ message: 'Upload failed' }] }))
+    const apiError = new ApiError(response.status, data.errors || [{ message: 'Upload failed' }])
+    addToast(apiError.message, 'error')
+    throw apiError
+  }
+
+  return response.json()
+}
+
 export const api = {
   get: <T>(path: string, opts?: { silent?: boolean }) =>
     request<T>(path, { ...opts }),
@@ -88,6 +115,7 @@ export const api = {
     request<T>(path, { method: 'PATCH', body, ...opts }),
   delete: <T>(path: string, opts?: { silent?: boolean }) =>
     request<T>(path, { method: 'DELETE', ...opts }),
+  upload: uploadFile,
 }
 
 export { ApiError }

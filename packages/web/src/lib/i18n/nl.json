@@ -187,5 +187,16 @@
 
   "not_found.title": "404",
   "not_found.message": "Pagina niet gevonden",
-  "not_found.go_home": "Naar dashboard"
+  "not_found.go_home": "Naar dashboard",
+
+  "create_org.title": "Maak uw organisatie aan",
+  "create_org.subtitle": "Stel uw werkruimte in om te beginnen.",
+  "create_org.name": "Organisatienaam",
+  "create_org.color": "Merkkleur",
+  "create_org.locale": "Standaardtaal",
+  "create_org.logo": "Logo",
+  "create_org.logo_hint": "PNG of JPG, max 2 MB",
+  "create_org.submit": "Organisatie aanmaken",
+  "create_org.creating": "Aanmaken...",
+  "create_org.new": "Nieuwe organisatie"
 }

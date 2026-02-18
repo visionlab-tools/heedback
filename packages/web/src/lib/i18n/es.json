@@ -187,5 +187,16 @@
 
   "not_found.title": "404",
   "not_found.message": "Página no encontrada",
-  "not_found.go_home": "Ir al panel"
+  "not_found.go_home": "Ir al panel",
+
+  "create_org.title": "Crea tu organización",
+  "create_org.subtitle": "Configura tu espacio de trabajo para empezar.",
+  "create_org.name": "Nombre de la organización",
+  "create_org.color": "Color de marca",
+  "create_org.locale": "Idioma predeterminado",
+  "create_org.logo": "Logo",
+  "create_org.logo_hint": "PNG o JPG, máx. 2 MB",
+  "create_org.submit": "Crear organización",
+  "create_org.creating": "Creando...",
+  "create_org.new": "Nueva organización"
 }

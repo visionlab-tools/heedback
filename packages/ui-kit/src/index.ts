@@ -16,6 +16,7 @@ export { default as PageHeader } from './layout/PageHeader.svelte'
 export { default as EmptyState } from './layout/EmptyState.svelte'
 export { default as DataTable } from './layout/DataTable.svelte'
 export { default as LoadingSpinner } from './layout/LoadingSpinner.svelte'
+export { default as Modal } from './layout/Modal.svelte'
 
 // Navigation
 export { default as Nav } from './navigation/Nav.svelte'

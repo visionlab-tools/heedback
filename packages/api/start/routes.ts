@@ -13,6 +13,7 @@ const TagsController = () => import('#controllers/tags_controller')
 const RoadmapController = () => import('#controllers/roadmap_controller')
 const ChangelogController = () => import('#controllers/changelog_controller')
 const ConversationsController = () => import('#controllers/conversations_controller')
+const UploadsController = () => import('#controllers/uploads_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,9 @@ router
 */
 router
   .group(() => {
+    // File uploads — before org routes (no org middleware needed)
+    router.post('/uploads', [UploadsController, 'store'])
+
     router.get('/organizations', [OrganizationsController, 'index'])
     router.post('/organizations', [OrganizationsController, 'store'])
     router.get('/organizations/:orgSlug', [OrganizationsController, 'show']).use(middleware.org())

@@ -21,10 +21,13 @@
     "@adonisjs/auth": "^9.2.0",
     "@adonisjs/core": "^6.14.1",
     "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/drive": "^3.4.1",
     "@adonisjs/lucid": "^21.3.0",
     "@adonisjs/redis": "^9.1.0",
     "@adonisjs/session": "^7.5.0",
     "@adonisjs/static": "^1.1.1",
+    "@aws-sdk/client-s3": "^3.992.0",
+    "@aws-sdk/s3-request-presigner": "^3.992.0",
     "@vinejs/vine": "^2.1.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
@@ -41,8 +44,8 @@
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.16.0",
-    "tsx": "^4.21.0",
     "prettier": "^3.4.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.2"
   }
 }

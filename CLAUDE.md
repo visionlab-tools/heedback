@@ -25,6 +25,7 @@ Heedback is an open source customer support & product feedback suite. Self-hoste
 - **API**: REST JSON, versioned `/api/v1/`
 - **Queue**: AdonisJS + Bull (Redis) for async jobs
 - **Search**: PostgreSQL full-text search (tsvector)
+- **File storage**: `@adonisjs/drive` + `@aws-sdk/client-s3` — config in `config/drive.ts`, endpoint `POST /api/v1/uploads`
 
 ## Key Conventions
 
@@ -76,7 +77,7 @@ Shared component library consumed via `@heedback/ui-kit` workspace dependency. E
 Components:
 - **Primitives**: `Button`, `Input`, `Textarea`, `Select`, `Checkbox`
 - **Display**: `Badge`, `Alert`, `Card`
-- **Layout**: `PageHeader`, `EmptyState`, `DataTable`, `LoadingSpinner`
+- **Layout**: `PageHeader`, `EmptyState`, `DataTable`, `LoadingSpinner`, `Modal`
 - **Navigation**: `Nav`, `NavItem`
 
 ## Internationalization (i18n)
