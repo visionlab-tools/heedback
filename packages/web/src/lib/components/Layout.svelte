@@ -26,12 +26,14 @@
   const unsubOrg = currentOrg.subscribe((v) => (org = v))
   const unsubAllOrgs = allOrgs.subscribe((v) => (orgs = v))
   const unsubLoading = orgLoading.subscribe((v) => (loading = v))
+  let unsubAuthGuard: (() => void) | undefined
 
   onDestroy(() => {
     unsubAuth()
     unsubOrg()
     unsubAllOrgs()
     unsubLoading()
+    unsubAuthGuard?.()
   })
 
   // Sync currentOrg from URL org ID whenever path or orgs change
@@ -47,12 +49,11 @@
 
   onMount(async () => {
     await auth.init()
-    const unsubAuthGuard = auth.subscribe((state) => {
+    unsubAuthGuard = auth.subscribe((state) => {
       if (state.initialized && !state.user) {
         navigate('/login', { replace: true })
       }
     })
-    onDestroy(unsubAuthGuard)
     await currentOrg.load()
   })
 </script>

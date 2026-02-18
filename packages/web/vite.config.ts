@@ -7,6 +7,8 @@ export default defineConfig({
   plugins: [svelte(), tailwindcss()],
   resolve: {
     conditions: ['browser'],
+    // Resolve TipTap from web's node_modules when compiling ui-kit .svelte files
+    dedupe: ['@tiptap/core', '@tiptap/pm', '@tiptap/starter-kit', 'tiptap-markdown'],
   },
   server: {
     port: 3000,
