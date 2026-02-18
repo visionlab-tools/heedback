@@ -140,7 +140,7 @@
     flex-direction: column;
     gap: 10px;
   }
-  .hb-chat-input, .hb-chat-textarea {
+  .hb-chat-textarea {
     width: 100%;
     padding: 10px 14px;
     border: 1px solid #e5e7eb;
@@ -152,7 +152,7 @@
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
   }
-  .hb-chat-input:focus, .hb-chat-textarea:focus {
+  .hb-chat-textarea:focus {
     border-color: #a5b4fc;
     background: white;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);

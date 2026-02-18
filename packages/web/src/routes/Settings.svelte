@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { Button, Input, Checkbox } from '@heedback/ui-kit'
+  import { Button, Input, Checkbox, ColorPicker } from '@heedback/ui-kit'
   import { LOCALE_LABELS } from '@heedback/shared'
   import { api } from '../lib/api/client'
   import { currentOrg } from '../lib/stores/org'
@@ -75,13 +75,7 @@
   <form onsubmit={handleSubmit} class="mt-8 space-y-6">
     <Input id="name" label={$_('settings.org_name')} bind:value={name} required />
 
-    <div>
-      <label for="brandColor" class="block text-sm font-medium text-slate-700">{$_('settings.brand_color')}</label>
-      <div class="mt-1 flex items-center gap-2">
-        <input id="brandColor" type="color" bind:value={brandColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
-        <input type="text" bind:value={brandColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
-      </div>
-    </div>
+    <ColorPicker id="brandColor" label={$_('settings.brand_color')} bind:value={brandColor} />
 
     <!-- Content language picker replaces the old defaultLocale text input -->
     <div>

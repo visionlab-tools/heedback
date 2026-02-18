@@ -4,6 +4,7 @@ import Conversation from '#models/conversation'
 import Message from '#models/message'
 import EndUser from '#models/end_user'
 import Organization from '#models/organization'
+import WebhookService from '#services/webhook_service'
 
 interface ListFilters {
   page?: number
@@ -35,6 +36,8 @@ interface PublicReplyData {
 }
 
 export default class ConversationService {
+  private webhookService = new WebhookService()
+
   async list(orgId: string, filters: ListFilters) {
     const page = filters.page || 1
     const limit = Math.min(filters.limit || 20, 100)
@@ -145,8 +148,16 @@ export default class ConversationService {
     return true
   }
 
+  /** Resolve org by UUID or slug — widget passes UUID, portal passes slug */
+  private async findOrgBySlugOrId(orgSlug: string) {
+    return Organization.query()
+      .where('id', orgSlug)
+      .orWhere('slug', orgSlug)
+      .first()
+  }
+
   async publicCreate(orgSlug: string, data: PublicCreateData) {
-    const org = await Organization.findBy('slug', orgSlug)
+    const org = await this.findOrgBySlugOrId(orgSlug)
     if (!org) return null
 
     let endUser = null
@@ -188,11 +199,24 @@ export default class ConversationService {
 
     await conversation.load('endUser')
 
+    // Fire-and-forget webhooks for new conversation
+    this.webhookService.dispatch(org, {
+      event: 'conversation.created',
+      organizationId: org.id,
+      data: {
+        conversationId: conversation.id,
+        body: data.body,
+        channel: conversation.channel,
+        endUserEmail: data.endUserEmail,
+        endUserName: data.endUserName,
+      },
+    })
+
     return conversation
   }
 
   async publicShow(orgSlug: string, conversationId: string) {
-    const org = await Organization.findBy('slug', orgSlug)
+    const org = await this.findOrgBySlugOrId(orgSlug)
     if (!org) return null
 
     const conversation = await Conversation.query()
@@ -215,7 +239,7 @@ export default class ConversationService {
   }
 
   async publicReply(orgSlug: string, conversationId: string, data: PublicReplyData) {
-    const org = await Organization.findBy('slug', orgSlug)
+    const org = await this.findOrgBySlugOrId(orgSlug)
     if (!org) return null
 
     const conversation = await Conversation.query()
@@ -240,6 +264,18 @@ export default class ConversationService {
       conversation.status = 'open'
     }
     await conversation.save()
+
+    // Fire-and-forget webhooks for new reply
+    this.webhookService.dispatch(org, {
+      event: 'message.created',
+      organizationId: org.id,
+      data: {
+        conversationId: conversation.id,
+        messageId: message.id,
+        body: data.body,
+        endUserEmail: conversation.endUserId,
+      },
+    })
 
     return message
   }

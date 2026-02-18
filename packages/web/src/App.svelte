@@ -17,6 +17,8 @@
   import ConversationDetail from './routes/ConversationDetail.svelte'
   import Settings from './routes/Settings.svelte'
   import SettingsWidget from './routes/SettingsWidget.svelte'
+  import SettingsWidgetDemo from './routes/SettingsWidgetDemo.svelte'
+  import SettingsIntegrations from './routes/SettingsIntegrations.svelte'
   import NotFound from './routes/NotFound.svelte'
 
   /* Routes are matched top-to-bottom; first match wins.
@@ -39,7 +41,9 @@
     { path: '/:orgId/changelog/new', component: ChangelogEditor, layout: Layout },
     { path: '/:orgId/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
     { path: '/:orgId/settings', component: Settings, layout: Layout },
+    { path: '/:orgId/settings/widget/demo', component: SettingsWidgetDemo, layout: Layout },
     { path: '/:orgId/settings/widget', component: SettingsWidget, layout: Layout },
+    { path: '/:orgId/settings/integrations', component: SettingsIntegrations, layout: Layout },
     { path: '*', component: NotFound, layout: Layout },
   ]
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { Button, PageHeader } from '@heedback/ui-kit'
+  import { Button, PageHeader, ColorPicker } from '@heedback/ui-kit'
   import CodeSnippet from '../lib/components/CodeSnippet.svelte'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
   import { currentOrg } from '../lib/stores/org'
@@ -71,13 +71,11 @@
     <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.appearance')}</h2>
     <p class="mt-1 text-sm text-slate-600">{$_('settings_widget.widget_color_hint')}</p>
     <form onsubmit={saveAppearance} class="mt-4 space-y-4">
-      <div>
-        <label for="widgetColor" class="block text-sm font-medium text-slate-700">{$_('settings_widget.widget_color')}</label>
-        <div class="mt-1 flex items-center gap-2">
-          <input id="widgetColor" type="color" bind:value={widgetColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
-          <input type="text" bind:value={widgetColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
-        </div>
-      </div>
+      <ColorPicker
+        id="widgetColor"
+        label={$_('settings_widget.widget_color')}
+        bind:value={widgetColor}
+      />
       <Button type="submit" loading={saving}>
         {saving ? $_('common.saving') : $_('settings_widget.save_appearance')}
       </Button>

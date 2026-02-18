@@ -97,7 +97,10 @@ export default class OrganizationService {
       logoUrl: data.logoUrl !== undefined ? data.logoUrl : org.logoUrl,
       websiteUrl: data.websiteUrl !== undefined ? data.websiteUrl : org.websiteUrl,
       billingEmail: data.billingEmail !== undefined ? data.billingEmail : org.billingEmail,
-      settings: data.settings !== undefined ? data.settings : org.settings,
+      // Shallow-merge settings so each admin page can send only its own keys
+      settings: data.settings !== undefined
+        ? { ...(org.settings ?? {}), ...data.settings }
+        : org.settings,
     })
 
     await org.save()
