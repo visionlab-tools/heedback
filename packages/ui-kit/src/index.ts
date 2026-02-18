@@ -5,6 +5,7 @@ export { default as Textarea } from './primitives/Textarea.svelte'
 export { default as Select } from './primitives/Select.svelte'
 export { default as Checkbox } from './primitives/Checkbox.svelte'
 export { default as TitleWithSlug } from './primitives/TitleWithSlug.svelte'
+export { default as MarkdownEditor } from './MarkdownEditor.svelte'
 
 // Display
 export { default as Badge } from './display/Badge.svelte'

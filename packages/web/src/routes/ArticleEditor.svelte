@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
-  import { Button, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import { Button, MarkdownEditor, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createArticleEditorState } from './ArticleEditor.svelte.ts'
 
@@ -34,7 +34,7 @@
 
     <TitleWithSlug bind:title={state.title} bind:slug={state.slug} required />
 
-    <Textarea id="body" label={$_('article_editor.content')} bind:value={state.body} rows={20} mono />
+    <MarkdownEditor label={$_('article_editor.content')} value={state.body} onchange={(v) => (state.body = v)} rows={20} />
 
     <Select id="status" label={$_('common.status')} bind:value={state.status}>
       <option value="draft">{$_('article_editor.status_draft')}</option>

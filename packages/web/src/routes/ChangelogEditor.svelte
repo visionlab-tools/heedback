@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
-  import { Button, Input, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import { Button, Input, MarkdownEditor, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createChangelogEditorState, allLabels } from './ChangelogEditor.svelte.ts'
 
@@ -34,7 +34,7 @@
 
     <TitleWithSlug bind:title={state.title} bind:slug={state.slug} required />
 
-    <Textarea id="body" label={$_('changelog_editor.content')} bind:value={state.body} rows={15} mono />
+    <MarkdownEditor label={$_('changelog_editor.content')} value={state.body} onchange={(v) => (state.body = v)} rows={15} />
 
     <div>
       <label class="block text-sm font-medium text-slate-700 mb-2">{$_('changelog_editor.labels')}</label>
