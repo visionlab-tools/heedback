@@ -5,6 +5,7 @@ import Message from '#models/message'
 import EndUser from '#models/end_user'
 import Organization from '#models/organization'
 import WebhookService from '#services/webhook_service'
+import { isUuid } from '#helpers/uuid'
 
 interface ListFilters {
   page?: number
@@ -150,10 +151,10 @@ export default class ConversationService {
 
   /** Resolve org by UUID or slug — widget passes UUID, portal passes slug */
   private async findOrgBySlugOrId(orgSlug: string) {
-    return Organization.query()
-      .where('id', orgSlug)
-      .orWhere('slug', orgSlug)
-      .first()
+    if (isUuid(orgSlug)) {
+      return Organization.query().where('id', orgSlug).first()
+    }
+    return Organization.query().where('slug', orgSlug).first()
   }
 
   async publicCreate(orgSlug: string, data: PublicCreateData) {

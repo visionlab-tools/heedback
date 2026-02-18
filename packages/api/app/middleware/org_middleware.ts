@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import Organization from '#models/organization'
+import { isUuid } from '#helpers/uuid'
 
 /**
  * Org middleware resolves the organization from the :orgSlug route
@@ -20,11 +21,10 @@ export default class OrgMiddleware {
       })
     }
 
-    // Accept both UUID and slug
-    const organization = await Organization.query()
-      .where('id', orgSlug)
-      .orWhere('slug', orgSlug)
-      .first()
+    // Accept both UUID and slug — check format to avoid Postgres uuid cast errors
+    const organization = isUuid(orgSlug)
+      ? await Organization.findBy('id', orgSlug)
+      : await Organization.findBy('slug', orgSlug)
 
     if (!organization) {
       return ctx.response.notFound({

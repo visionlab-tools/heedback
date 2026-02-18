@@ -7,16 +7,16 @@ import {
 } from '#validators/organization_validator'
 import OrganizationService from '#services/organization_service'
 import Organization from '#models/organization'
+import { isUuid } from '#helpers/uuid'
 
 export default class OrganizationsController {
   private orgService = new OrganizationService()
 
   /** Public endpoint — no auth required. Exposes only safe widget config. */
   async publicConfig({ params, response }: HttpContext) {
-    const org = await Organization.query()
-      .where('id', params.orgSlug)
-      .orWhere('slug', params.orgSlug)
-      .first()
+    const org = isUuid(params.orgSlug)
+      ? await Organization.findBy('id', params.orgSlug)
+      : await Organization.findBy('slug', params.orgSlug)
 
     if (!org) return response.notFound({ message: 'Organization not found' })
 
