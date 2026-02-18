@@ -193,7 +193,10 @@
   "settings_widget.save_appearance": "Erscheinungsbild speichern",
 
   "settings_widget.demo_title": "Widget-Demo",
-  "settings_widget.demo_subtitle": "Vorschau des Heedback-Widgets auf einer Beispielwebsite.",
+  "settings_widget.demo_subtitle": "Vorschau des Heedback-Widgets auf einer Beispielwebsite. Passen Sie Parameter an, um Änderungen in Echtzeit zu sehen.",
+  "settings_widget.demo_position": "Position",
+  "settings_widget.demo_locale": "Sprache",
+  "settings_widget.demo_color": "Schaltflächenfarbe",
 
   "error.bad_request": "Ungültige Anfrage.",
   "error.unauthorized": "Sitzung abgelaufen. Bitte erneut anmelden.",

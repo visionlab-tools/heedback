@@ -1,27 +1,35 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { PageHeader } from '@heedback/ui-kit'
+  import { PageHeader, ColorPicker, Select } from '@heedback/ui-kit'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
   import { currentOrg } from '../lib/stores/org'
 
   let { orgId }: { orgId: string } = $props()
 
   let origin = window.location.origin
-  let widgetColor = $state('')
+
+  // Live-editable demo parameters
+  let demoColor = $state('#6366f1')
+  let demoPosition = $state('bottom-right')
+  let demoLocale = $state('en')
 
   currentOrg.subscribe((org) => {
     if (org) {
       const settings = org.settings as Record<string, unknown>
-      widgetColor = (settings?.widgetColor as string) || (settings?.brandColor as string) || ''
+      demoColor = (settings?.widgetColor as string)
+        || (settings?.brandColor as string)
+        || '#6366f1'
     }
   })
 
-  /** data-color attr to forward the saved widget color into the iframe */
-  let colorAttr = $derived(widgetColor ? ` data-color="${widgetColor}"` : '')
+  let colorAttr = $derived(demoColor ? ` data-color="${demoColor}"` : '')
 
-  /** Mock website HTML that loads the real widget via the Vite dev server */
-  let srcdoc = $derived(`<!DOCTYPE html>
-<html lang="en">
+  /** Rebuild the iframe HTML whenever a parameter changes */
+  let srcdoc = $derived(buildSrcdoc(demoPosition, demoLocale, colorAttr))
+
+  function buildSrcdoc(position: string, locale: string, colorAttribute: string) {
+    return `<!DOCTYPE html>
+<html lang="${locale}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -75,19 +83,54 @@
     </div>
   </div>
 
-  <script src="${origin}/widget.js" data-org="${orgId}" data-position="bottom-right"${colorAttr}><\/script>
+  <script src="${origin}/widget.js" data-org="${orgId}" data-position="${position}" data-locale="${locale}"${colorAttribute}><\/script>
 </body>
-</html>`)
+</html>`
+  }
 </script>
 
 <div>
   <SettingsTabs />
   <PageHeader title={$_('settings_widget.demo_title')} subtitle={$_('settings_widget.demo_subtitle')} />
 
+  <!-- Live controls -->
+  <div class="mt-4 flex flex-wrap items-end gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <div class="w-48">
+      <label for="demoPosition" class="block text-xs font-medium text-slate-600 mb-1">{$_('settings_widget.demo_position')}</label>
+      <select
+        id="demoPosition"
+        bind:value={demoPosition}
+        class="block w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+      >
+        <option value="bottom-right">bottom-right</option>
+        <option value="bottom-left">bottom-left</option>
+      </select>
+    </div>
+
+    <div class="w-40">
+      <label for="demoLocale" class="block text-xs font-medium text-slate-600 mb-1">{$_('settings_widget.demo_locale')}</label>
+      <select
+        id="demoLocale"
+        bind:value={demoLocale}
+        class="block w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white hover:border-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+      >
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="nl">Nederlands</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+
+    <div class="w-56">
+      <ColorPicker label={$_('settings_widget.demo_color')} bind:value={demoColor} />
+    </div>
+  </div>
+
   <iframe
     title="Widget demo"
     {srcdoc}
     class="mt-4 w-full rounded-lg border border-slate-200 shadow-sm"
-    style="height: calc(100vh - 220px);"
+    style="height: calc(100vh - 300px);"
   ></iframe>
 </div>

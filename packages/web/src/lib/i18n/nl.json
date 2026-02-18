@@ -193,7 +193,10 @@
   "settings_widget.save_appearance": "Uiterlijk opslaan",
 
   "settings_widget.demo_title": "Widget-demo",
-  "settings_widget.demo_subtitle": "Bekijk de Heedback-widget op een voorbeeldwebsite.",
+  "settings_widget.demo_subtitle": "Bekijk de Heedback-widget op een voorbeeldwebsite. Pas parameters aan om wijzigingen in realtime te zien.",
+  "settings_widget.demo_position": "Positie",
+  "settings_widget.demo_locale": "Taal",
+  "settings_widget.demo_color": "Knopkleur",
 
   "error.bad_request": "Ongeldige aanvraag.",
   "error.unauthorized": "Sessie verlopen. Log opnieuw in.",

@@ -193,7 +193,10 @@
   "settings_widget.save_appearance": "Save Appearance",
 
   "settings_widget.demo_title": "Widget Demo",
-  "settings_widget.demo_subtitle": "Preview the Heedback widget on a mock website.",
+  "settings_widget.demo_subtitle": "Preview the Heedback widget on a mock website. Tweak parameters to see changes in real time.",
+  "settings_widget.demo_position": "Position",
+  "settings_widget.demo_locale": "Language",
+  "settings_widget.demo_color": "Button Color",
 
   "error.bad_request": "Invalid request.",
   "error.unauthorized": "Session expired. Please log in again.",
