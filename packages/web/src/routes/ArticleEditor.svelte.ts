@@ -85,7 +85,7 @@ export function createArticleEditorState(id?: string) {
       } else {
         await api.post(`/org/${orgSlug}/articles`, payload)
       }
-      navigate('/articles')
+      navigate(`/${orgSlug}/articles`)
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : 'Failed to save article'
     } finally {

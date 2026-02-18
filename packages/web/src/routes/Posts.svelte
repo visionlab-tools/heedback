@@ -4,7 +4,6 @@
   import { ChevronUp } from 'lucide-svelte'
   import { Badge, Card, Select, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Post {
     id: string
@@ -16,15 +15,12 @@
     createdAt: string
   }
 
+  let { orgSlug }: { orgSlug: string } = $props()
+
   let posts = $state<Post[]>([])
   let loading = $state(true)
-  let orgSlug = $state('')
   let statusFilter = $state('')
   let sortBy = $state<'votes' | 'newest'>('newest')
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
 
   onMount(loadPosts)
 
@@ -84,7 +80,7 @@
   {:else}
     <div class="mt-4 space-y-3">
       {#each posts as post}
-        <Card href="/posts/{post.id}" padding="sm" interactive>
+        <Card href="/{orgSlug}/posts/{post.id}" padding="sm" interactive>
           <div class="flex items-start justify-between">
             <div class="flex-1">
               <div class="flex items-center gap-2">

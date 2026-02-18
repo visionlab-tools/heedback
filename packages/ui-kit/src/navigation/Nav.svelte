@@ -16,8 +16,9 @@
   } = $props()
 
   function isActive(href: string): boolean {
-    if (href === '/') return activePath === '/'
-    return activePath.startsWith(href)
+    if (activePath === href) return true
+    // Sub-path match (e.g. /org/articles matches /org/articles/new)
+    return activePath.startsWith(href + '/')
   }
 </script>
 

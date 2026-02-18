@@ -5,7 +5,7 @@
   import Markdown from '../lib/components/Markdown.svelte'
   import { createPostDetailState } from './PostDetail.svelte.ts'
 
-  let { id }: { id: string } = $props()
+  let { id, orgSlug }: { id: string; orgSlug: string } = $props()
 
   const state = createPostDetailState(id)
 

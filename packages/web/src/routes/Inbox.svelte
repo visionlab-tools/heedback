@@ -4,6 +4,8 @@
   import { Badge, Card, Select, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { createInboxState } from './Inbox.svelte.ts'
 
+  let { orgSlug }: { orgSlug: string } = $props()
+
   const state = createInboxState()
 
   onMount(state.loadConversations)
@@ -29,7 +31,7 @@
   {:else}
     <div class="mt-4 space-y-3">
       {#each state.conversations as convo}
-        <Card href="/inbox/{convo.id}" padding="sm" interactive>
+        <Card href="/{orgSlug}/inbox/{convo.id}" padding="sm" interactive>
           <div class="flex items-start justify-between">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">

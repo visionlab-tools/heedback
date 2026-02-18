@@ -155,7 +155,6 @@
   "settings_widget.col_default": "Standard",
   "settings_widget.col_description": "Beschreibung",
   "settings_widget.desc_org": "Ihr Organisations-Slug (erforderlich)",
-  "settings_widget.desc_color": "Markenfarbe für den Widget-Header",
   "settings_widget.desc_position": "Widget-Position: bottom-right oder bottom-left",
   "settings_widget.desc_locale": "Standardsprache",
   "settings_widget.desc_user_id": "Einen eingeloggten Benutzer vorab identifizieren",

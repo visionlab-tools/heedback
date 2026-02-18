@@ -5,7 +5,7 @@
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createChangelogEditorState, allLabels } from './ChangelogEditor.svelte.ts'
 
-  let { id }: { id?: string } = $props()
+  let { id, orgSlug }: { id?: string; orgSlug: string } = $props()
 
   const state = createChangelogEditorState(id)
 
@@ -66,7 +66,7 @@
       <Button type="submit" loading={state.saving}>
         {state.saving ? $_('common.saving') : state.isEdit ? $_('common.update') : $_('common.create')}
       </Button>
-      <Button href="/changelog" variant="secondary">{$_('common.cancel')}</Button>
+      <Button href="/{orgSlug}/changelog" variant="secondary">{$_('common.cancel')}</Button>
     </div>
   </form>
 </div>

@@ -93,7 +93,7 @@ export function createChangelogEditorState(id?: string) {
       } else {
         await api.post(`/org/${orgSlug}/changelog`, payload)
       }
-      navigate('/changelog')
+      navigate(`/${orgSlug}/changelog`)
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : 'Failed to save'
     } finally {

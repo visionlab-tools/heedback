@@ -155,7 +155,6 @@
   "settings_widget.col_default": "Default",
   "settings_widget.col_description": "Description",
   "settings_widget.desc_org": "Your organization slug (required)",
-  "settings_widget.desc_color": "Brand color for the widget header",
   "settings_widget.desc_position": "Widget position: bottom-right or bottom-left",
   "settings_widget.desc_locale": "Default language locale",
   "settings_widget.desc_user_id": "Pre-identify a logged-in user",

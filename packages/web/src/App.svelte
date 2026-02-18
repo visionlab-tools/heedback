@@ -3,6 +3,7 @@
   import type { RouteDefinition } from './lib/components/Router.svelte'
   import Layout from './lib/components/Layout.svelte'
   import Login from './routes/Login.svelte'
+  import RootRedirect from './routes/RootRedirect.svelte'
   import Dashboard from './routes/Dashboard.svelte'
   import Articles from './routes/Articles.svelte'
   import ArticleEditor from './routes/ArticleEditor.svelte'
@@ -19,24 +20,26 @@
   import NotFound from './routes/NotFound.svelte'
 
   /* Routes are matched top-to-bottom; first match wins.
-     More specific paths (e.g. /articles/new) must come before parameterized ones. */
+     All org-scoped routes are prefixed with /:orgSlug so the URL
+     always reflects the active organization context. */
   const routes: RouteDefinition[] = [
     { path: '/login', component: Login },
-    { path: '/', component: Dashboard, layout: Layout },
-    { path: '/articles', component: Articles, layout: Layout },
-    { path: '/articles/new', component: ArticleEditor, layout: Layout },
-    { path: '/articles/:id/edit', component: ArticleEditor, layout: Layout },
-    { path: '/collections', component: Collections, layout: Layout },
-    { path: '/inbox', component: Inbox, layout: Layout },
-    { path: '/inbox/:id', component: ConversationDetail, layout: Layout },
-    { path: '/boards', component: Boards, layout: Layout },
-    { path: '/posts', component: Posts, layout: Layout },
-    { path: '/posts/:id', component: PostDetail, layout: Layout },
-    { path: '/changelog', component: Changelog, layout: Layout },
-    { path: '/changelog/new', component: ChangelogEditor, layout: Layout },
-    { path: '/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
-    { path: '/settings', component: Settings, layout: Layout },
-    { path: '/settings/widget', component: SettingsWidget, layout: Layout },
+    { path: '/', component: RootRedirect },
+    { path: '/:orgSlug', component: Dashboard, layout: Layout },
+    { path: '/:orgSlug/articles', component: Articles, layout: Layout },
+    { path: '/:orgSlug/articles/new', component: ArticleEditor, layout: Layout },
+    { path: '/:orgSlug/articles/:id/edit', component: ArticleEditor, layout: Layout },
+    { path: '/:orgSlug/collections', component: Collections, layout: Layout },
+    { path: '/:orgSlug/inbox', component: Inbox, layout: Layout },
+    { path: '/:orgSlug/inbox/:id', component: ConversationDetail, layout: Layout },
+    { path: '/:orgSlug/boards', component: Boards, layout: Layout },
+    { path: '/:orgSlug/posts', component: Posts, layout: Layout },
+    { path: '/:orgSlug/posts/:id', component: PostDetail, layout: Layout },
+    { path: '/:orgSlug/changelog', component: Changelog, layout: Layout },
+    { path: '/:orgSlug/changelog/new', component: ChangelogEditor, layout: Layout },
+    { path: '/:orgSlug/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
+    { path: '/:orgSlug/settings', component: Settings, layout: Layout },
+    { path: '/:orgSlug/settings/widget', component: SettingsWidget, layout: Layout },
     { path: '*', component: NotFound, layout: Layout },
   ]
 </script>

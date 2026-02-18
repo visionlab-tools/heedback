@@ -1,10 +1,14 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
   import { getPath } from '../router.svelte.ts'
+  import { currentOrg, type Organization } from '../stores/org'
+
+  let org = $state<Organization | null>(null)
+  currentOrg.subscribe((v) => (org = v))
 
   let tabs = $derived([
-    { href: '/settings', label: $_('settings_tabs.general') },
-    { href: '/settings/widget', label: $_('settings_tabs.widget') },
+    { href: `/${org?.slug ?? ''}/settings`, label: $_('settings_tabs.general') },
+    { href: `/${org?.slug ?? ''}/settings/widget`, label: $_('settings_tabs.widget') },
   ])
 
   let activePath = $derived(getPath())

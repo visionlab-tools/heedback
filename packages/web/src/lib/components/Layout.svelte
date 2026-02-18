@@ -1,12 +1,16 @@
+<!--
+  App shell for authenticated org-scoped pages.
+  Reads orgSlug from the URL, syncs it with the org store,
+  and renders the sidebar + page content.
+-->
 <script lang="ts">
   import { onMount, type Snippet } from 'svelte'
-  import { navigate } from '../router.svelte.ts'
+  import { getPath, navigate } from '../router.svelte.ts'
   import { auth } from '../stores/auth'
-  import { currentOrg, orgLoading } from '../stores/org'
+  import { currentOrg, allOrgs, orgLoading, type Organization } from '../stores/org'
   import { LoadingSpinner } from '@heedback/ui-kit'
   import Sidebar from './Sidebar.svelte'
   import Toast from './Toast.svelte'
-  import CreateOrgModal from './CreateOrgModal.svelte'
 
   let { children }: { children: Snippet } = $props()
 
@@ -14,12 +18,25 @@
     initialized: false,
     user: null,
   })
-  let org = $state<unknown | null>(null)
+  let orgs = $state<Organization[]>([])
+  let org = $state<Organization | null>(null)
   let loading = $state(true)
 
   auth.subscribe((s) => (authState = s))
   currentOrg.subscribe((v) => (org = v))
+  allOrgs.subscribe((v) => (orgs = v))
   orgLoading.subscribe((v) => (loading = v))
+
+  // Sync currentOrg from URL slug whenever path or orgs change
+  let urlOrgSlug = $derived(getPath().split('/')[1] || '')
+
+  $effect(() => {
+    if (!urlOrgSlug || orgs.length === 0) return
+    const match = orgs.find((o) => o.slug === urlOrgSlug)
+    if (match && match.id !== org?.id) {
+      currentOrg.select(match)
+    }
+  })
 
   onMount(async () => {
     await auth.init()
@@ -36,8 +53,6 @@
   <div class="flex h-screen items-center justify-center bg-slate-50">
     <LoadingSpinner />
   </div>
-{:else if !org && authState.user}
-  <CreateOrgModal />
 {:else}
   <div class="flex h-screen bg-slate-50">
     <Sidebar />

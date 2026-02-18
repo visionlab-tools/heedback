@@ -3,7 +3,6 @@
   import { _ } from 'svelte-i18n'
   import { Button, Badge, PageHeader, EmptyState, DataTable, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Article {
     id: string
@@ -14,13 +13,10 @@
     createdAt: string
   }
 
+  let { orgSlug }: { orgSlug: string } = $props()
+
   let articles = $state<Article[]>([])
   let loading = $state(true)
-  let orgSlug = $state('')
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
 
   onMount(async () => {
     if (!orgSlug) return
@@ -58,7 +54,7 @@
 <div>
   <PageHeader title={$_('articles.title')} subtitle={$_('articles.subtitle')}>
     {#snippet actions()}
-      <Button href="/articles/new" size="sm">{$_('articles.new')}</Button>
+      <Button href="/{orgSlug}/articles/new" size="sm">{$_('articles.new')}</Button>
     {/snippet}
   </PageHeader>
 
@@ -78,7 +74,7 @@
             {article.collection?.translations?.[0]?.name || '—'}
           </td>
           <td class="px-6 py-4 text-right">
-            <Button href="/articles/{article.id}/edit" variant="ghost" size="sm">{$_('common.edit')}</Button>
+            <Button href="/{orgSlug}/articles/{article.id}/edit" variant="ghost" size="sm">{$_('common.edit')}</Button>
           </td>
         </tr>
       {/each}

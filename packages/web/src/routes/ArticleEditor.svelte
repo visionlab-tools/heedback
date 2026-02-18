@@ -5,7 +5,7 @@
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createArticleEditorState } from './ArticleEditor.svelte.ts'
 
-  let { id }: { id?: string } = $props()
+  let { id, orgSlug }: { id?: string; orgSlug: string } = $props()
 
   const state = createArticleEditorState(id)
 
@@ -49,7 +49,7 @@
       <Button type="submit" loading={state.saving}>
         {state.saving ? $_('common.saving') : state.isEdit ? $_('article_editor.update') : $_('article_editor.create')}
       </Button>
-      <Button href="/articles" variant="secondary">{$_('common.cancel')}</Button>
+      <Button href="/{orgSlug}/articles" variant="secondary">{$_('common.cancel')}</Button>
     </div>
   </form>
 </div>

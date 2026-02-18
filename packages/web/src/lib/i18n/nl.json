@@ -155,7 +155,6 @@
   "settings_widget.col_default": "Standaard",
   "settings_widget.col_description": "Beschrijving",
   "settings_widget.desc_org": "Uw organisatie-slug (verplicht)",
-  "settings_widget.desc_color": "Merkkleur voor de widget-header",
   "settings_widget.desc_position": "Widget-positie: bottom-right of bottom-left",
   "settings_widget.desc_locale": "Standaardtaal",
   "settings_widget.desc_user_id": "Identificeer een ingelogde gebruiker",

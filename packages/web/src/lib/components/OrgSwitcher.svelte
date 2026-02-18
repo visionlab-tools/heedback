@@ -1,10 +1,11 @@
 <!--
   Dropdown to switch between organizations in the sidebar.
-  Also shows a "new org" option to create additional organizations.
+  Navigating to /:orgSlug sets the active org context via the URL.
 -->
 <script lang="ts">
   import { _ } from 'svelte-i18n'
   import { ChevronDown, Plus } from 'lucide-svelte'
+  import { navigate } from '../router.svelte.ts'
   import { currentOrg, allOrgs, type Organization } from '../stores/org'
   import CreateOrgModal from './CreateOrgModal.svelte'
 
@@ -17,7 +18,7 @@
   allOrgs.subscribe((v) => (orgs = v))
 
   function selectOrg(org: Organization) {
-    currentOrg.select(org)
+    navigate(`/${org.slug}`)
     showDropdown = false
   }
 

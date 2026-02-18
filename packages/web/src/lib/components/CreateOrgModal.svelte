@@ -9,6 +9,7 @@
   import { api } from '../api/client'
   import { currentOrg } from '../stores/org'
   import { addToast } from '../stores/toast'
+  import { navigate } from '../router.svelte.ts'
 
   let {
     blocking = true,
@@ -64,6 +65,7 @@
       await currentOrg.load()
       addToast($_('success.created'), 'success')
       onclose?.()
+      navigate(`/${slug}`)
     } finally {
       creating = false
     }

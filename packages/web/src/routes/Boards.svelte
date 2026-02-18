@@ -3,7 +3,6 @@
   import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Board {
     id: string
@@ -14,9 +13,10 @@
     postCount?: number
   }
 
+  let { orgSlug }: { orgSlug: string } = $props()
+
   let boards = $state<Board[]>([])
   let loading = $state(true)
-  let orgSlug = $state('')
   let showForm = $state(false)
   let editingId = $state<string | null>(null)
 
@@ -25,10 +25,6 @@
   let formDescription = $state('')
   let formIsPublic = $state(true)
   let saving = $state(false)
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
 
   onMount(loadBoards)
 

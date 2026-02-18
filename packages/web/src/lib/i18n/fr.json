@@ -155,7 +155,6 @@
   "settings_widget.col_default": "Par défaut",
   "settings_widget.col_description": "Description",
   "settings_widget.desc_org": "Slug de votre organisation (requis)",
-  "settings_widget.desc_color": "Couleur de marque du widget",
   "settings_widget.desc_position": "Position du widget : bottom-right ou bottom-left",
   "settings_widget.desc_locale": "Langue par défaut",
   "settings_widget.desc_user_id": "Pré-identifier un utilisateur connecté",
