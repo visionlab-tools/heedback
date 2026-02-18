@@ -49,13 +49,13 @@
 
 {#if match}
   {#if match.def.layout}
-    {#key match.def.path}
-      {@const LayoutComp = match.def.layout}
-      {@const PageComp = match.def.component}
-      <LayoutComp>
+    {@const LayoutComp = match.def.layout}
+    <LayoutComp>
+      {#key match.def.path}
+        {@const PageComp = match.def.component}
         <PageComp {...match.params} />
-      </LayoutComp>
-    {/key}
+      {/key}
+    </LayoutComp>
   {:else}
     {#key match.def.path}
       {@const PageComp = match.def.component}

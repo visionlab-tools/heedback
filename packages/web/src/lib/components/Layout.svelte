@@ -4,7 +4,7 @@
   and renders the sidebar + page content.
 -->
 <script lang="ts">
-  import { onMount, type Snippet } from 'svelte'
+  import { onMount, onDestroy, type Snippet } from 'svelte'
   import { getPath, navigate } from '../router.svelte.ts'
   import { auth } from '../stores/auth'
   import { currentOrg, allOrgs, orgLoading, type Organization } from '../stores/org'
@@ -22,10 +22,17 @@
   let org = $state<Organization | null>(null)
   let loading = $state(true)
 
-  auth.subscribe((s) => (authState = s))
-  currentOrg.subscribe((v) => (org = v))
-  allOrgs.subscribe((v) => (orgs = v))
-  orgLoading.subscribe((v) => (loading = v))
+  const unsubAuth = auth.subscribe((s) => (authState = s))
+  const unsubOrg = currentOrg.subscribe((v) => (org = v))
+  const unsubAllOrgs = allOrgs.subscribe((v) => (orgs = v))
+  const unsubLoading = orgLoading.subscribe((v) => (loading = v))
+
+  onDestroy(() => {
+    unsubAuth()
+    unsubOrg()
+    unsubAllOrgs()
+    unsubLoading()
+  })
 
   // Sync currentOrg from URL org ID whenever path or orgs change
   let urlOrgId = $derived(getPath().split('/')[1] || '')
@@ -40,11 +47,12 @@
 
   onMount(async () => {
     await auth.init()
-    auth.subscribe((state) => {
+    const unsubAuthGuard = auth.subscribe((state) => {
       if (state.initialized && !state.user) {
         navigate('/login', { replace: true })
       }
     })
+    onDestroy(unsubAuthGuard)
     await currentOrg.load()
   })
 </script>

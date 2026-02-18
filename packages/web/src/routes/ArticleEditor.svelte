@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
-  import { Button, Input, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import { Button, Textarea, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createArticleEditorState } from './ArticleEditor.svelte.ts'
 
@@ -36,14 +36,11 @@
 
     <Textarea id="body" label={$_('article_editor.content')} bind:value={state.body} rows={20} mono />
 
-    <div class="grid grid-cols-2 gap-6">
-      <Select id="status" label={$_('common.status')} bind:value={state.status}>
-        <option value="draft">{$_('article_editor.status_draft')}</option>
-        <option value="published">{$_('article_editor.status_published')}</option>
-        <option value="archived">{$_('article_editor.status_archived')}</option>
-      </Select>
-      <Input id="seoTitle" label={$_('article_editor.seo_title')} bind:value={state.seoTitle} />
-    </div>
+    <Select id="status" label={$_('common.status')} bind:value={state.status}>
+      <option value="draft">{$_('article_editor.status_draft')}</option>
+      <option value="published">{$_('article_editor.status_published')}</option>
+      <option value="archived">{$_('article_editor.status_archived')}</option>
+    </Select>
 
     <div class="flex items-center gap-3">
       <Button type="submit" loading={state.saving}>

@@ -14,8 +14,6 @@ export function createArticleEditorState(id?: string) {
   let slug = $state('')
   let status = $state<'draft' | 'published' | 'archived'>('draft')
   let collectionId = $state('')
-  let seoTitle = $state('')
-  let seoDescription = $state('')
   let saving = $state(false)
   let error = $state('')
 
@@ -45,8 +43,6 @@ export function createArticleEditorState(id?: string) {
       const article = data.data
       slug = article.slug
       status = article.status
-      seoTitle = article.seoTitle || ''
-      seoDescription = article.seoDescription || ''
       collectionId = article.collectionId || ''
 
       // Merge server translations into per-locale drafts
@@ -76,8 +72,6 @@ export function createArticleEditorState(id?: string) {
       slug,
       status,
       collectionId: collectionId || null,
-      seoTitle: seoTitle || null,
-      seoDescription: seoDescription || null,
       translations: filledTranslations,
     }
 
@@ -102,10 +96,6 @@ export function createArticleEditorState(id?: string) {
     set status(v: 'draft' | 'published' | 'archived') { status = v },
     get collectionId() { return collectionId },
     set collectionId(v: string) { collectionId = v },
-    get seoTitle() { return seoTitle },
-    set seoTitle(v: string) { seoTitle = v },
-    get seoDescription() { return seoDescription },
-    set seoDescription(v: string) { seoDescription = v },
     get saving() { return saving },
     get error() { return error },
     get isEdit() { return isEdit },

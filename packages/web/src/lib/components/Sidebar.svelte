@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte'
   import { auth } from '../stores/auth'
   import { currentOrg, type Organization } from '../stores/org'
   import { getPath } from '../router.svelte.ts'
@@ -9,10 +10,15 @@
   let user = $state<{ name: string; email: string } | null>(null)
   let org = $state<Organization | null>(null)
 
-  auth.subscribe((state) => {
+  const unsubAuth = auth.subscribe((state) => {
     user = state.user
   })
-  currentOrg.subscribe((v) => (org = v))
+  const unsubOrg = currentOrg.subscribe((v) => (org = v))
+
+  onDestroy(() => {
+    unsubAuth()
+    unsubOrg()
+  })
 
   let activePath = $derived(getPath())
   let orgId = $derived(org?.id ?? '')
