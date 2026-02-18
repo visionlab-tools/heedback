@@ -20,26 +20,26 @@
   import NotFound from './routes/NotFound.svelte'
 
   /* Routes are matched top-to-bottom; first match wins.
-     All org-scoped routes are prefixed with /:orgSlug so the URL
+     All org-scoped routes are prefixed with /:orgId so the URL
      always reflects the active organization context. */
   const routes: RouteDefinition[] = [
     { path: '/login', component: Login },
     { path: '/', component: RootRedirect },
-    { path: '/:orgSlug', component: Dashboard, layout: Layout },
-    { path: '/:orgSlug/articles', component: Articles, layout: Layout },
-    { path: '/:orgSlug/articles/new', component: ArticleEditor, layout: Layout },
-    { path: '/:orgSlug/articles/:id/edit', component: ArticleEditor, layout: Layout },
-    { path: '/:orgSlug/collections', component: Collections, layout: Layout },
-    { path: '/:orgSlug/inbox', component: Inbox, layout: Layout },
-    { path: '/:orgSlug/inbox/:id', component: ConversationDetail, layout: Layout },
-    { path: '/:orgSlug/boards', component: Boards, layout: Layout },
-    { path: '/:orgSlug/posts', component: Posts, layout: Layout },
-    { path: '/:orgSlug/posts/:id', component: PostDetail, layout: Layout },
-    { path: '/:orgSlug/changelog', component: Changelog, layout: Layout },
-    { path: '/:orgSlug/changelog/new', component: ChangelogEditor, layout: Layout },
-    { path: '/:orgSlug/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
-    { path: '/:orgSlug/settings', component: Settings, layout: Layout },
-    { path: '/:orgSlug/settings/widget', component: SettingsWidget, layout: Layout },
+    { path: '/:orgId', component: Dashboard, layout: Layout },
+    { path: '/:orgId/articles', component: Articles, layout: Layout },
+    { path: '/:orgId/articles/new', component: ArticleEditor, layout: Layout },
+    { path: '/:orgId/articles/:id/edit', component: ArticleEditor, layout: Layout },
+    { path: '/:orgId/collections', component: Collections, layout: Layout },
+    { path: '/:orgId/inbox', component: Inbox, layout: Layout },
+    { path: '/:orgId/inbox/:id', component: ConversationDetail, layout: Layout },
+    { path: '/:orgId/boards', component: Boards, layout: Layout },
+    { path: '/:orgId/posts', component: Posts, layout: Layout },
+    { path: '/:orgId/posts/:id', component: PostDetail, layout: Layout },
+    { path: '/:orgId/changelog', component: Changelog, layout: Layout },
+    { path: '/:orgId/changelog/new', component: ChangelogEditor, layout: Layout },
+    { path: '/:orgId/changelog/:id/edit', component: ChangelogEditor, layout: Layout },
+    { path: '/:orgId/settings', component: Settings, layout: Layout },
+    { path: '/:orgId/settings/widget', component: SettingsWidget, layout: Layout },
     { path: '*', component: NotFound, layout: Layout },
   ]
 </script>

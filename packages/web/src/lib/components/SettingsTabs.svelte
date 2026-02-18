@@ -7,8 +7,8 @@
   currentOrg.subscribe((v) => (org = v))
 
   let tabs = $derived([
-    { href: `/${org?.slug ?? ''}/settings`, label: $_('settings_tabs.general') },
-    { href: `/${org?.slug ?? ''}/settings/widget`, label: $_('settings_tabs.widget') },
+    { href: `/${org?.id ?? ''}/settings`, label: $_('settings_tabs.general') },
+    { href: `/${org?.id ?? ''}/settings/widget`, label: $_('settings_tabs.widget') },
   ])
 
   let activePath = $derived(getPath())

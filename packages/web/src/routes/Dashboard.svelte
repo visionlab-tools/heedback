@@ -16,7 +16,7 @@
     color: string
   }
 
-  let { orgSlug }: { orgSlug: string } = $props()
+  let { orgId }: { orgId: string } = $props()
 
   let org = $state<{ name: string } | null>(null)
   let stats = $state({

@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n'
   import { Button, Badge, Card, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
+  import { currentOrg } from '../lib/stores/org'
 
   interface ChangelogEntry {
     id: string
@@ -13,10 +14,15 @@
     translations: Array<{ locale: string; title: string }>
   }
 
-  let { orgSlug }: { orgSlug: string } = $props()
+  let { orgId }: { orgId: string } = $props()
 
   let entries = $state<ChangelogEntry[]>([])
   let loading = $state(true)
+  let orgSlug = $state('')
+
+  currentOrg.subscribe((org) => {
+    if (org) orgSlug = org.slug
+  })
 
   onMount(async () => {
     if (!orgSlug) return
@@ -46,7 +52,7 @@
 <div>
   <PageHeader title={$_('changelog.title')} subtitle={$_('changelog.subtitle')}>
     {#snippet actions()}
-      <Button href="/{orgSlug}/changelog/new" size="sm">{$_('changelog.new')}</Button>
+      <Button href="/{orgId}/changelog/new" size="sm">{$_('changelog.new')}</Button>
     {/snippet}
   </PageHeader>
 
@@ -57,7 +63,7 @@
   {:else}
     <div class="space-y-3">
       {#each entries as entry}
-        <Card href="/{orgSlug}/changelog/{entry.id}/edit" padding="sm" interactive>
+        <Card href="/{orgId}/changelog/{entry.id}/edit" padding="sm" interactive>
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">

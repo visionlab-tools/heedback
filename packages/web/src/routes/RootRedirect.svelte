@@ -19,7 +19,7 @@
   currentOrg.subscribe((v) => {
     if (v) {
       hasOrg = true
-      navigate(`/${v.slug}`, { replace: true })
+      navigate(`/${v.id}`, { replace: true })
     }
   })
   auth.subscribe((s) => (authReady = s.initialized))

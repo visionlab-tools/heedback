@@ -18,7 +18,7 @@
   allOrgs.subscribe((v) => (orgs = v))
 
   function selectOrg(org: Organization) {
-    navigate(`/${org.slug}`)
+    navigate(`/${org.id}`)
     showDropdown = false
   }
 

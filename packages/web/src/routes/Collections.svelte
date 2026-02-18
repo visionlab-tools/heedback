@@ -19,10 +19,11 @@
 
   interface TranslationDraft { locale: string; name: string; description: string }
 
-  let { orgSlug }: { orgSlug: string } = $props()
+  let { orgId }: { orgId: string } = $props()
 
   let collections = $state<Collection[]>([])
   let loading = $state(true)
+  let orgSlug = $state('')
   let orgLocales = $state<string[]>(['en'])
   let showForm = $state(false)
   let editingId = $state<string | null>(null)
@@ -36,9 +37,9 @@
   // Index into the active locale's draft
   let activeIndex = $derived(formTranslations.findIndex((t) => t.locale === activeLocale))
 
-  // Still need org settings for locale config
   currentOrg.subscribe((org) => {
     if (!org) return
+    orgSlug = org.slug
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) orgLocales = locales
   })

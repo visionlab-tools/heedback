@@ -51,7 +51,7 @@
         logoUrl = result.key
       }
 
-      await api.post('/organizations', {
+      const res = await api.post<{ data: { id: string } }>('/organizations', {
         name,
         slug,
         logoUrl,
@@ -65,7 +65,7 @@
       await currentOrg.load()
       addToast($_('success.created'), 'success')
       onclose?.()
-      navigate(`/${slug}`)
+      navigate(`/${res.data.id}`)
     } finally {
       creating = false
     }

@@ -11,6 +11,7 @@ interface TranslationDraft {
 }
 
 export function createChangelogEditorState(id?: string) {
+  let orgId = $state('')
   let orgSlug = $state('')
   let slug = $state('')
   let status = $state<'draft' | 'scheduled' | 'published'>('draft')
@@ -28,6 +29,7 @@ export function createChangelogEditorState(id?: string) {
 
   currentOrg.subscribe((org) => {
     if (!org) return
+    orgId = org.id
     orgSlug = org.slug
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) {
@@ -93,7 +95,7 @@ export function createChangelogEditorState(id?: string) {
       } else {
         await api.post(`/org/${orgSlug}/changelog`, payload)
       }
-      navigate(`/${orgSlug}/changelog`)
+      navigate(`/${orgId}/changelog`)
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : 'Failed to save'
     } finally {

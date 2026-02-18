@@ -5,6 +5,8 @@ import Organization from '#models/organization'
 /**
  * Org middleware resolves the organization from the :orgSlug route
  * parameter and attaches it to the HTTP context.
+ * Accepts both UUID (id) and slug for flexibility — the widget uses
+ * the org ID while legacy URLs may still use the slug.
  *
  * Usage: .use(middleware.org())
  */
@@ -14,11 +16,15 @@ export default class OrgMiddleware {
 
     if (!orgSlug) {
       return ctx.response.badRequest({
-        message: 'Organization slug is required',
+        message: 'Organization identifier is required',
       })
     }
 
-    const organization = await Organization.query().where('slug', orgSlug).first()
+    // Accept both UUID and slug
+    const organization = await Organization.query()
+      .where('id', orgSlug)
+      .orWhere('slug', orgSlug)
+      .first()
 
     if (!organization) {
       return ctx.response.notFound({
@@ -26,7 +32,6 @@ export default class OrgMiddleware {
       })
     }
 
-    // Attach the organization to the context for downstream use
     ctx.organization = organization
 
     return next()

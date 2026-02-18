@@ -4,14 +4,14 @@
   import CodeSnippet from '../lib/components/CodeSnippet.svelte'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
 
-  let { orgSlug }: { orgSlug: string } = $props()
+  let { orgId }: { orgId: string } = $props()
 
   let apiBaseUrl = $state(window.location.origin)
 
   let autoInitSnippet = $derived(
     `<script
   src="${apiBaseUrl}/widget.js"
-  data-org="${orgSlug}"
+  data-org="${orgId}"
   data-position="bottom-right"
   data-locale="en"><\/script>`,
   )
@@ -20,7 +20,7 @@
     `<script src="${apiBaseUrl}/widget.js"><\/script>
 <script>
   window.Heedback.init({
-    org: '${orgSlug}',
+    org: '${orgId}',
     position: 'bottom-right',
     locale: 'en'
   })
@@ -66,7 +66,7 @@
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-org</td>
             <td class="px-4 py-2.5 text-slate-500">—</td>
-            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_org')}</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_org_id')}</td>
           </tr>
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-position</td>

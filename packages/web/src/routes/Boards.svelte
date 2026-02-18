@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
+  import { currentOrg } from '../lib/stores/org'
 
   interface Board {
     id: string
@@ -13,7 +14,13 @@
     postCount?: number
   }
 
-  let { orgSlug }: { orgSlug: string } = $props()
+  let { orgId }: { orgId: string } = $props()
+
+  let orgSlug = $state('')
+
+  currentOrg.subscribe((org) => {
+    if (org) orgSlug = org.slug
+  })
 
   let boards = $state<Board[]>([])
   let loading = $state(true)

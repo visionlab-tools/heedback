@@ -15,12 +15,12 @@
   currentOrg.subscribe((v) => (org = v))
 
   let activePath = $derived(getPath())
-  let orgSlug = $derived(org?.slug ?? '')
+  let orgId = $derived(org?.id ?? '')
 </script>
 
 <aside class="w-64 bg-slate-950 flex flex-col shrink-0">
   <OrgSwitcher />
-  <SidebarNav {activePath} {orgSlug} />
+  <SidebarNav {activePath} {orgId} />
 
   {#if user}
     <SidebarUser {user} onLogout={() => auth.logout()} />

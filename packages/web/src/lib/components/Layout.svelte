@@ -27,12 +27,12 @@
   allOrgs.subscribe((v) => (orgs = v))
   orgLoading.subscribe((v) => (loading = v))
 
-  // Sync currentOrg from URL slug whenever path or orgs change
-  let urlOrgSlug = $derived(getPath().split('/')[1] || '')
+  // Sync currentOrg from URL org ID whenever path or orgs change
+  let urlOrgId = $derived(getPath().split('/')[1] || '')
 
   $effect(() => {
-    if (!urlOrgSlug || orgs.length === 0) return
-    const match = orgs.find((o) => o.slug === urlOrgSlug)
+    if (!urlOrgId || orgs.length === 0) return
+    const match = orgs.find((o) => o.id === urlOrgId)
     if (match && match.id !== org?.id) {
       currentOrg.select(match)
     }

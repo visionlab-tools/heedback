@@ -5,7 +5,7 @@
   import Markdown from '../lib/components/Markdown.svelte'
   import { createConversationDetailState } from './ConversationDetail.svelte.ts'
 
-  let { id, orgSlug }: { id: string; orgSlug: string } = $props()
+  let { id, orgId }: { id: string; orgId: string } = $props()
 
   const state = createConversationDetailState(id)
 
