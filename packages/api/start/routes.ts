@@ -230,6 +230,11 @@ router
 router
   .group(() => {
     /*
+    | Public org config (widget colors, name)
+    */
+    router.get('/org/:orgSlug/public/config', [OrganizationsController, 'publicConfig'])
+
+    /*
     | Public knowledge base
     */
     router.get('/org/:orgSlug/public/collections', [CollectionsController, 'publicIndex'])

@@ -172,6 +172,15 @@
 
   "settings_tabs.general": "Algemeen",
   "settings_tabs.widget": "Widget-integratie",
+  "settings_tabs.widget_demo": "Demo",
+
+  "settings_widget.appearance": "Widget-uiterlijk",
+  "settings_widget.widget_color": "Widget-knopkleur",
+  "settings_widget.widget_color_hint": "Pas de kleur van de knop onafhankelijk van uw merkkleur aan.",
+  "settings_widget.save_appearance": "Uiterlijk opslaan",
+
+  "settings_widget.demo_title": "Widget-demo",
+  "settings_widget.demo_subtitle": "Bekijk de Heedback-widget op een voorbeeldwebsite.",
 
   "error.bad_request": "Ongeldige aanvraag.",
   "error.unauthorized": "Sessie verlopen. Log opnieuw in.",

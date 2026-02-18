@@ -172,6 +172,15 @@
 
   "settings_tabs.general": "Général",
   "settings_tabs.widget": "Intégration du widget",
+  "settings_tabs.widget_demo": "Démo",
+
+  "settings_widget.appearance": "Apparence du widget",
+  "settings_widget.widget_color": "Couleur du bouton widget",
+  "settings_widget.widget_color_hint": "Personnalisez la couleur du bouton indépendamment de votre couleur de marque.",
+  "settings_widget.save_appearance": "Enregistrer l'apparence",
+
+  "settings_widget.demo_title": "Démo du widget",
+  "settings_widget.demo_subtitle": "Prévisualisez le widget Heedback sur un site factice.",
 
   "error.bad_request": "Requête invalide.",
   "error.unauthorized": "Session expirée. Veuillez vous reconnecter.",

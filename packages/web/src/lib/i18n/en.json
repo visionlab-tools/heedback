@@ -172,6 +172,15 @@
 
   "settings_tabs.general": "General",
   "settings_tabs.widget": "Widget Integration",
+  "settings_tabs.widget_demo": "Demo",
+
+  "settings_widget.appearance": "Widget Appearance",
+  "settings_widget.widget_color": "Widget Button Color",
+  "settings_widget.widget_color_hint": "Customize the launcher button color independently from your brand color.",
+  "settings_widget.save_appearance": "Save Appearance",
+
+  "settings_widget.demo_title": "Widget Demo",
+  "settings_widget.demo_subtitle": "Preview the Heedback widget on a mock website.",
 
   "error.bad_request": "Invalid request.",
   "error.unauthorized": "Session expired. Please log in again.",

@@ -18,7 +18,7 @@
     user?: any
   } = $props()
 
-  const state = createWidgetState(org)
+  const state = createWidgetState(org, color)
 </script>
 
 <div
@@ -28,8 +28,8 @@
   <!-- Panel -->
   {#if state.isOpen}
     <div class="hb-panel" class:hb-panel-closing={state.animating && !state.isOpen}>
-      <!-- Header -->
-      <div class="hb-header" style="background: linear-gradient(135deg, {color}, {color}dd);">
+      <!-- Header uses brandColor for consistency with the org identity -->
+      <div class="hb-header" style="background: linear-gradient(135deg, {state.brandColor}, {state.brandColor}dd);">
         <div class="hb-header-top">
           <div class="hb-header-brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +76,7 @@
       <!-- Content -->
       <div class="hb-content">
         {#if state.tab === 'chat'}
-          <ChatView {org} {user} {color} {locale} />
+          <ChatView {org} {user} color={state.brandColor} {locale} />
         {:else}
           <HelpView {org} {locale} />
         {/if}
@@ -84,11 +84,11 @@
     </div>
   {/if}
 
-  <!-- Trigger button -->
+  <!-- Trigger button uses widgetColor (independently customizable) -->
   <button
     class="hb-trigger"
     class:hb-trigger-open={state.isOpen}
-    style="background: linear-gradient(135deg, {color}, {color}dd);"
+    style="background: linear-gradient(135deg, {state.widgetColor}, {state.widgetColor}dd);"
     onclick={state.toggle}
     aria-label={state.isOpen ? t(locale, 'trigger.close') : t(locale, 'trigger.open')}
   >

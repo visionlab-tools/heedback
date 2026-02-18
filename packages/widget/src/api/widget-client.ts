@@ -22,6 +22,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const widgetApi = {
+  getOrgConfig(orgSlug: string) {
+    return request<{ data: { name: string; brandColor: string; widgetColor: string } }>(
+      `/org/${orgSlug}/public/config`
+    )
+  },
+
   searchPosts(orgSlug: string, query: string) {
     return request<{ data: any[] }>(`/org/${orgSlug}/posts?q=${encodeURIComponent(query)}&sort=votes`)
   },
@@ -51,7 +57,7 @@ export const widgetApi = {
 
   startConversation(
     orgSlug: string,
-    data: { subject?: string; body: string; channel?: string; endUserEmail?: string; endUserName?: string }
+    data: { body: string; channel?: string; endUserEmail?: string; endUserName?: string }
   ) {
     return request<{ data: any }>(`/org/${orgSlug}/public/conversations`, {
       method: 'POST',

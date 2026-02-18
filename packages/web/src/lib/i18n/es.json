@@ -172,6 +172,15 @@
 
   "settings_tabs.general": "General",
   "settings_tabs.widget": "Integración del widget",
+  "settings_tabs.widget_demo": "Demo",
+
+  "settings_widget.appearance": "Apariencia del widget",
+  "settings_widget.widget_color": "Color del botón del widget",
+  "settings_widget.widget_color_hint": "Personaliza el color del botón independientemente de tu color de marca.",
+  "settings_widget.save_appearance": "Guardar apariencia",
+
+  "settings_widget.demo_title": "Demo del widget",
+  "settings_widget.demo_subtitle": "Previsualiza el widget de Heedback en un sitio de ejemplo.",
 
   "error.bad_request": "Solicitud inválida.",
   "error.unauthorized": "Sesión expirada. Inicia sesión de nuevo.",

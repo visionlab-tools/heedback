@@ -96,7 +96,6 @@ describe('widget-client', () => {
       mockFetch.mockResolvedValue(mockResponse({ data: { id: 'conv-1' } }))
       await widgetApi.startConversation('my-org', {
         body: 'Hello',
-        subject: 'Test',
         channel: 'widget',
         endUserEmail: 'user@test.com',
       })
@@ -106,7 +105,6 @@ describe('widget-client', () => {
           method: 'POST',
           body: JSON.stringify({
             body: 'Hello',
-            subject: 'Test',
             channel: 'widget',
             endUserEmail: 'user@test.com',
           }),

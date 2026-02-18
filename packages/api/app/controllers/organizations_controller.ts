@@ -6,9 +6,29 @@ import {
   updateMemberValidator,
 } from '#validators/organization_validator'
 import OrganizationService from '#services/organization_service'
+import Organization from '#models/organization'
 
 export default class OrganizationsController {
   private orgService = new OrganizationService()
+
+  /** Public endpoint — no auth required. Exposes only safe widget config. */
+  async publicConfig({ params, response }: HttpContext) {
+    const org = await Organization.query()
+      .where('id', params.orgSlug)
+      .orWhere('slug', params.orgSlug)
+      .first()
+
+    if (!org) return response.notFound({ message: 'Organization not found' })
+
+    const settings = (org.settings ?? {}) as Record<string, unknown>
+    return response.ok({
+      data: {
+        name: org.name,
+        brandColor: (settings.brandColor as string) ?? '#6366f1',
+        widgetColor: (settings.widgetColor as string) ?? (settings.brandColor as string) ?? '#6366f1',
+      },
+    })
+  }
 
   async index({ auth, response }: HttpContext) {
     const result = await this.orgService.listForUser(auth.user!)

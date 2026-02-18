@@ -32,12 +32,6 @@
     </div>
 
     <form onsubmit={state.handleStart} class="hb-chat-form">
-      <input
-        type="text"
-        placeholder={t(locale, 'chat.subject_placeholder')}
-        bind:value={state.subject}
-        class="hb-chat-input"
-      />
       <textarea
         placeholder={t(locale, 'chat.message_placeholder')}
         bind:value={state.newMessage}

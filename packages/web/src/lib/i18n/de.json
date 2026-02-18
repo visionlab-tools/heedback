@@ -172,6 +172,15 @@
 
   "settings_tabs.general": "Allgemein",
   "settings_tabs.widget": "Widget-Integration",
+  "settings_tabs.widget_demo": "Demo",
+
+  "settings_widget.appearance": "Widget-Erscheinungsbild",
+  "settings_widget.widget_color": "Widget-Schaltflächenfarbe",
+  "settings_widget.widget_color_hint": "Passen Sie die Farbe der Schaltfläche unabhängig von Ihrer Markenfarbe an.",
+  "settings_widget.save_appearance": "Erscheinungsbild speichern",
+
+  "settings_widget.demo_title": "Widget-Demo",
+  "settings_widget.demo_subtitle": "Vorschau des Heedback-Widgets auf einer Beispielwebsite.",
 
   "error.bad_request": "Ungültige Anfrage.",
   "error.unauthorized": "Sitzung abgelaufen. Bitte erneut anmelden.",

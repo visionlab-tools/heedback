@@ -6,7 +6,6 @@ export function createChatViewState(org: string, user: any) {
   let newMessage = $state('')
   let sending = $state(false)
   let loading = $state(false)
-  let subject = $state('')
   let started = $state(false)
 
   async function handleStart(e: Event) {
@@ -15,7 +14,6 @@ export function createChatViewState(org: string, user: any) {
     sending = true
     try {
       const data = await widgetApi.startConversation(org, {
-        subject: subject || undefined,
         body: newMessage,
         channel: 'widget',
         endUserEmail: user?.email,
@@ -32,7 +30,6 @@ export function createChatViewState(org: string, user: any) {
         },
       ]
       newMessage = ''
-      subject = ''
     } catch {
       // Handle error
     } finally {
@@ -81,8 +78,6 @@ export function createChatViewState(org: string, user: any) {
     set newMessage(v: string) { newMessage = v },
     get sending() { return sending },
     get loading() { return loading },
-    get subject() { return subject },
-    set subject(v: string) { subject = v },
     get started() { return started },
     handleStart,
     handleReply,

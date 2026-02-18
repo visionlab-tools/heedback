@@ -1,12 +1,39 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { PageHeader } from '@heedback/ui-kit'
+  import { Button, PageHeader } from '@heedback/ui-kit'
   import CodeSnippet from '../lib/components/CodeSnippet.svelte'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
+  import { currentOrg } from '../lib/stores/org'
+  import { api } from '../lib/api/client'
+  import { addToast } from '../lib/stores/toast'
 
   let { orgId }: { orgId: string } = $props()
 
   let apiBaseUrl = $state(window.location.origin)
+  let widgetColor = $state('#6366f1')
+  let orgSlug = $state('')
+  let saving = $state(false)
+
+  currentOrg.subscribe((org) => {
+    if (org) {
+      orgSlug = org.slug
+      const settings = org.settings as Record<string, unknown>
+      widgetColor = (settings?.widgetColor as string) || (settings?.brandColor as string) || '#6366f1'
+    }
+  })
+
+  async function saveAppearance(e: Event) {
+    e.preventDefault()
+    saving = true
+    try {
+      await api.put(`/organizations/${orgSlug}`, {
+        settings: { widgetColor },
+      })
+      addToast($_('success.saved'), 'success')
+    } finally {
+      saving = false
+    }
+  }
 
   let autoInitSnippet = $derived(
     `<script
@@ -39,8 +66,26 @@
   <SettingsTabs />
   <PageHeader title={$_('settings_widget.title')} subtitle={$_('settings_widget.subtitle')} />
 
-  <!-- Quick start -->
+  <!-- Widget Appearance -->
   <section>
+    <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.appearance')}</h2>
+    <p class="mt-1 text-sm text-slate-600">{$_('settings_widget.widget_color_hint')}</p>
+    <form onsubmit={saveAppearance} class="mt-4 space-y-4">
+      <div>
+        <label for="widgetColor" class="block text-sm font-medium text-slate-700">{$_('settings_widget.widget_color')}</label>
+        <div class="mt-1 flex items-center gap-2">
+          <input id="widgetColor" type="color" bind:value={widgetColor} class="h-10 w-10 rounded border border-slate-300 cursor-pointer" />
+          <input type="text" bind:value={widgetColor} class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors" />
+        </div>
+      </div>
+      <Button type="submit" loading={saving}>
+        {saving ? $_('common.saving') : $_('settings_widget.save_appearance')}
+      </Button>
+    </form>
+  </section>
+
+  <!-- Quick start -->
+  <section class="mt-10">
     <h2 class="text-lg font-semibold text-slate-900">{$_('settings_widget.quick_start')}</h2>
     <p class="mt-1 text-sm text-slate-600">
       {@html $_('settings_widget.quick_start_desc')}
