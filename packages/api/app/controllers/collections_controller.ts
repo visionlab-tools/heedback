@@ -6,6 +6,7 @@ import {
 } from '#validators/collection_validator'
 import CollectionService from '#services/collection_service'
 import Organization from '#models/organization'
+import { isUuid } from '#helpers/uuid'
 
 export default class CollectionsController {
   private collectionService = new CollectionService()
@@ -80,7 +81,9 @@ export default class CollectionsController {
   }
 
   async publicIndex({ params, request, response }: HttpContext) {
-    const org = await Organization.query().where('slug', params.orgId).first()
+    const org = isUuid(params.orgId)
+      ? await Organization.findBy('id', params.orgId)
+      : await Organization.findBy('slug', params.orgId)
 
     if (!org) {
       return response.notFound({ message: 'Organization not found' })
@@ -90,7 +93,22 @@ export default class CollectionsController {
     const collections = await this.collectionService.listPublished(org.id, locale)
 
     return response.ok({
-      data: collections.map((c) => c.serialize()),
+      data: collections.map((c) => this.serializePublicCollection(c)),
     })
+  }
+
+  /** Flatten translations so the widget gets { name, description, articles: [{ id, title }] } */
+  private serializePublicCollection(collection: any) {
+    const t = collection.translations?.[0]
+    return {
+      id: collection.id,
+      name: t?.name ?? '',
+      description: t?.description ?? '',
+      icon: collection.icon,
+      articles: (collection.articles ?? []).map((a: any) => {
+        const at = a.translations?.[0] ?? a.$preloaded?.translations?.[0]
+        return { id: a.id, title: at?.title ?? '', slug: a.slug }
+      }),
+    }
   }
 }

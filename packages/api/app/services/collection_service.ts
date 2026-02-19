@@ -212,6 +212,13 @@ export default class CollectionService {
       .preload('translations', (q) => {
         if (locale) q.where('locale', locale)
       })
+      .preload('articles', (q) => {
+        q.where('status', 'published')
+          .preload('translations', (tq) => {
+            if (locale) tq.where('locale', locale)
+          })
+          .orderBy('sort_order', 'asc')
+      })
       .preload('children', (query) => {
         query.where('is_published', true).preload('translations', (q) => {
           if (locale) q.where('locale', locale)

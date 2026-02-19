@@ -36,11 +36,20 @@
 
     <MarkdownEditor label={$_('article_editor.content')} value={state.body} onchange={(v) => (state.body = v)} rows={20} />
 
-    <Select id="status" label={$_('common.status')} bind:value={state.status}>
-      <option value="draft">{$_('article_editor.status_draft')}</option>
-      <option value="published">{$_('article_editor.status_published')}</option>
-      <option value="archived">{$_('article_editor.status_archived')}</option>
-    </Select>
+    <div class="grid grid-cols-2 gap-4">
+      <Select id="status" label={$_('common.status')} bind:value={state.status}>
+        <option value="draft">{$_('article_editor.status_draft')}</option>
+        <option value="published">{$_('article_editor.status_published')}</option>
+        <option value="archived">{$_('article_editor.status_archived')}</option>
+      </Select>
+
+      <Select id="collection" label={$_('articles.col_collection')} bind:value={state.collectionId}>
+        <option value="">—</option>
+        {#each state.collections as col}
+          <option value={col.id}>{col.name}</option>
+        {/each}
+      </Select>
+    </div>
 
     <div class="flex items-center gap-3">
       <Button type="submit" loading={state.saving}>

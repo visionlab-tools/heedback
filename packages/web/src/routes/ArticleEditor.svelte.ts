@@ -8,11 +8,17 @@ interface TranslationDraft {
   body: string
 }
 
+interface CollectionOption {
+  id: string
+  name: string
+}
+
 export function createArticleEditorState(id?: string) {
   let orgId = $state('')
   let slug = $state('')
   let status = $state<'draft' | 'published' | 'archived'>('draft')
   let collectionId = $state('')
+  let collections = $state<CollectionOption[]>([])
   let saving = $state(false)
   let error = $state('')
 
@@ -34,7 +40,21 @@ export function createArticleEditorState(id?: string) {
     }
   })
 
+  async function loadCollections() {
+    if (!orgId) return
+    try {
+      const data = await api.get<{ data: any[] }>(`/org/${orgId}/collections`)
+      collections = data.data.map((c: any) => ({
+        id: c.id,
+        name: c.translations?.[0]?.name ?? c.slug,
+      }))
+    } catch {
+      collections = []
+    }
+  }
+
   async function load() {
+    loadCollections()
     if (!isEdit || !orgId) return
     try {
       const data = await api.get<{ data: any }>(`/org/${orgId}/articles/${id}`)
@@ -94,6 +114,7 @@ export function createArticleEditorState(id?: string) {
     set status(v: 'draft' | 'published' | 'archived') { status = v },
     get collectionId() { return collectionId },
     set collectionId(v: string) { collectionId = v },
+    get collections() { return collections },
     get saving() { return saving },
     get error() { return error },
     get isEdit() { return isEdit },
