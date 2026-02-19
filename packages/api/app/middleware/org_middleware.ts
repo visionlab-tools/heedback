@@ -4,31 +4,31 @@ import Organization from '#models/organization'
 import { isUuid } from '#helpers/uuid'
 
 /**
- * Org middleware resolves the organization from the :orgSlug route
+ * Org middleware resolves the organization from the :orgId route
  * parameter and attaches it to the HTTP context.
- * Accepts both UUID (id) and slug for flexibility — the widget uses
- * the org ID while legacy URLs may still use the slug.
+ * Accepts both UUID (id) and slug for backwards compatibility —
+ * the widget uses the org ID while the portal may still use the slug.
  *
  * Usage: .use(middleware.org())
  */
 export default class OrgMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
-    const orgSlug = ctx.params.orgSlug
+    const orgIdentifier = ctx.params.orgId
 
-    if (!orgSlug) {
+    if (!orgIdentifier) {
       return ctx.response.badRequest({
         message: 'Organization identifier is required',
       })
     }
 
     // Accept both UUID and slug — check format to avoid Postgres uuid cast errors
-    const organization = isUuid(orgSlug)
-      ? await Organization.findBy('id', orgSlug)
-      : await Organization.findBy('slug', orgSlug)
+    const organization = isUuid(orgIdentifier)
+      ? await Organization.findBy('id', orgIdentifier)
+      : await Organization.findBy('slug', orgIdentifier)
 
     if (!organization) {
       return ctx.response.notFound({
-        message: `Organization "${orgSlug}" not found`,
+        message: `Organization "${orgIdentifier}" not found`,
       })
     }
 

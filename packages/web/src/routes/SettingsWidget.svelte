@@ -11,12 +11,10 @@
 
   let apiBaseUrl = $state(window.location.origin)
   let widgetColor = $state('#6366f1')
-  let orgSlug = $state('')
   let saving = $state(false)
 
   currentOrg.subscribe((org) => {
     if (org) {
-      orgSlug = org.slug
       const settings = org.settings as Record<string, unknown>
       widgetColor = (settings?.widgetColor as string) || (settings?.brandColor as string) || '#6366f1'
     }
@@ -26,7 +24,7 @@
     e.preventDefault()
     saving = true
     try {
-      await api.put(`/organizations/${orgSlug}`, {
+      await api.put(`/organizations/${orgId}`, {
         settings: { widgetColor },
       })
       addToast($_('success.saved'), 'success')

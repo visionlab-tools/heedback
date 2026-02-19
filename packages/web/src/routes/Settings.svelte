@@ -9,7 +9,6 @@
 
   let { orgId }: { orgId: string } = $props()
 
-  let orgSlug = $state('')
   let name = $state('')
   let brandColor = $state('#6366f1')
   let defaultLocale = $state('en')
@@ -21,7 +20,6 @@
 
   currentOrg.subscribe((org) => {
     if (org) {
-      orgSlug = org.slug
       name = org.name
       const settings = org.settings as Record<string, unknown>
       brandColor = (settings?.brandColor as string) || '#6366f1'
@@ -49,7 +47,7 @@
     saving = true
 
     try {
-      await api.put(`/organizations/${orgSlug}`, {
+      await api.put(`/organizations/${orgId}`, {
         name,
         settings: {
           brandColor,

@@ -105,6 +105,7 @@
   "inbox.no_subject": "No subject",
   "inbox.assigned_to": "assigned to {name}",
   "inbox.msg_count": "{count} msg",
+  "inbox.select_conversation": "Select a conversation to view it",
 
   "conversation.fallback_title": "Conversation",
   "conversation.messages": "{count} messages",

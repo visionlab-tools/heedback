@@ -105,6 +105,7 @@
   "inbox.no_subject": "Kein Betreff",
   "inbox.assigned_to": "zugewiesen an {name}",
   "inbox.msg_count": "{count} Nachr.",
+  "inbox.select_conversation": "Wählen Sie ein Gespräch aus, um es anzuzeigen",
 
   "conversation.fallback_title": "Gespräch",
   "conversation.messages": "{count} Nachrichten",

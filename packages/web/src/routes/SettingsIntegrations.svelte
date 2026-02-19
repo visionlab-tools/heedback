@@ -8,14 +8,12 @@
 
   let { orgId }: { orgId: string } = $props()
 
-  let orgSlug = $state('')
   let webhookUrl = $state('')
   let slackWebhookUrl = $state('')
   let saving = $state(false)
 
   currentOrg.subscribe((org) => {
     if (org) {
-      orgSlug = org.slug
       const settings = org.settings as Record<string, unknown>
       webhookUrl = (settings?.webhookUrl as string) || ''
       slackWebhookUrl = (settings?.slackWebhookUrl as string) || ''
@@ -26,7 +24,7 @@
     e.preventDefault()
     saving = true
     try {
-      await api.put(`/organizations/${orgSlug}`, {
+      await api.put(`/organizations/${orgId}`, {
         settings: {
           webhookUrl: webhookUrl || null,
           slackWebhookUrl: slackWebhookUrl || null,

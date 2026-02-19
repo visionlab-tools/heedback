@@ -84,7 +84,7 @@ export default class ConversationsController {
   async publicStore({ params, request, response }: HttpContext) {
     const payload = await request.validateUsing(createConversationValidator)
 
-    const conversation = await this.conversationService.publicCreate(params.orgSlug, payload)
+    const conversation = await this.conversationService.publicCreate(params.orgId, payload)
 
     if (!conversation) {
       return response.notFound({ message: 'Organization not found' })
@@ -94,16 +94,17 @@ export default class ConversationsController {
   }
 
   async publicShow({ params, response }: HttpContext) {
-    const result = await this.conversationService.publicShow(params.orgSlug, params.conversationId)
+    const result = await this.conversationService.publicShow(params.orgId, params.conversationId)
 
     if (!result) {
       return response.notFound({ message: 'Conversation not found' })
     }
 
+    // messages already include sender info from service
     return response.ok({
       data: {
         ...result.conversation.serialize(),
-        messages: result.messages.map((m) => m.serialize()),
+        messages: result.messages,
       },
     })
   }
@@ -112,7 +113,7 @@ export default class ConversationsController {
     const payload = await request.validateUsing(sendMessageValidator)
 
     const message = await this.conversationService.publicReply(
-      params.orgSlug,
+      params.orgId,
       params.conversationId,
       payload,
     )
@@ -122,5 +123,18 @@ export default class ConversationsController {
     }
 
     return response.created({ data: message.serialize() })
+  }
+
+  async publicListByEndUser({ params, response }: HttpContext) {
+    const conversations = await this.conversationService.publicListByEndUser(
+      params.orgId,
+      params.endUserId,
+    )
+
+    if (!conversations) {
+      return response.notFound({ message: 'Organization not found' })
+    }
+
+    return response.ok({ data: conversations.map((c) => c.serialize()) })
   }
 }

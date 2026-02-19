@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte'
   import { t } from '../lib/i18n'
   import { renderMarkdown } from '../utils/markdown'
   import { createChatViewState } from './ChatView.svelte.ts'
+  import ChatConversationList from './ChatConversationList.svelte'
 
   let {
     org,
@@ -16,11 +18,35 @@
   } = $props()
 
   const state = createChatViewState(org, user)
+
+  onMount(() => state.init())
+  onDestroy(() => state.cleanup())
 </script>
 
 <div class="hb-chat">
-  {#if !state.started}
-    <!-- Welcome + new conversation -->
+  {#if state.screen === 'loading'}
+    <div class="hb-chat-center"><span class="hb-chat-spinner"></span></div>
+
+  {:else if state.screen === 'list'}
+    <div class="hb-chat-header">
+      <h3 class="hb-chat-list-title">{t(locale, 'chat.conversations_title')}</h3>
+    </div>
+    <ChatConversationList
+      conversations={state.conversations}
+      {locale}
+      {color}
+      onSelect={state.openConversation}
+      onNew={state.goToNew}
+    />
+
+  {:else if state.screen === 'new'}
+    <!-- Welcome + new conversation form -->
+    {#if state.endUserId}
+      <button class="hb-chat-back" onclick={state.goToList}>
+        ← {t(locale, 'chat.back')}
+      </button>
+    {/if}
+
     <div class="hb-chat-welcome">
       <div class="hb-chat-welcome-icon" style="background: {color}15;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -56,8 +82,14 @@
         {/if}
       </button>
     </form>
-  {:else}
-    <!-- Conversation thread -->
+
+  {:else if state.screen === 'thread'}
+    <!-- Back button -->
+    <button class="hb-chat-back" onclick={state.goToList}>
+      ← {t(locale, 'chat.back')}
+    </button>
+
+    <!-- Message thread -->
     <div class="hb-chat-messages">
       {#each state.messages as msg}
         <div
@@ -67,7 +99,16 @@
           style={msg.senderType !== 'admin' ? `background: ${color}; color: white;` : ''}
         >
           {#if msg.senderType === 'admin'}
-            <span class="hb-chat-bubble-sender">{t(locale, 'chat.support')}</span>
+            <div class="hb-chat-sender-row">
+              {#if msg.sender?.avatarUrl}
+                <img class="hb-chat-avatar" src={msg.sender.avatarUrl} alt="" />
+              {:else}
+                <span class="hb-chat-avatar-placeholder" style="background: {color}30; color: {color};">
+                  {(msg.sender?.name || 'S')[0]}
+                </span>
+              {/if}
+              <span class="hb-chat-bubble-sender">{msg.sender?.name || t(locale, 'chat.support')}</span>
+            </div>
           {/if}
           <div class="hb-chat-bubble-body">{@html renderMarkdown(msg.body)}</div>
           <span class="hb-chat-bubble-time">{state.formatTime(msg.createdAt)}</span>
@@ -106,6 +147,34 @@
     flex-direction: column;
     height: 100%;
     gap: 12px;
+  }
+  .hb-chat-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Back button */
+  .hb-chat-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #6b7280;
+    font-family: inherit;
+    padding: 0;
+    text-align: left;
+  }
+  .hb-chat-back:hover { color: #374151; }
+
+  /* List header */
+  .hb-chat-header { padding-bottom: 4px; }
+  .hb-chat-list-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
   }
 
   /* Welcome */
@@ -151,15 +220,13 @@
     background: #f9fafb;
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
+    resize: none;
+    line-height: 1.5;
   }
   .hb-chat-textarea:focus {
     border-color: #a5b4fc;
     background: white;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
-  }
-  .hb-chat-textarea {
-    resize: none;
-    line-height: 1.5;
   }
   .hb-chat-send-btn {
     display: flex;
@@ -176,12 +243,8 @@
     transition: opacity 0.15s;
     font-family: inherit;
   }
-  .hb-chat-send-btn:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-  .hb-chat-send-btn:disabled {
-    cursor: not-allowed;
-  }
+  .hb-chat-send-btn:hover:not(:disabled) { opacity: 0.9; }
+  .hb-chat-send-btn:disabled { cursor: not-allowed; }
 
   .hb-chat-spinner {
     width: 14px;
@@ -204,9 +267,7 @@
     gap: 8px;
     padding-bottom: 8px;
   }
-  .hb-chat-messages::-webkit-scrollbar {
-    width: 3px;
-  }
+  .hb-chat-messages::-webkit-scrollbar { width: 3px; }
   .hb-chat-messages::-webkit-scrollbar-thumb {
     background: #d1d5db;
     border-radius: 3px;
@@ -229,22 +290,38 @@
     align-self: flex-end;
     border-bottom-right-radius: 4px;
   }
+
+  /* Agent sender row */
+  .hb-chat-sender-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .hb-chat-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .hb-chat-avatar-placeholder {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+  }
   .hb-chat-bubble-sender {
-    display: block;
     font-size: 11px;
     font-weight: 600;
     color: #6b7280;
-    margin-bottom: 2px;
   }
-  .hb-chat-bubble-body {
-    margin: 0;
-  }
-  .hb-chat-bubble-body :global(p) {
-    margin: 0 0 4px;
-  }
-  .hb-chat-bubble-body :global(p:last-child) {
-    margin: 0;
-  }
+  .hb-chat-bubble-body { margin: 0; }
+  .hb-chat-bubble-body :global(p) { margin: 0 0 4px; }
+  .hb-chat-bubble-body :global(p:last-child) { margin: 0; }
   .hb-chat-bubble-time {
     font-size: 10px;
     opacity: 0.6;
@@ -290,10 +367,6 @@
     transition: opacity 0.15s;
     flex-shrink: 0;
   }
-  .hb-chat-reply-btn:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-  .hb-chat-reply-btn:disabled {
-    cursor: not-allowed;
-  }
+  .hb-chat-reply-btn:hover:not(:disabled) { opacity: 0.9; }
+  .hb-chat-reply-btn:disabled { cursor: not-allowed; }
 </style>

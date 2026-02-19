@@ -14,7 +14,6 @@
   import Changelog from './routes/Changelog.svelte'
   import ChangelogEditor from './routes/ChangelogEditor.svelte'
   import Inbox from './routes/Inbox.svelte'
-  import ConversationDetail from './routes/ConversationDetail.svelte'
   import Settings from './routes/Settings.svelte'
   import SettingsWidget from './routes/SettingsWidget.svelte'
   import SettingsWidgetDemo from './routes/SettingsWidgetDemo.svelte'
@@ -32,8 +31,7 @@
     { path: '/:orgId/articles/new', component: ArticleEditor, layout: Layout },
     { path: '/:orgId/articles/:id/edit', component: ArticleEditor, layout: Layout },
     { path: '/:orgId/collections', component: Collections, layout: Layout },
-    { path: '/:orgId/inbox', component: Inbox, layout: Layout },
-    { path: '/:orgId/inbox/:id', component: ConversationDetail, layout: Layout },
+    { path: '/:orgId/inbox/:id?', component: Inbox, layout: Layout },
     { path: '/:orgId/boards', component: Boards, layout: Layout },
     { path: '/:orgId/posts', component: Posts, layout: Layout },
     { path: '/:orgId/posts/:id', component: PostDetail, layout: Layout },

@@ -5,6 +5,7 @@ export const createConversationValidator = vine.compile(
     subject: vine.string().trim().maxLength(500).optional().nullable(),
     body: vine.string().trim().minLength(1).maxLength(10000),
     channel: vine.enum(['widget', 'portal', 'email']).optional(),
+    endUserId: vine.string().uuid().optional(),
     endUserEmail: vine.string().email().optional(),
     endUserName: vine.string().trim().maxLength(255).optional(),
   })

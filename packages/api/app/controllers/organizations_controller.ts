@@ -14,9 +14,9 @@ export default class OrganizationsController {
 
   /** Public endpoint — no auth required. Exposes only safe widget config. */
   async publicConfig({ params, response }: HttpContext) {
-    const org = isUuid(params.orgSlug)
-      ? await Organization.findBy('id', params.orgSlug)
-      : await Organization.findBy('slug', params.orgSlug)
+    const org = isUuid(params.orgId)
+      ? await Organization.findBy('id', params.orgId)
+      : await Organization.findBy('slug', params.orgId)
 
     if (!org) return response.notFound({ message: 'Organization not found' })
 

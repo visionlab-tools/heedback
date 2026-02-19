@@ -3,7 +3,6 @@
   import { _ } from 'svelte-i18n'
   import { Button, Badge, PageHeader, EmptyState, DataTable, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Article {
     id: string
@@ -18,16 +17,11 @@
 
   let articles = $state<Article[]>([])
   let loading = $state(true)
-  let orgSlug = $state('')
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
 
   onMount(async () => {
-    if (!orgSlug) return
+    if (!orgId) return
     try {
-      const data = await api.get<{ data: Article[] }>(`/org/${orgSlug}/articles`)
+      const data = await api.get<{ data: Article[] }>(`/org/${orgId}/articles`)
       articles = data.data
     } finally {
       loading = false

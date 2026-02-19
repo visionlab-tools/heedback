@@ -227,8 +227,8 @@ export default class ChangelogService {
     return entry
   }
 
-  async subscribe(orgSlug: string, email: string) {
-    const org = await Organization.query().where('slug', orgSlug).first()
+  async subscribe(orgIdentifier: string, email: string) {
+    const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 
@@ -252,8 +252,8 @@ export default class ChangelogService {
     return { alreadySubscribed: false }
   }
 
-  async unsubscribe(orgSlug: string, email: string) {
-    const org = await Organization.query().where('slug', orgSlug).first()
+  async unsubscribe(orgIdentifier: string, email: string) {
+    const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 
@@ -271,8 +271,8 @@ export default class ChangelogService {
     return true
   }
 
-  async listPublished(orgSlug: string, page: number = 1, limit: number = 20, locale?: string) {
-    const org = await Organization.query().where('slug', orgSlug).first()
+  async listPublished(orgIdentifier: string, page: number = 1, limit: number = 20, locale?: string) {
+    const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 
@@ -289,8 +289,8 @@ export default class ChangelogService {
     return entries
   }
 
-  async showPublished(orgSlug: string, entryId: string, locale?: string) {
-    const org = await Organization.query().where('slug', orgSlug).first()
+  async showPublished(orgIdentifier: string, entryId: string, locale?: string) {
+    const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 

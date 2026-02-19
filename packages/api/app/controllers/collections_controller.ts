@@ -80,7 +80,7 @@ export default class CollectionsController {
   }
 
   async publicIndex({ params, request, response }: HttpContext) {
-    const org = await Organization.query().where('slug', params.orgSlug).first()
+    const org = await Organization.query().where('slug', params.orgId).first()
 
     if (!org) {
       return response.notFound({ message: 'Organization not found' })

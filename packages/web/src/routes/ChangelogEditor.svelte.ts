@@ -12,7 +12,6 @@ interface TranslationDraft {
 
 export function createChangelogEditorState(id?: string) {
   let orgId = $state('')
-  let orgSlug = $state('')
   let slug = $state('')
   let status = $state<'draft' | 'scheduled' | 'published'>('draft')
   let labels = $state<string[]>([])
@@ -30,7 +29,6 @@ export function createChangelogEditorState(id?: string) {
   currentOrg.subscribe((org) => {
     if (!org) return
     orgId = org.id
-    orgSlug = org.slug
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) {
       orgLocales = locales
@@ -39,9 +37,9 @@ export function createChangelogEditorState(id?: string) {
   })
 
   async function load() {
-    if (!isEdit || !orgSlug) return
+    if (!isEdit || !orgId) return
     try {
-      const data = await api.get<{ data: any }>(`/org/${orgSlug}/changelog/${id}`)
+      const data = await api.get<{ data: any }>(`/org/${orgId}/changelog/${id}`)
       const entry = data.data
       slug = entry.slug
       status = entry.status
@@ -91,9 +89,9 @@ export function createChangelogEditorState(id?: string) {
 
     try {
       if (isEdit) {
-        await api.put(`/org/${orgSlug}/changelog/${id}`, payload)
+        await api.put(`/org/${orgId}/changelog/${id}`, payload)
       } else {
-        await api.post(`/org/${orgSlug}/changelog`, payload)
+        await api.post(`/org/${orgId}/changelog`, payload)
       }
       navigate(`/${orgId}/changelog`)
     } catch (err: unknown) {

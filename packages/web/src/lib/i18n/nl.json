@@ -105,6 +105,7 @@
   "inbox.no_subject": "Geen onderwerp",
   "inbox.assigned_to": "toegewezen aan {name}",
   "inbox.msg_count": "{count} ber.",
+  "inbox.select_conversation": "Selecteer een gesprek om het te bekijken",
 
   "conversation.fallback_title": "Gesprek",
   "conversation.messages": "{count} berichten",

@@ -2,8 +2,8 @@ import Post from '#models/post'
 import Organization from '#models/organization'
 
 export default class RoadmapService {
-  async getRoadmap(orgSlug: string) {
-    const org = await Organization.query().where('slug', orgSlug).first()
+  async getRoadmap(orgIdentifier: string) {
+    const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 

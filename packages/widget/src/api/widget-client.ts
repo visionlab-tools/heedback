@@ -22,80 +22,112 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const widgetApi = {
-  getOrgConfig(orgSlug: string) {
+  getOrgConfig(orgId: string) {
     return request<{ data: { name: string; brandColor: string; widgetColor: string } }>(
-      `/org/${orgSlug}/public/config`
+      `/org/${orgId}/public/config`
     )
   },
 
-  searchPosts(orgSlug: string, query: string) {
-    return request<{ data: any[] }>(`/org/${orgSlug}/posts?q=${encodeURIComponent(query)}&sort=votes`)
+  searchPosts(orgId: string, query: string) {
+    return request<{ data: any[] }>(`/org/${orgId}/posts?q=${encodeURIComponent(query)}&sort=votes`)
   },
 
-  createPost(orgSlug: string, data: { boardId: string; title: string; body: string }) {
-    return request<{ data: any }>(`/org/${orgSlug}/posts`, {
+  createPost(orgId: string, data: { boardId: string; title: string; body: string }) {
+    return request<{ data: any }>(`/org/${orgId}/posts`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   },
 
-  vote(orgSlug: string, postId: string) {
-    return request<{ data: any }>(`/org/${orgSlug}/posts/${postId}/vote`, {
+  vote(orgId: string, postId: string) {
+    return request<{ data: any }>(`/org/${orgId}/posts/${postId}/vote`, {
       method: 'POST',
     })
   },
 
-  unvote(orgSlug: string, postId: string) {
-    return request<void>(`/org/${orgSlug}/posts/${postId}/vote`, {
+  unvote(orgId: string, postId: string) {
+    return request<void>(`/org/${orgId}/posts/${postId}/vote`, {
       method: 'DELETE',
     })
   },
 
-  getBoards(orgSlug: string) {
-    return request<{ data: any[] }>(`/org/${orgSlug}/boards`)
+  getBoards(orgId: string) {
+    return request<{ data: any[] }>(`/org/${orgId}/boards`)
   },
 
   startConversation(
-    orgSlug: string,
-    data: { body: string; channel?: string; endUserEmail?: string; endUserName?: string }
+    orgId: string,
+    data: {
+      body: string
+      channel?: string
+      endUserId?: string
+      endUserEmail?: string
+      endUserName?: string
+    }
   ) {
-    return request<{ data: any }>(`/org/${orgSlug}/public/conversations`, {
+    return request<{ data: any }>(`/org/${orgId}/public/conversations`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   },
 
-  getConversation(orgSlug: string, conversationId: string) {
-    return request<{ data: any }>(`/org/${orgSlug}/public/conversations/${conversationId}`)
+  getConversation(orgId: string, conversationId: string) {
+    return request<{ data: any }>(`/org/${orgId}/public/conversations/${conversationId}`)
   },
 
-  replyToConversation(orgSlug: string, conversationId: string, data: { body: string }) {
-    return request<{ data: any }>(`/org/${orgSlug}/public/conversations/${conversationId}/messages`, {
+  replyToConversation(orgId: string, conversationId: string, data: { body: string }) {
+    return request<{ data: any }>(`/org/${orgId}/public/conversations/${conversationId}/messages`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
+  },
+
+  listConversations(orgId: string, endUserId: string) {
+    return request<{ data: any[] }>(
+      `/org/${orgId}/public/end-users/${endUserId}/conversations`
+    )
   },
 
   // Help center
-  getCollections(orgSlug: string, locale?: string) {
+  getCollections(orgId: string, locale?: string) {
     const qs = locale ? `?locale=${locale}` : ''
-    return request<{ data: any[] }>(`/org/${orgSlug}/public/collections${qs}`)
+    return request<{ data: any[] }>(`/org/${orgId}/public/collections${qs}`)
   },
 
-  getArticle(orgSlug: string, articleId: string, locale?: string) {
+  getArticle(orgId: string, articleId: string, locale?: string) {
     const qs = locale ? `?locale=${locale}` : ''
-    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}${qs}`)
+    return request<{ data: any }>(`/org/${orgId}/public/articles/${articleId}${qs}`)
   },
 
-  searchArticles(orgSlug: string, query: string, locale?: string) {
+  searchArticles(orgId: string, query: string, locale?: string) {
     const localeParam = locale ? `&locale=${locale}` : ''
-    return request<{ data: any[] }>(`/org/${orgSlug}/public/articles/search?q=${encodeURIComponent(query)}${localeParam}`)
+    return request<{ data: any[] }>(`/org/${orgId}/public/articles/search?q=${encodeURIComponent(query)}${localeParam}`)
   },
 
-  sendArticleFeedback(orgSlug: string, articleId: string, data: { rating: number; comment?: string }) {
-    return request<{ data: any }>(`/org/${orgSlug}/public/articles/${articleId}/feedback`, {
+  sendArticleFeedback(orgId: string, articleId: string, data: { rating: number; comment?: string }) {
+    return request<{ data: any }>(`/org/${orgId}/public/articles/${articleId}/feedback`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   },
+}
+
+/** Connect to a conversation's SSE stream. Returns a function to disconnect. */
+export function connectSSE(
+  orgId: string,
+  conversationId: string,
+  onMessage: (event: { event: string; data: any }) => void,
+): () => void {
+  const url = `${apiBase}/api/v1/org/${orgId}/public/conversations/${conversationId}/sse`
+  const es = new EventSource(url)
+
+  es.onmessage = (e) => {
+    try {
+      onMessage(JSON.parse(e.data))
+    } catch {
+      // Ignore malformed SSE data
+    }
+  }
+
+  return () => es.close()
 }

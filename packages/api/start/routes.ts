@@ -13,6 +13,7 @@ const TagsController = () => import('#controllers/tags_controller')
 const RoadmapController = () => import('#controllers/roadmap_controller')
 const ChangelogController = () => import('#controllers/changelog_controller')
 const ConversationsController = () => import('#controllers/conversations_controller')
+const SseController = () => import('#controllers/sse_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 
 /*
@@ -47,10 +48,10 @@ router
 
     router.get('/organizations', [OrganizationsController, 'index'])
     router.post('/organizations', [OrganizationsController, 'store'])
-    router.get('/organizations/:orgSlug', [OrganizationsController, 'show']).use(middleware.org())
-    router.put('/organizations/:orgSlug', [OrganizationsController, 'update']).use(middleware.org())
+    router.get('/organizations/:orgId', [OrganizationsController, 'show']).use(middleware.org())
+    router.put('/organizations/:orgId', [OrganizationsController, 'update']).use(middleware.org())
     router
-      .delete('/organizations/:orgSlug', [OrganizationsController, 'destroy'])
+      .delete('/organizations/:orgId', [OrganizationsController, 'destroy'])
       .use(middleware.org())
       .use(middleware.orgRole({ roles: ['owner'] }))
 
@@ -66,7 +67,7 @@ router
         router.put('/members/:memberId', [OrganizationsController, 'updateMember'])
         router.delete('/members/:memberId', [OrganizationsController, 'removeMember'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -83,7 +84,7 @@ router
         router.delete('/collections/:collectionId', [CollectionsController, 'destroy'])
         router.post('/collections/reorder', [CollectionsController, 'reorder'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -101,7 +102,7 @@ router
         router.delete('/articles/:articleId', [ArticlesController, 'destroy'])
         router.post('/articles/:articleId/feedback', [ArticlesController, 'feedback'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -117,7 +118,7 @@ router
         router.put('/boards/:boardId', [BoardsController, 'update'])
         router.delete('/boards/:boardId', [BoardsController, 'destroy'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -136,7 +137,7 @@ router
         router.delete('/posts/:postId/vote', [PostsController, 'unvote'])
         router.post('/posts/:postId/merge', [PostsController, 'merge'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -151,7 +152,7 @@ router
         router.put('/comments/:commentId', [CommentsController, 'update'])
         router.delete('/comments/:commentId', [CommentsController, 'destroy'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -166,7 +167,7 @@ router
         router.put('/tags/:tagId', [TagsController, 'update'])
         router.delete('/tags/:tagId', [TagsController, 'destroy'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -178,7 +179,7 @@ router
       .group(() => {
         router.get('/roadmap', [RoadmapController, 'index'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -197,7 +198,7 @@ router
         router.post('/changelog/subscribers', [ChangelogController, 'subscribe'])
         router.delete('/changelog/subscribers/:email', [ChangelogController, 'unsubscribe'])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
       .use(middleware.org())
 
     /*
@@ -216,7 +217,16 @@ router
           'sendMessage',
         ])
       })
-      .prefix('/org/:orgSlug')
+      .prefix('/org/:orgId')
+      .use(middleware.org())
+
+    /*
+    |--------------------------------------------------------------------------
+    | SSE: real-time inbox stream (auth-required)
+    |--------------------------------------------------------------------------
+    */
+    router
+      .get('/org/:orgId/sse/inbox', [SseController, 'inboxStream'])
       .use(middleware.org())
   })
   .prefix('/api/v1')
@@ -232,29 +242,29 @@ router
     /*
     | Public org config (widget colors, name)
     */
-    router.get('/org/:orgSlug/public/config', [OrganizationsController, 'publicConfig'])
+    router.get('/org/:orgId/public/config', [OrganizationsController, 'publicConfig'])
 
     /*
     | Public knowledge base
     */
-    router.get('/org/:orgSlug/public/collections', [CollectionsController, 'publicIndex'])
-    router.get('/org/:orgSlug/public/articles/:articleId', [ArticlesController, 'publicShow'])
-    router.get('/org/:orgSlug/public/articles/search', [ArticlesController, 'publicSearch'])
-    router.post('/org/:orgSlug/public/articles/:articleId/feedback', [ArticlesController, 'feedback'])
+    router.get('/org/:orgId/public/collections', [CollectionsController, 'publicIndex'])
+    router.get('/org/:orgId/public/articles/:articleId', [ArticlesController, 'publicShow'])
+    router.get('/org/:orgId/public/articles/search', [ArticlesController, 'publicSearch'])
+    router.post('/org/:orgId/public/articles/:articleId/feedback', [ArticlesController, 'feedback'])
 
     /*
     | Public roadmap
     */
-    router.get('/org/:orgSlug/public/roadmap', [RoadmapController, 'index'])
+    router.get('/org/:orgId/public/roadmap', [RoadmapController, 'index'])
 
     /*
     | Public changelog
     */
-    router.get('/org/:orgSlug/public/changelog', [ChangelogController, 'publicIndex'])
-    router.get('/org/:orgSlug/public/changelog/:entryId', [ChangelogController, 'publicShow'])
-    router.post('/org/:orgSlug/public/changelog/subscribers', [ChangelogController, 'subscribe'])
+    router.get('/org/:orgId/public/changelog', [ChangelogController, 'publicIndex'])
+    router.get('/org/:orgId/public/changelog/:entryId', [ChangelogController, 'publicShow'])
+    router.post('/org/:orgId/public/changelog/subscribers', [ChangelogController, 'subscribe'])
     router
-      .delete('/org/:orgSlug/public/changelog/subscribers/:email', [
+      .delete('/org/:orgId/public/changelog/subscribers/:email', [
         ChangelogController,
         'unsubscribe',
       ])
@@ -262,14 +272,26 @@ router
     /*
     | Public chat / conversations
     */
-    router.post('/org/:orgSlug/public/conversations', [ConversationsController, 'publicStore'])
-    router.get('/org/:orgSlug/public/conversations/:conversationId', [
+    router.post('/org/:orgId/public/conversations', [ConversationsController, 'publicStore'])
+    router.get('/org/:orgId/public/conversations/:conversationId', [
       ConversationsController,
       'publicShow',
     ])
-    router.post('/org/:orgSlug/public/conversations/:conversationId/messages', [
+    router.post('/org/:orgId/public/conversations/:conversationId/messages', [
       ConversationsController,
       'publicReply',
+    ])
+    router.get('/org/:orgId/public/end-users/:endUserId/conversations', [
+      ConversationsController,
+      'publicListByEndUser',
+    ])
+
+    /*
+    | SSE: real-time conversation stream (public, for widget)
+    */
+    router.get('/org/:orgId/public/conversations/:conversationId/sse', [
+      SseController,
+      'conversationStream',
     ])
   })
   .prefix('/api/v1')

@@ -2,7 +2,7 @@ import { api } from '../lib/api/client'
 import { currentOrg } from '../lib/stores/org'
 
 export function createPostDetailState(id: string) {
-  let orgSlug = $state('')
+  let orgId = $state('')
   let post = $state<any>(null)
   let comments = $state<any[]>([])
   let loading = $state(true)
@@ -11,15 +11,15 @@ export function createPostDetailState(id: string) {
   let newStatus = $state('')
 
   currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
+    if (org) orgId = org.id
   })
 
   async function load() {
-    if (!orgSlug || !id) return
+    if (!orgId || !id) return
     try {
       const [postData, commentsData] = await Promise.all([
-        api.get<{ data: any }>(`/org/${orgSlug}/posts/${id}`),
-        api.get<{ data: any[] }>(`/org/${orgSlug}/posts/${id}/comments`),
+        api.get<{ data: any }>(`/org/${orgId}/posts/${id}`),
+        api.get<{ data: any[] }>(`/org/${orgId}/posts/${id}/comments`),
       ])
       post = postData.data
       comments = commentsData.data
@@ -31,14 +31,14 @@ export function createPostDetailState(id: string) {
 
   async function handleStatusChange() {
     if (!post || newStatus === post.status) return
-    await api.put(`/org/${orgSlug}/posts/${id}`, { status: newStatus })
+    await api.put(`/org/${orgId}/posts/${id}`, { status: newStatus })
     post.status = newStatus
   }
 
   async function handleAddComment(e: Event) {
     e.preventDefault()
     if (!newComment.trim()) return
-    const data = await api.post<{ data: any }>(`/org/${orgSlug}/posts/${id}/comments`, {
+    const data = await api.post<{ data: any }>(`/org/${orgId}/posts/${id}/comments`, {
       body: newComment,
       isInternal,
     })
@@ -49,7 +49,7 @@ export function createPostDetailState(id: string) {
 
   async function handleDelete() {
     if (!confirm('Delete this post?')) return
-    await api.delete(`/org/${orgSlug}/posts/${id}`)
+    await api.delete(`/org/${orgId}/posts/${id}`)
     window.history.back()
   }
 

@@ -3,7 +3,6 @@
   import { _ } from 'svelte-i18n'
   import { Button, Input, Textarea, Checkbox, Card, PageHeader, EmptyState, LoadingSpinner, TitleWithSlug } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Board {
     id: string
@@ -15,12 +14,6 @@
   }
 
   let { orgId }: { orgId: string } = $props()
-
-  let orgSlug = $state('')
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
 
   let boards = $state<Board[]>([])
   let loading = $state(true)
@@ -36,9 +29,9 @@
   onMount(loadBoards)
 
   async function loadBoards() {
-    if (!orgSlug) return
+    if (!orgId) return
     try {
-      const data = await api.get<{ data: Board[] }>(`/org/${orgSlug}/boards`)
+      const data = await api.get<{ data: Board[] }>(`/org/${orgId}/boards`)
       boards = data.data
     } finally {
       loading = false
@@ -74,9 +67,9 @@
     }
     try {
       if (editingId) {
-        await api.put(`/org/${orgSlug}/boards/${editingId}`, payload)
+        await api.put(`/org/${orgId}/boards/${editingId}`, payload)
       } else {
-        await api.post(`/org/${orgSlug}/boards`, payload)
+        await api.post(`/org/${orgId}/boards`, payload)
       }
       showForm = false
       loading = true
@@ -88,7 +81,7 @@
 
   async function handleDelete(id: string) {
     if (!confirm($_('boards.confirm_delete'))) return
-    await api.delete(`/org/${orgSlug}/boards/${id}`)
+    await api.delete(`/org/${orgId}/boards/${id}`)
     loading = true
     await loadBoards()
   }

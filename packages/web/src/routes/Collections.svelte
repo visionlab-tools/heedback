@@ -23,7 +23,6 @@
 
   let collections = $state<Collection[]>([])
   let loading = $state(true)
-  let orgSlug = $state('')
   let orgLocales = $state<string[]>(['en'])
   let showForm = $state(false)
   let editingId = $state<string | null>(null)
@@ -39,7 +38,6 @@
 
   currentOrg.subscribe((org) => {
     if (!org) return
-    orgSlug = org.slug
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) orgLocales = locales
   })
@@ -47,9 +45,9 @@
   onMount(loadCollections)
 
   async function loadCollections() {
-    if (!orgSlug) return
+    if (!orgId) return
     try {
-      const data = await api.get<{ data: Collection[] }>(`/org/${orgSlug}/collections`)
+      const data = await api.get<{ data: Collection[] }>(`/org/${orgId}/collections`)
       collections = data.data
     } finally {
       loading = false
@@ -96,9 +94,9 @@
 
     try {
       if (editingId) {
-        await api.put(`/org/${orgSlug}/collections/${editingId}`, payload)
+        await api.put(`/org/${orgId}/collections/${editingId}`, payload)
       } else {
-        await api.post(`/org/${orgSlug}/collections`, payload)
+        await api.post(`/org/${orgId}/collections`, payload)
       }
       showForm = false
       loading = true
@@ -110,7 +108,7 @@
 
   async function handleDelete(id: string) {
     if (!confirm($_('collections.confirm_delete'))) return
-    await api.delete(`/org/${orgSlug}/collections/${id}`)
+    await api.delete(`/org/${orgId}/collections/${id}`)
     loading = true
     await loadCollections()
   }

@@ -10,7 +10,6 @@ interface TranslationDraft {
 
 export function createArticleEditorState(id?: string) {
   let orgId = $state('')
-  let orgSlug = $state('')
   let slug = $state('')
   let status = $state<'draft' | 'published' | 'archived'>('draft')
   let collectionId = $state('')
@@ -27,7 +26,6 @@ export function createArticleEditorState(id?: string) {
   currentOrg.subscribe((org) => {
     if (!org) return
     orgId = org.id
-    orgSlug = org.slug
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) {
       orgLocales = locales
@@ -37,9 +35,9 @@ export function createArticleEditorState(id?: string) {
   })
 
   async function load() {
-    if (!isEdit || !orgSlug) return
+    if (!isEdit || !orgId) return
     try {
-      const data = await api.get<{ data: any }>(`/org/${orgSlug}/articles/${id}`)
+      const data = await api.get<{ data: any }>(`/org/${orgId}/articles/${id}`)
       const article = data.data
       slug = article.slug
       status = article.status
@@ -77,9 +75,9 @@ export function createArticleEditorState(id?: string) {
 
     try {
       if (isEdit) {
-        await api.put(`/org/${orgSlug}/articles/${id}`, payload)
+        await api.put(`/org/${orgId}/articles/${id}`, payload)
       } else {
-        await api.post(`/org/${orgSlug}/articles`, payload)
+        await api.post(`/org/${orgId}/articles`, payload)
       }
       navigate(`/${orgId}/articles`)
     } catch (err: unknown) {

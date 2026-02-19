@@ -96,7 +96,7 @@ export default class ArticlesController {
   }
 
   async publicShow({ params, response }: HttpContext) {
-    const org = await Organization.query().where('slug', params.orgSlug).first()
+    const org = await Organization.query().where('slug', params.orgId).first()
 
     if (!org) {
       return response.notFound({ message: 'Organization not found' })
@@ -112,7 +112,7 @@ export default class ArticlesController {
   }
 
   async publicSearch({ params, request, response }: HttpContext) {
-    const org = await Organization.query().where('slug', params.orgSlug).first()
+    const org = await Organization.query().where('slug', params.orgId).first()
 
     if (!org) {
       return response.notFound({ message: 'Organization not found' })

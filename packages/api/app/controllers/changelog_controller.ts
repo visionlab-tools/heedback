@@ -97,7 +97,7 @@ export default class ChangelogController {
   async subscribe({ params, request, response }: HttpContext) {
     const payload = await request.validateUsing(subscribeChangelogValidator)
 
-    const result = await this.changelogService.subscribe(params.orgSlug, payload.email)
+    const result = await this.changelogService.subscribe(params.orgId, payload.email)
 
     if (!result) {
       return response.notFound({ message: 'Organization not found' })
@@ -112,7 +112,7 @@ export default class ChangelogController {
 
   async unsubscribe({ params, response }: HttpContext) {
     try {
-      const result = await this.changelogService.unsubscribe(params.orgSlug, params.email)
+      const result = await this.changelogService.unsubscribe(params.orgId, params.email)
 
       if (!result) {
         return response.notFound({ message: 'Organization not found' })
@@ -131,7 +131,7 @@ export default class ChangelogController {
     const qs = request.qs()
 
     const entries = await this.changelogService.listPublished(
-      params.orgSlug,
+      params.orgId,
       Number(qs.page) || 1,
       Number(qs.limit) || 20,
       qs.locale as string | undefined,
@@ -146,7 +146,7 @@ export default class ChangelogController {
 
   async publicShow({ params, request, response }: HttpContext) {
     const locale = request.qs().locale as string | undefined
-    const entry = await this.changelogService.showPublished(params.orgSlug, params.entryId, locale)
+    const entry = await this.changelogService.showPublished(params.orgId, params.entryId, locale)
 
     if (!entry) {
       return response.notFound({ message: 'Changelog entry not found' })

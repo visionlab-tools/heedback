@@ -4,7 +4,6 @@
   import { ChevronUp } from 'lucide-svelte'
   import { Badge, Card, Select, PageHeader, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
-  import { currentOrg } from '../lib/stores/org'
 
   interface Post {
     id: string
@@ -18,12 +17,6 @@
 
   let { orgId }: { orgId: string } = $props()
 
-  let orgSlug = $state('')
-
-  currentOrg.subscribe((org) => {
-    if (org) orgSlug = org.slug
-  })
-
   let posts = $state<Post[]>([])
   let loading = $state(true)
   let statusFilter = $state('')
@@ -32,13 +25,13 @@
   onMount(loadPosts)
 
   async function loadPosts() {
-    if (!orgSlug) return
+    if (!orgId) return
     loading = true
     try {
       const params = new URLSearchParams()
       if (statusFilter) params.set('status', statusFilter)
       params.set('sort', sortBy)
-      const data = await api.get<{ data: Post[] }>(`/org/${orgSlug}/posts?${params}`)
+      const data = await api.get<{ data: Post[] }>(`/org/${orgId}/posts?${params}`)
       posts = data.data
     } catch {
       // Handle error

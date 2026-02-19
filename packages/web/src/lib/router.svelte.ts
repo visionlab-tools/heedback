@@ -19,7 +19,8 @@ export function navigate(path: string, options?: { replace?: boolean }) {
   currentPath = path
 }
 
-/** Extract named params from a pattern like `/articles/:id/edit` */
+/** Extract named params from a pattern like `/articles/:id/edit`.
+ *  Supports trailing optional segments via `:param?`. */
 export function matchRoute(
   pattern: string,
   path: string,
@@ -27,13 +28,24 @@ export function matchRoute(
   const patternParts = pattern.split('/').filter(Boolean)
   const pathParts = path.split('/').filter(Boolean)
 
-  if (patternParts.length !== pathParts.length) return null
+  const requiredCount = patternParts.filter((p) => !p.endsWith('?')).length
+  if (pathParts.length < requiredCount || pathParts.length > patternParts.length) return null
 
   const params: Record<string, string> = {}
 
   for (let i = 0; i < patternParts.length; i++) {
-    if (patternParts[i].startsWith(':')) {
-      params[patternParts[i].slice(1)] = pathParts[i]
+    const isOptional = patternParts[i].endsWith('?')
+    const isParam = patternParts[i].startsWith(':')
+
+    if (i >= pathParts.length) {
+      // Only optional segments can be missing
+      if (!isOptional) return null
+      continue
+    }
+
+    if (isParam) {
+      const name = patternParts[i].slice(1).replace(/\?$/, '')
+      params[name] = pathParts[i]
     } else if (patternParts[i] !== pathParts[i]) {
       return null
     }
