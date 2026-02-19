@@ -6,12 +6,19 @@ interface Conversation {
   subject: string | null
   status: string
   channel: string
+  assignedToId: string | null
   messageCount: number
   lastMessageAt: string | null
   createdAt: string
   endUser?: { name: string | null; email: string | null }
-  assignedTo?: { fullName: string }
+  assignedTo?: { id: string; fullName: string }
   messages?: Message[]
+}
+
+interface OrgMember {
+  id: string
+  role: string
+  user: { id: string; fullName: string; email: string }
 }
 
 interface Message {
@@ -51,12 +58,26 @@ export function createInboxState(orgId: string) {
   let newStatus = $state('')
   let sending = $state(false)
 
+  // Members for assignment dropdown
+  let members = $state<OrgMember[]>([])
+  let assigneeId = $state('')
+
   // SSE — plain variable, not reactive (never read in templates)
   let eventSource: EventSource | null = null
 
   // Load immediately — orgId comes from the URL, always available
   loadConversations()
+  loadMembers()
   connectInboxSse()
+
+  async function loadMembers() {
+    try {
+      const data = await api.get<{ data: OrgMember[] }>(`/org/${orgId}/members`)
+      members = data.data
+    } catch {
+      members = []
+    }
+  }
 
   async function loadConversations() {
     if (!orgId) return
@@ -79,6 +100,7 @@ export function createInboxState(orgId: string) {
       conversation = data.data
       messages = data.data.messages || []
       newStatus = data.data.status
+      assigneeId = data.data.assignedToId ?? ''
     } finally {
       detailLoading = false
     }
@@ -101,6 +123,18 @@ export function createInboxState(orgId: string) {
     if (!conversation || !selectedId || newStatus === conversation.status) return
     await api.put(`/org/${orgId}/conversations/${selectedId}`, { status: newStatus })
     conversation.status = newStatus
+  }
+
+  async function handleAssign() {
+    if (!conversation || !selectedId) return
+    const id = assigneeId || null
+    await api.put(`/org/${orgId}/conversations/${selectedId}`, { assignedToId: id })
+    conversation.assignedToId = id
+    if (id) {
+      conversation.assignedTo = members.find((m) => m.user.id === id)?.user as any
+    } else {
+      conversation.assignedTo = undefined
+    }
   }
 
   async function handleSend(e: Event) {
@@ -214,11 +248,15 @@ export function createInboxState(orgId: string) {
     get newStatus() { return newStatus },
     set newStatus(v: string) { newStatus = v },
     get sending() { return sending },
+    get members() { return members },
+    get assigneeId() { return assigneeId },
+    set assigneeId(v: string) { assigneeId = v },
     init,
     loadConversations,
     selectConversation,
     clearSelection,
     handleStatusChange,
+    handleAssign,
     handleSend,
     handleDelete,
     cleanup,

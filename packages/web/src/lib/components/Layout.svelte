@@ -8,6 +8,7 @@
   import { getPath, navigate } from '../router.svelte.ts'
   import { auth } from '../stores/auth'
   import { currentOrg, allOrgs, orgLoading, type Organization } from '../stores/org'
+  import { fullWidth } from '../stores/layout'
   import { LoadingSpinner } from '@heedback/ui-kit'
   import Sidebar from './Sidebar.svelte'
   import Toast from './Toast.svelte'
@@ -21,11 +22,13 @@
   let orgs = $state<Organization[]>([])
   let org = $state<Organization | null>(null)
   let loading = $state(true)
+  let isFullWidth = $state(false)
 
   const unsubAuth = auth.subscribe((s) => (authState = s))
   const unsubOrg = currentOrg.subscribe((v) => (org = v))
   const unsubAllOrgs = allOrgs.subscribe((v) => (orgs = v))
   const unsubLoading = orgLoading.subscribe((v) => (loading = v))
+  const unsubFullWidth = fullWidth.subscribe((v) => (isFullWidth = v))
   let unsubAuthGuard: (() => void) | undefined
 
   onDestroy(() => {
@@ -33,6 +36,7 @@
     unsubOrg()
     unsubAllOrgs()
     unsubLoading()
+    unsubFullWidth()
     unsubAuthGuard?.()
   })
 
@@ -66,7 +70,7 @@
   <div class="flex h-screen bg-slate-50">
     <Sidebar />
     <main class="flex-1 overflow-auto">
-      <div class="mx-auto max-w-7xl px-8 py-8">
+      <div class={isFullWidth ? 'h-full' : 'mx-auto max-w-7xl px-8 py-8'}>
         {@render children()}
       </div>
     </main>

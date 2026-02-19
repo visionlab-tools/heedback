@@ -4,22 +4,24 @@
   import { Badge, Select, EmptyState, LoadingSpinner } from '@heedback/ui-kit'
   import InboxDetail from './InboxDetail.svelte'
   import { createInboxState } from './Inbox.svelte.ts'
+  import { fullWidth } from '../lib/stores/layout'
 
   let { orgId, id }: { orgId: string; id?: string } = $props()
 
   const state = createInboxState(orgId)
 
   onMount(() => {
+    fullWidth.set(true)
     state.init(id)
   })
 
   onDestroy(() => {
+    fullWidth.set(false)
     state.cleanup()
   })
 </script>
 
-<!-- Negative margins break out of Layout's max-w-7xl px-8 py-8 wrapper -->
-<div class="-mx-8 -mt-8 -mb-8 flex flex-col h-screen">
+<div class="flex flex-col h-full">
   <div class="flex flex-1 min-h-0">
     <!-- Left column: conversation list -->
     <div class="w-80 shrink-0 flex flex-col border-r border-slate-200 bg-white">
