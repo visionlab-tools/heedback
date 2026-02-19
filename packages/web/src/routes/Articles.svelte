@@ -9,7 +9,7 @@
     slug: string
     status: string
     translations: Array<{ locale: string; title: string }>
-    collection?: { translations?: Array<{ locale: string; name: string }> }
+    tags?: Array<{ id: string; name: string; color: string | null }>
     createdAt: string
   }
 
@@ -46,7 +46,7 @@
   let columns = $derived([
     { label: $_('articles.col_title') },
     { label: $_('articles.col_status') },
-    { label: $_('articles.col_collection') },
+    { label: $_('article_editor.tags') },
     { label: $_('common.actions'), align: 'right' as const },
   ])
 </script>
@@ -71,7 +71,18 @@
             <Badge variant={statusVariant(article.status)}>{article.status}</Badge>
           </td>
           <td class="px-6 py-4 text-sm text-slate-500">
-            {article.collection?.translations?.[0]?.name || '—'}
+            {#if article.tags?.length}
+              <div class="flex flex-wrap gap-1">
+                {#each article.tags as tag}
+                  <span
+                    class="inline-block px-2 py-0.5 rounded text-xs font-medium text-white"
+                    style:background={tag.color ?? '#6b7280'}
+                  >{tag.name}</span>
+                {/each}
+              </div>
+            {:else}
+              —
+            {/if}
           </td>
           <td class="px-6 py-4 text-right">
             <Button href="/{orgId}/articles/{article.id}/edit" variant="ghost" size="sm">{$_('common.edit')}</Button>

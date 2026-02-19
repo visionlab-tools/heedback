@@ -54,6 +54,7 @@
   "article_editor.status_draft": "Draft",
   "article_editor.status_published": "Published",
   "article_editor.status_archived": "Archived",
+  "article_editor.tags": "Tags",
 
   "collections.title": "Collections",
   "collections.subtitle": "Organize your help center articles into collections.",
@@ -196,6 +197,10 @@
   "settings_integrations.slack_desc": "Send notifications to a Slack channel using an Incoming Webhook.",
   "settings_integrations.slack_webhook_url": "Slack Webhook URL",
   "settings_integrations.slack_webhook_url_hint": "Create an Incoming Webhook in your Slack workspace settings.",
+  "settings_integrations.ai_title": "AI Configuration",
+  "settings_integrations.ai_description": "API keys used for AI-powered features.",
+  "settings_integrations.openai_api_key": "OpenAI API Key",
+  "settings_integrations.anthropic_api_key": "Anthropic API Key",
   "settings_integrations.save": "Save Integrations",
 
   "settings_widget.appearance": "Widget Appearance",

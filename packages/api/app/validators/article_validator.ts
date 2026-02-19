@@ -11,6 +11,7 @@ export const createArticleValidator = vine.compile(
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     sortOrder: vine.number().min(0).optional(),
     status: vine.enum(['draft', 'published', 'archived']).optional(),
+    tagIds: vine.array(vine.string().uuid()).optional(),
     translations: vine.array(
       vine.object({
         locale: vine.string().trim().minLength(2).maxLength(10),
@@ -35,6 +36,7 @@ export const updateArticleValidator = vine.compile(
       .optional(),
     sortOrder: vine.number().min(0).optional(),
     status: vine.enum(['draft', 'published', 'archived']).optional(),
+    tagIds: vine.array(vine.string().uuid()).optional(),
     translations: vine.array(
       vine.object({
         locale: vine.string().trim().minLength(2).maxLength(10),

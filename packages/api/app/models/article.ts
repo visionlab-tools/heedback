@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, belongsTo, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Organization from '#models/organization'
 import Collection from '#models/collection'
+import Tag from '#models/tag'
 import ArticleTranslation from '#models/article_translation'
 import ArticleFeedback from '#models/article_feedback'
 import AdminUser from '#models/admin_user'
@@ -65,4 +66,14 @@ export default class Article extends BaseModel {
 
   @hasMany(() => ArticleFeedback, { foreignKey: 'articleId' })
   declare feedbacks: HasMany<typeof ArticleFeedback>
+
+  @manyToMany(() => Tag, {
+    pivotTable: 'article_tags',
+    localKey: 'id',
+    relatedKey: 'id',
+    pivotForeignKey: 'article_id',
+    pivotRelatedForeignKey: 'tag_id',
+    pivotTimestamps: true,
+  })
+  declare tags: ManyToMany<typeof Tag>
 }

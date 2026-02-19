@@ -8,17 +8,18 @@ interface TranslationDraft {
   body: string
 }
 
-interface CollectionOption {
+interface TagOption {
   id: string
   name: string
+  color: string | null
 }
 
 export function createArticleEditorState(id?: string) {
   let orgId = $state('')
   let slug = $state('')
   let status = $state<'draft' | 'published' | 'archived'>('draft')
-  let collectionId = $state('')
-  let collections = $state<CollectionOption[]>([])
+  let selectedTagIds = $state<string[]>([])
+  let tags = $state<TagOption[]>([])
   let saving = $state(false)
   let error = $state('')
 
@@ -40,28 +41,25 @@ export function createArticleEditorState(id?: string) {
     }
   })
 
-  async function loadCollections() {
+  async function loadTags() {
     if (!orgId) return
     try {
-      const data = await api.get<{ data: any[] }>(`/org/${orgId}/collections`)
-      collections = data.data.map((c: any) => ({
-        id: c.id,
-        name: c.translations?.[0]?.name ?? c.slug,
-      }))
+      const data = await api.get<{ data: any[] }>(`/org/${orgId}/tags`)
+      tags = data.data.map((t: any) => ({ id: t.id, name: t.name, color: t.color }))
     } catch {
-      collections = []
+      tags = []
     }
   }
 
   async function load() {
-    loadCollections()
+    loadTags()
     if (!isEdit || !orgId) return
     try {
       const data = await api.get<{ data: any }>(`/org/${orgId}/articles/${id}`)
       const article = data.data
       slug = article.slug
       status = article.status
-      collectionId = article.collectionId || ''
+      selectedTagIds = (article.tags ?? []).map((t: any) => t.id)
 
       // Merge server translations into per-locale drafts
       translations = orgLocales.map((loc) => {
@@ -89,7 +87,7 @@ export function createArticleEditorState(id?: string) {
     const payload = {
       slug,
       status,
-      collectionId: collectionId || null,
+      tagIds: selectedTagIds,
       translations: filledTranslations,
     }
 
@@ -112,9 +110,9 @@ export function createArticleEditorState(id?: string) {
     set slug(v: string) { slug = v },
     get status() { return status },
     set status(v: 'draft' | 'published' | 'archived') { status = v },
-    get collectionId() { return collectionId },
-    set collectionId(v: string) { collectionId = v },
-    get collections() { return collections },
+    get selectedTagIds() { return selectedTagIds },
+    set selectedTagIds(v: string[]) { selectedTagIds = v },
+    get tags() { return tags },
     get saving() { return saving },
     get error() { return error },
     get isEdit() { return isEdit },

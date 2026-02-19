@@ -7,6 +7,7 @@ import ArticleFeedback from '#models/article_feedback'
 interface ArticleFilters {
   collectionId?: string
   status?: string
+  tagId?: string
   page?: number
   limit?: number
 }
@@ -26,7 +27,7 @@ export default class ArticleService {
       .where('organization_id', orgId)
       .preload('translations')
       .preload('author')
-      .preload('collection')
+      .preload('tags')
 
     if (filters.collectionId) {
       query.where('collection_id', filters.collectionId)
@@ -34,6 +35,11 @@ export default class ArticleService {
 
     if (filters.status) {
       query.where('status', filters.status)
+    }
+
+    if (filters.tagId) {
+      const tagId = filters.tagId
+      query.whereHas('tags', (q) => q.where('tags.id', tagId))
     }
 
     const page = filters.page || 1
@@ -54,6 +60,7 @@ export default class ArticleService {
       collectionId?: string | null
       sortOrder?: number
       status?: 'draft' | 'published' | 'archived'
+      tagIds?: string[]
       translations: Array<{
         locale: string
         title: string
@@ -95,8 +102,13 @@ export default class ArticleService {
       })
     }
 
+    if (data.tagIds?.length) {
+      await article.related('tags').sync(data.tagIds)
+    }
+
     await article.load('translations')
     await article.load('author')
+    await article.load('tags')
 
     return article
   }
@@ -111,7 +123,7 @@ export default class ArticleService {
       .where('organization_id', orgId)
       .preload('translations')
       .preload('author')
-      .preload('collection')
+      .preload('tags')
       .preload('feedbacks')
       .first()
   }
@@ -129,6 +141,7 @@ export default class ArticleService {
       collectionId?: string | null
       sortOrder?: number
       status?: 'draft' | 'published' | 'archived'
+      tagIds?: string[]
       translations?: Array<{
         locale: string
         title: string
@@ -172,6 +185,10 @@ export default class ArticleService {
 
     await article.save()
 
+    if (data.tagIds) {
+      await article.related('tags').sync(data.tagIds)
+    }
+
     if (data.translations) {
       for (const t of data.translations) {
         const existing = await ArticleTranslation.query()
@@ -204,6 +221,7 @@ export default class ArticleService {
 
     await article.load('translations')
     await article.load('author')
+    await article.load('tags')
 
     return article
   }
@@ -282,8 +300,26 @@ export default class ArticleService {
       .where('status', 'published')
       .preload('translations')
       .preload('author')
-      .preload('collection')
+      .preload('tags')
       .first()
+  }
+
+  /**
+   * List all published articles for a public endpoint (flat list with tags).
+   */
+  async listPublished(orgId: string, params: { locale?: string; tagId?: string }) {
+    const query = Article.query()
+      .where('organization_id', orgId)
+      .where('status', 'published')
+      .preload('translations')
+      .preload('tags')
+      .orderBy('sort_order', 'asc')
+
+    if (params.tagId) {
+      query.whereHas('tags', (q) => q.where('tags.id', params.tagId!))
+    }
+
+    return query.limit(100)
   }
 
   /**

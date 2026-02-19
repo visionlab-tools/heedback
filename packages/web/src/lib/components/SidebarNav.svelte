@@ -3,7 +3,6 @@
   import {
     LayoutDashboard,
     FileText,
-    FolderOpen,
     Inbox,
     MessageSquare,
     Pin,
@@ -20,7 +19,6 @@
   let navItems = $derived<Array<{ href: string; label: string; icon: IconComponent }>>([
     { href: `/${orgId}`, label: $_('nav.dashboard'), icon: LayoutDashboard },
     { href: `/${orgId}/articles`, label: $_('nav.articles'), icon: FileText },
-    { href: `/${orgId}/collections`, label: $_('nav.collections'), icon: FolderOpen },
     { href: `/${orgId}/inbox`, label: $_('nav.inbox'), icon: Inbox },
     { href: `/${orgId}/boards`, label: $_('nav.boards'), icon: MessageSquare },
     { href: `/${orgId}/posts`, label: $_('nav.posts'), icon: Pin },

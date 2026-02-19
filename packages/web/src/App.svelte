@@ -7,7 +7,6 @@
   import Dashboard from './routes/Dashboard.svelte'
   import Articles from './routes/Articles.svelte'
   import ArticleEditor from './routes/ArticleEditor.svelte'
-  import Collections from './routes/Collections.svelte'
   import Boards from './routes/Boards.svelte'
   import Posts from './routes/Posts.svelte'
   import PostDetail from './routes/PostDetail.svelte'
@@ -30,7 +29,6 @@
     { path: '/:orgId/articles', component: Articles, layout: Layout },
     { path: '/:orgId/articles/new', component: ArticleEditor, layout: Layout },
     { path: '/:orgId/articles/:id/edit', component: ArticleEditor, layout: Layout },
-    { path: '/:orgId/collections', component: Collections, layout: Layout },
     { path: '/:orgId/inbox/:id?', component: Inbox, layout: Layout },
     { path: '/:orgId/boards', component: Boards, layout: Layout },
     { path: '/:orgId/posts', component: Posts, layout: Layout },

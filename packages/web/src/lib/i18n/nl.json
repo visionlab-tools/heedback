@@ -54,6 +54,7 @@
   "article_editor.status_draft": "Concept",
   "article_editor.status_published": "Gepubliceerd",
   "article_editor.status_archived": "Gearchiveerd",
+  "article_editor.tags": "Tags",
 
   "collections.title": "Collecties",
   "collections.subtitle": "Organiseer uw artikelen in collecties.",
@@ -196,6 +197,10 @@
   "settings_integrations.slack_desc": "Stuur meldingen naar een Slack-kanaal via een Incoming Webhook.",
   "settings_integrations.slack_webhook_url": "Slack Webhook-URL",
   "settings_integrations.slack_webhook_url_hint": "Maak een Incoming Webhook aan in de instellingen van uw Slack-workspace.",
+  "settings_integrations.ai_title": "AI-configuratie",
+  "settings_integrations.ai_description": "API-sleutels voor AI-functies.",
+  "settings_integrations.openai_api_key": "OpenAI API-sleutel",
+  "settings_integrations.anthropic_api_key": "Anthropic API-sleutel",
   "settings_integrations.save": "Integraties opslaan",
 
   "settings_widget.appearance": "Widget-uiterlijk",

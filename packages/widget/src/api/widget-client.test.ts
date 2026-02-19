@@ -113,17 +113,6 @@ describe('widget-client', () => {
     })
   })
 
-  describe('getCollections', () => {
-    it('calls correct public endpoint', async () => {
-      mockFetch.mockResolvedValue(mockResponse({ data: [] }))
-      await widgetApi.getCollections('my-org')
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/org/my-org/public/collections',
-        expect.any(Object),
-      )
-    })
-  })
-
   describe('searchArticles', () => {
     it('calls correct endpoint with encoded query', async () => {
       mockFetch.mockResolvedValue(mockResponse({ data: [] }))

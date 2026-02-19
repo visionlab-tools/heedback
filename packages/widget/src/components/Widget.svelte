@@ -19,6 +19,7 @@
   } = $props()
 
   const state = createWidgetState(org, color)
+  let helpArticleOpen = $state(false)
 </script>
 
 <div
@@ -27,7 +28,7 @@
 >
   <!-- Panel -->
   {#if state.isOpen}
-    <div class="hb-panel" class:hb-panel-closing={state.animating && !state.isOpen}>
+    <div class="hb-panel" class:hb-panel-closing={state.animating && !state.isOpen} class:hb-article-open={state.tab === 'help' && helpArticleOpen}>
       <!-- Header uses brandColor for consistency with the org identity -->
       <div class="hb-header" style="background: linear-gradient(135deg, {state.brandColor}, {state.brandColor}dd);">
         <div class="hb-header-top">
@@ -78,7 +79,7 @@
         {#if state.tab === 'chat'}
           <ChatView {org} {user} color={state.brandColor} {locale} />
         {:else}
-          <HelpView {org} {locale} />
+          <HelpView {org} {locale} onviewchange={(v) => helpArticleOpen = v === 'article'} />
         {/if}
       </div>
     </div>
@@ -145,6 +146,10 @@
     flex-direction: column;
     margin-bottom: 14px;
     animation: hb-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: max-height 0.25s ease;
+  }
+  .hb-panel.hb-article-open {
+    max-height: min(700px, calc(100vh - 100px));
   }
   @keyframes hb-slide-up {
     from {
@@ -236,6 +241,10 @@
     padding: 16px 20px;
     min-height: 300px;
     max-height: min(420px, calc(100vh - 280px));
+    transition: max-height 0.25s ease;
+  }
+  .hb-article-open .hb-content {
+    max-height: min(520px, calc(100vh - 280px));
   }
   .hb-content::-webkit-scrollbar {
     width: 4px;

@@ -18,6 +18,7 @@ export default class ArticlesController {
     const articles = await this.articleService.list(organization.id, {
       collectionId: qs.collectionId,
       status: qs.status,
+      tagId: qs.tagId,
       page: Number(qs.page) || 1,
       limit: Number(qs.limit) || 20,
     })
@@ -96,6 +97,24 @@ export default class ArticlesController {
     })
   }
 
+  async publicIndex({ params, request, response }: HttpContext) {
+    const org = isUuid(params.orgId)
+      ? await Organization.findBy('id', params.orgId)
+      : await Organization.findBy('slug', params.orgId)
+
+    if (!org) {
+      return response.notFound({ message: 'Organization not found' })
+    }
+
+    const qs = request.qs()
+    const locale = qs.locale as string | undefined
+    const articles = await this.articleService.listPublished(org.id, { locale, tagId: qs.tagId })
+
+    return response.ok({
+      data: articles.map((a) => this.serializePublicArticle(a, locale)),
+    })
+  }
+
   async publicShow({ params, request, response }: HttpContext) {
     const org = isUuid(params.orgId)
       ? await Organization.findBy('id', params.orgId)
@@ -134,17 +153,18 @@ export default class ArticlesController {
     })
   }
 
-  /** Flatten translations so the widget gets { id, title, body, slug } */
+  /** Flatten translations so the widget gets { id, title, body, slug, tags } */
   private serializePublicArticle(article: any, locale?: string) {
     const translations = article.translations ?? article.$preloaded?.translations ?? []
     const t = locale
       ? translations.find((tr: any) => tr.locale === locale) ?? translations[0]
       : translations[0]
-    return {
-      id: article.id,
-      slug: article.slug,
-      title: t?.title ?? '',
-      body: t?.body ?? '',
-    }
+    const tags = (article.tags ?? []).map((tag: any) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+      color: tag.color,
+    }))
+    return { id: article.id, slug: article.slug, title: t?.title ?? '', body: t?.body ?? '', tags }
   }
 }

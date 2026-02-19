@@ -54,6 +54,7 @@
   "article_editor.status_draft": "Brouillon",
   "article_editor.status_published": "Publié",
   "article_editor.status_archived": "Archivé",
+  "article_editor.tags": "Tags",
 
   "collections.title": "Collections",
   "collections.subtitle": "Organisez vos articles en collections.",
@@ -196,6 +197,10 @@
   "settings_integrations.slack_desc": "Envoyez des notifications vers un canal Slack via un Incoming Webhook.",
   "settings_integrations.slack_webhook_url": "URL du Webhook Slack",
   "settings_integrations.slack_webhook_url_hint": "Créez un Incoming Webhook dans les paramètres de votre workspace Slack.",
+  "settings_integrations.ai_title": "Configuration IA",
+  "settings_integrations.ai_description": "Clés API utilisées pour les fonctionnalités basées sur l'IA.",
+  "settings_integrations.openai_api_key": "Clé API OpenAI",
+  "settings_integrations.anthropic_api_key": "Clé API Anthropic",
   "settings_integrations.save": "Enregistrer les intégrations",
 
   "settings_widget.appearance": "Apparence du widget",

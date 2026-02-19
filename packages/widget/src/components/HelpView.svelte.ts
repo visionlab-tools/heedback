@@ -1,24 +1,50 @@
 import { onMount } from 'svelte'
 import { widgetApi } from '../api/widget-client'
 
-export function createHelpViewState(org: string, locale: string) {
-  let collections = $state<any[]>([])
+interface HelpViewOptions {
+  org: string
+  locale: string
+  onViewChange?: (view: string) => void
+}
+
+export function createHelpViewState({ org, locale, onViewChange }: HelpViewOptions) {
+  let articles = $state<any[]>([])
   let loading = $state(true)
   let search = $state('')
   let searchResults = $state<any[]>([])
   let searching = $state(false)
   let selectedArticle = $state<any>(null)
   let view = $state<'home' | 'search' | 'article'>('home')
+  let selectedTagId = $state<string | null>(null)
 
-  onMount(loadCollections)
+  // Unique tags extracted from loaded articles
+  let availableTags = $derived.by(() => {
+    const seen = new Map<string, { id: string; name: string; color: string }>()
+    for (const article of articles) {
+      for (const tag of article.tags ?? []) {
+        if (!seen.has(tag.id)) seen.set(tag.id, tag)
+      }
+    }
+    return [...seen.values()]
+  })
 
-  async function loadCollections() {
+  // Articles filtered by selected tag
+  let filteredArticles = $derived.by(() => {
+    if (!selectedTagId) return articles
+    return articles.filter((a: any) =>
+      a.tags?.some((tag: any) => tag.id === selectedTagId),
+    )
+  })
+
+  onMount(loadArticles)
+
+  async function loadArticles() {
     loading = true
     try {
-      const data = await widgetApi.getCollections(org, locale)
-      collections = data.data
+      const data = await widgetApi.getArticles(org, locale)
+      articles = data.data
     } catch {
-      collections = []
+      articles = []
     } finally {
       loading = false
     }
@@ -52,6 +78,7 @@ export function createHelpViewState(org: string, locale: string) {
       const data = await widgetApi.getArticle(org, articleId, locale)
       selectedArticle = data.data
       view = 'article'
+      onViewChange?.('article')
     } catch {
       // Handle error
     } finally {
@@ -63,6 +90,7 @@ export function createHelpViewState(org: string, locale: string) {
     if (view === 'article') {
       selectedArticle = null
       view = search.trim() ? 'search' : 'home'
+      onViewChange?.(view)
     } else {
       view = 'home'
       search = ''
@@ -70,8 +98,12 @@ export function createHelpViewState(org: string, locale: string) {
     }
   }
 
+  function selectTag(tagId: string | null) {
+    selectedTagId = tagId
+  }
+
   return {
-    get collections() { return collections },
+    get articles() { return articles },
     get loading() { return loading },
     get search() { return search },
     set search(v: string) { search = v },
@@ -79,8 +111,12 @@ export function createHelpViewState(org: string, locale: string) {
     get searching() { return searching },
     get selectedArticle() { return selectedArticle },
     get view() { return view },
+    get availableTags() { return availableTags },
+    get filteredArticles() { return filteredArticles },
+    get selectedTagId() { return selectedTagId },
     handleSearch,
     openArticle,
     goBack,
+    selectTag,
   }
 }

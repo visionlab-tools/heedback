@@ -248,8 +248,9 @@ router
     | Public knowledge base
     */
     router.get('/org/:orgId/public/collections', [CollectionsController, 'publicIndex'])
-    router.get('/org/:orgId/public/articles/:articleId', [ArticlesController, 'publicShow'])
+    router.get('/org/:orgId/public/articles', [ArticlesController, 'publicIndex'])
     router.get('/org/:orgId/public/articles/search', [ArticlesController, 'publicSearch'])
+    router.get('/org/:orgId/public/articles/:articleId', [ArticlesController, 'publicShow'])
     router.post('/org/:orgId/public/articles/:articleId/feedback', [ArticlesController, 'feedback'])
 
     /*

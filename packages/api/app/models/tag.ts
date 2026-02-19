@@ -3,6 +3,7 @@ import { BaseModel, column, belongsTo, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Organization from '#models/organization'
 import Post from '#models/post'
+import Article from '#models/article'
 
 export default class Tag extends BaseModel {
   static table = 'tags'
@@ -51,4 +52,14 @@ export default class Tag extends BaseModel {
     pivotTimestamps: true,
   })
   declare posts: ManyToMany<typeof Post>
+
+  @manyToMany(() => Article, {
+    pivotTable: 'article_tags',
+    localKey: 'id',
+    relatedKey: 'id',
+    pivotForeignKey: 'tag_id',
+    pivotRelatedForeignKey: 'article_id',
+    pivotTimestamps: true,
+  })
+  declare articles: ManyToMany<typeof Article>
 }

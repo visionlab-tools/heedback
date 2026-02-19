@@ -92,9 +92,9 @@ export const widgetApi = {
   },
 
   // Help center
-  getCollections(orgId: string, locale?: string) {
+  getArticles(orgId: string, locale?: string) {
     const qs = locale ? `?locale=${locale}` : ''
-    return request<{ data: any[] }>(`/org/${orgId}/public/collections${qs}`)
+    return request<{ data: any[] }>(`/org/${orgId}/public/articles${qs}`)
   },
 
   getArticle(orgId: string, articleId: string, locale?: string) {

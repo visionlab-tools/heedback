@@ -3,9 +3,17 @@
   import { renderMarkdown } from '../utils/markdown'
   import { createHelpViewState } from './HelpView.svelte.ts'
 
-  let { org, locale = 'en' }: { org: string; locale?: string } = $props()
+  let {
+    org,
+    locale = 'en',
+    onviewchange,
+  }: {
+    org: string
+    locale?: string
+    onviewchange?: (view: string) => void
+  } = $props()
 
-  const state = createHelpViewState(org, locale)
+  const state = createHelpViewState({ org, locale, onViewChange: onviewchange })
 </script>
 
 <div class="hb-help">
@@ -38,13 +46,35 @@
       />
     </div>
 
+    <!-- Tag filter chips (only on home view when tags exist) -->
+    {#if state.view === 'home' && state.availableTags.length > 0}
+      <div class="hb-help-tags-filter">
+        <button
+          class="hb-help-tag-chip"
+          class:hb-help-tag-chip-active={!state.selectedTagId}
+          onclick={() => state.selectTag(null)}
+        >
+          {t(locale, 'help.all')}
+        </button>
+        {#each state.availableTags as tag}
+          <button
+            class="hb-help-tag-chip"
+            class:hb-help-tag-chip-active={state.selectedTagId === tag.id}
+            style:--tag-color={tag.color ?? '#6366f1'}
+            onclick={() => state.selectTag(tag.id)}
+          >
+            {tag.name}
+          </button>
+        {/each}
+      </div>
+    {/if}
+
     {#if state.loading || state.searching}
       <div class="hb-help-loading">
         <div class="hb-help-spinner"></div>
         <span>{t(locale, 'help.loading')}</span>
       </div>
     {:else if state.view === 'search'}
-      <!-- Search results -->
       {#if state.searchResults.length === 0}
         <div class="hb-help-empty">{t(locale, 'help.no_results')}</div>
       {:else}
@@ -63,33 +93,21 @@
         </div>
       {/if}
     {:else}
-      <!-- Collections list -->
-      {#if state.collections.length === 0}
+      <!-- Article list (filtered by tag) -->
+      {#if state.filteredArticles.length === 0}
         <div class="hb-help-empty">{t(locale, 'help.empty')}</div>
       {:else}
-        <div class="hb-help-collections">
-          {#each state.collections as collection}
-            <div class="hb-help-collection">
-              <div class="hb-help-collection-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>{collection.name || collection.title}</span>
-              </div>
-              {#if collection.articles?.length > 0}
-                <div class="hb-help-collection-articles">
-                  {#each collection.articles as article}
-                    <button class="hb-help-item" onclick={() => state.openArticle(article.id)}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                      </svg>
-                      <span>{article.title}</span>
-                    </button>
-                  {/each}
-                </div>
-              {/if}
-            </div>
+        <div class="hb-help-list">
+          {#each state.filteredArticles as article}
+            <button class="hb-help-item" onclick={() => state.openArticle(article.id)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>{article.title}</span>
+            </button>
           {/each}
         </div>
       {/if}
@@ -131,6 +149,38 @@
     border-color: #a5b4fc;
     background: white;
   }
+
+  /* Tag filter chips */
+  .hb-help-tags-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .hb-help-tag-chip {
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    color: #374151;
+    transition: all 0.15s;
+  }
+  .hb-help-tag-chip:hover {
+    border-color: #d1d5db;
+    background: #f3f4f6;
+  }
+  .hb-help-tag-chip-active {
+    background: var(--tag-color, #6366f1);
+    border-color: var(--tag-color, #6366f1);
+    color: white;
+  }
+  .hb-help-tag-chip-active:hover {
+    background: var(--tag-color, #6366f1);
+    border-color: var(--tag-color, #6366f1);
+  }
+
   .hb-help-loading {
     display: flex;
     align-items: center;
@@ -157,7 +207,7 @@
     padding: 32px 0;
     font-size: 13px;
   }
-  .hb-help-list, .hb-help-collections {
+  .hb-help-list {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -184,29 +234,6 @@
   .hb-help-item svg {
     flex-shrink: 0;
     color: #9ca3af;
-  }
-  .hb-help-collection {
-    margin-bottom: 8px;
-  }
-  .hb-help-collection-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .hb-help-collection-header svg {
-    color: #9ca3af;
-  }
-  .hb-help-collection-articles {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding-left: 8px;
   }
   .hb-help-back {
     display: flex;
