@@ -18,6 +18,7 @@ function serveWidget(): Plugin {
           return
         }
         res.setHeader('Content-Type', 'application/javascript')
+        res.setHeader('Cache-Control', 'no-store')
         fs.createReadStream(widgetPath).pipe(res)
       })
     },
