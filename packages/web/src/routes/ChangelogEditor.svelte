@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { Button, Input, MarkdownEditor, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
@@ -7,9 +6,7 @@
 
   let { id, orgId }: { id?: string; orgId: string } = $props()
 
-  const state = createChangelogEditorState(id)
-
-  onMount(state.load)
+  const state = createChangelogEditorState(orgId, id)
 </script>
 
 <div class="max-w-4xl">

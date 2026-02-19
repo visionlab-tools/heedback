@@ -10,8 +10,7 @@ interface TranslationDraft {
   body: string
 }
 
-export function createChangelogEditorState(id?: string) {
-  let orgId = $state('')
+export function createChangelogEditorState(orgId: string, id?: string) {
   let slug = $state('')
   let status = $state<'draft' | 'scheduled' | 'published'>('draft')
   let labels = $state<string[]>([])
@@ -19,7 +18,7 @@ export function createChangelogEditorState(id?: string) {
   let saving = $state(false)
   let error = $state('')
 
-  // Multi-locale support
+  // Multi-locale support — orgLocales come from the store (settings)
   let orgLocales = $state<string[]>(['en'])
   let activeLocale = $state('en')
   let translations = $state<TranslationDraft[]>([{ locale: 'en', title: '', body: '' }])
@@ -28,7 +27,6 @@ export function createChangelogEditorState(id?: string) {
 
   currentOrg.subscribe((org) => {
     if (!org) return
-    orgId = org.id
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) {
       orgLocales = locales
@@ -36,8 +34,11 @@ export function createChangelogEditorState(id?: string) {
     }
   })
 
+  // orgId comes from URL (router prop) — always correct
+  load()
+
   async function load() {
-    if (!isEdit || !orgId) return
+    if (!isEdit) return
     try {
       const data = await api.get<{ data: any }>(`/org/${orgId}/changelog/${id}`)
       const entry = data.data
@@ -126,7 +127,6 @@ export function createChangelogEditorState(id?: string) {
     set body(v: string) {
       translations = translations.map((t) => t.locale === activeLocale ? { ...t, body: v } : t)
     },
-    load,
     setActiveLocale,
     toggleLabel,
     hasLabel,

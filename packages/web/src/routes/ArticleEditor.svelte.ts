@@ -14,8 +14,7 @@ interface TagOption {
   color: string | null
 }
 
-export function createArticleEditorState(id?: string) {
-  let orgId = $state('')
+export function createArticleEditorState(orgId: string, id?: string) {
   let slug = $state('')
   let status = $state<'draft' | 'published' | 'archived'>('draft')
   let selectedTagIds = $state<string[]>([])
@@ -23,26 +22,27 @@ export function createArticleEditorState(id?: string) {
   let saving = $state(false)
   let error = $state('')
 
-  // Multi-locale support
+  // Multi-locale support — orgLocales come from the store (settings)
   let orgLocales = $state<string[]>(['en'])
   let activeLocale = $state('en')
   let translations = $state<TranslationDraft[]>([{ locale: 'en', title: '', body: '' }])
 
   let isEdit = $derived(!!id)
 
+  // Subscribe to org store only for settings (locales), not for orgId
   currentOrg.subscribe((org) => {
     if (!org) return
-    orgId = org.id
     const locales = (org.settings as Record<string, unknown>)?.supportedLocales as string[] | undefined
     if (locales?.length) {
       orgLocales = locales
-      // Initialize translation drafts for each org locale
       translations = locales.map((loc) => translations.find((t) => t.locale === loc) ?? { locale: loc, title: '', body: '' })
     }
   })
 
+  // orgId comes from the URL (router prop) — always correct and immediately available
+  load()
+
   async function loadTags() {
-    if (!orgId) return
     try {
       const data = await api.get<{ data: any[] }>(`/org/${orgId}/tags`)
       tags = data.data.map((t: any) => ({ id: t.id, name: t.name, color: t.color }))
@@ -53,7 +53,7 @@ export function createArticleEditorState(id?: string) {
 
   async function load() {
     loadTags()
-    if (!isEdit || !orgId) return
+    if (!isEdit) return
     try {
       const data = await api.get<{ data: any }>(`/org/${orgId}/articles/${id}`)
       const article = data.data
@@ -61,7 +61,6 @@ export function createArticleEditorState(id?: string) {
       status = article.status
       selectedTagIds = (article.tags ?? []).map((t: any) => t.id)
 
-      // Merge server translations into per-locale drafts
       translations = orgLocales.map((loc) => {
         const server = article.translations?.find((t: any) => t.locale === loc)
         return { locale: loc, title: server?.title ?? '', body: server?.body ?? '' }
@@ -81,7 +80,6 @@ export function createArticleEditorState(id?: string) {
     saving = true
     error = ''
 
-    // Only send translations that have content
     const filledTranslations = translations.filter((t) => t.title.trim())
 
     const payload = {
@@ -118,7 +116,6 @@ export function createArticleEditorState(id?: string) {
     get isEdit() { return isEdit },
     get orgLocales() { return orgLocales },
     get activeLocale() { return activeLocale },
-    // Reactive getters/setters for active locale's fields
     get title() {
       return translations.find((t) => t.locale === activeLocale)?.title ?? ''
     },
@@ -131,7 +128,6 @@ export function createArticleEditorState(id?: string) {
     set body(v: string) {
       translations = translations.map((t) => t.locale === activeLocale ? { ...t, body: v } : t)
     },
-    load,
     setActiveLocale,
     handleSubmit,
   }

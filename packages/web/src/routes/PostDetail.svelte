@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { Button, Badge, Select, Textarea, Card, Checkbox, LoadingSpinner } from '@heedback/ui-kit'
   import Markdown from '../lib/components/Markdown.svelte'
@@ -7,9 +6,7 @@
 
   let { id, orgId }: { id: string; orgId: string } = $props()
 
-  const state = createPostDetailState(id)
-
-  onMount(state.load)
+  const state = createPostDetailState(orgId, id)
 </script>
 
 <div class="max-w-4xl">

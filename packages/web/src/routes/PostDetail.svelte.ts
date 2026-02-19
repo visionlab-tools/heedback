@@ -1,8 +1,6 @@
 import { api } from '../lib/api/client'
-import { currentOrg } from '../lib/stores/org'
 
-export function createPostDetailState(id: string) {
-  let orgId = $state('')
+export function createPostDetailState(orgId: string, id: string) {
   let post = $state<any>(null)
   let comments = $state<any[]>([])
   let loading = $state(true)
@@ -10,12 +8,10 @@ export function createPostDetailState(id: string) {
   let isInternal = $state(false)
   let newStatus = $state('')
 
-  currentOrg.subscribe((org) => {
-    if (org) orgId = org.id
-  })
+  // orgId comes from URL (router prop) — always correct
+  load()
 
   async function load() {
-    if (!orgId || !id) return
     try {
       const [postData, commentsData] = await Promise.all([
         api.get<{ data: any }>(`/org/${orgId}/posts/${id}`),
@@ -63,7 +59,6 @@ export function createPostDetailState(id: string) {
     set isInternal(v: boolean) { isInternal = v },
     get newStatus() { return newStatus },
     set newStatus(v: string) { newStatus = v },
-    load,
     handleStatusChange,
     handleAddComment,
     handleDelete,
