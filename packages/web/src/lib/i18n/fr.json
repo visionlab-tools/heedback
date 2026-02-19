@@ -208,6 +208,9 @@
   "settings_widget.demo_position": "Position",
   "settings_widget.demo_locale": "Langue",
   "settings_widget.demo_color": "Couleur du bouton",
+  "settings_widget.demo_first_name": "Prénom",
+  "settings_widget.demo_last_name": "Nom",
+  "settings_widget.demo_avatar_url": "URL de l'avatar",
 
   "error.bad_request": "Requête invalide.",
   "error.unauthorized": "Session expirée. Veuillez vous reconnecter.",

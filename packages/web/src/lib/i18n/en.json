@@ -208,6 +208,9 @@
   "settings_widget.demo_position": "Position",
   "settings_widget.demo_locale": "Language",
   "settings_widget.demo_color": "Button Color",
+  "settings_widget.demo_first_name": "First name",
+  "settings_widget.demo_last_name": "Last name",
+  "settings_widget.demo_avatar_url": "Avatar URL",
 
   "error.bad_request": "Invalid request.",
   "error.unauthorized": "Session expired. Please log in again.",

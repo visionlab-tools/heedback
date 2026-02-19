@@ -61,8 +61,11 @@ export const widgetApi = {
       body: string
       channel?: string
       endUserId?: string
+      endUserExternalId?: string
+      endUserFirstName?: string
+      endUserLastName?: string
       endUserEmail?: string
-      endUserName?: string
+      endUserAvatarUrl?: string
     }
   ) {
     return request<{ data: any }>(`/org/${orgId}/public/conversations`, {

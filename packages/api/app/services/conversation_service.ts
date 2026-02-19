@@ -27,8 +27,11 @@ interface SendMessageData {
 
 interface PublicCreateData {
   endUserId?: string
+  endUserExternalId?: string
+  endUserFirstName?: string
+  endUserLastName?: string
   endUserEmail?: string
-  endUserName?: string | null
+  endUserAvatarUrl?: string
   subject?: string | null
   channel?: 'widget' | 'portal' | 'email'
   body: string
@@ -179,40 +182,89 @@ export default class ConversationService {
 
   /**
    * Find or create an EndUser for the conversation.
-   * Priority: existing by ID → existing by email → new anonymous.
+   * Priority: existing by internal ID → by externalId → by email → new.
    */
   private async resolveOrCreateEndUser(orgId: string, data: PublicCreateData) {
+    const fullName = this.buildFullName(data.endUserFirstName, data.endUserLastName)
+
+    // 1. Reuse existing end user by internal UUID (localStorage persistence)
     if (data.endUserId) {
       const existing = await EndUser.query()
         .where('id', data.endUserId)
         .where('organization_id', orgId)
         .first()
-      if (existing) return existing
+      if (existing) {
+        await this.syncEndUserFields(existing, fullName, data)
+        return existing
+      }
     }
 
+    // 2. Match by external ID from the host application
+    if (data.endUserExternalId) {
+      const byExternal = await EndUser.query()
+        .where('organization_id', orgId)
+        .where('external_id', data.endUserExternalId)
+        .first()
+
+      if (byExternal) {
+        await this.syncEndUserFields(byExternal, fullName, data)
+        return byExternal
+      }
+
+      return EndUser.create({
+        id: uuid(),
+        organizationId: orgId,
+        externalId: data.endUserExternalId,
+        email: data.endUserEmail ?? null,
+        name: fullName,
+        avatarUrl: data.endUserAvatarUrl ?? null,
+      })
+    }
+
+    // 3. Match by email
     if (data.endUserEmail) {
       const byEmail = await EndUser.query()
         .where('organization_id', orgId)
         .where('email', data.endUserEmail)
         .first()
 
-      if (byEmail) return byEmail
+      if (byEmail) {
+        await this.syncEndUserFields(byEmail, fullName, data)
+        return byEmail
+      }
 
       return EndUser.create({
         id: uuid(),
         organizationId: orgId,
         email: data.endUserEmail,
-        name: data.endUserName ?? null,
+        name: fullName,
+        avatarUrl: data.endUserAvatarUrl ?? null,
       })
     }
 
-    // Anonymous end user — no email, no name
+    // 4. Anonymous end user
     return EndUser.create({
       id: uuid(),
       organizationId: orgId,
       email: null,
-      name: data.endUserName ?? null,
+      name: fullName,
+      avatarUrl: data.endUserAvatarUrl ?? null,
     })
+  }
+
+  private buildFullName(firstName?: string, lastName?: string): string | null {
+    if (!firstName) return null
+    return lastName ? `${firstName} ${lastName}` : firstName
+  }
+
+  /** Keep end user profile in sync with latest identify data */
+  private async syncEndUserFields(endUser: EndUser, fullName: string | null, data: PublicCreateData) {
+    let dirty = false
+    if (fullName && endUser.name !== fullName) { endUser.name = fullName; dirty = true }
+    if (data.endUserEmail && endUser.email !== data.endUserEmail) { endUser.email = data.endUserEmail; dirty = true }
+    if (data.endUserAvatarUrl && endUser.avatarUrl !== data.endUserAvatarUrl) { endUser.avatarUrl = data.endUserAvatarUrl; dirty = true }
+    if (data.endUserExternalId && endUser.externalId !== data.endUserExternalId) { endUser.externalId = data.endUserExternalId; dirty = true }
+    if (dirty) await endUser.save()
   }
 
   async publicCreate(orgIdentifier: string, data: PublicCreateData) {
@@ -252,7 +304,7 @@ export default class ConversationService {
         body: data.body,
         channel: conversation.channel,
         endUserEmail: data.endUserEmail,
-        endUserName: data.endUserName,
+        endUserName: this.buildFullName(data.endUserFirstName, data.endUserLastName),
       },
     })
 

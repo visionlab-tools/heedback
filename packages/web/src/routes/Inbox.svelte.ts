@@ -10,15 +10,15 @@ interface Conversation {
   messageCount: number
   lastMessageAt: string | null
   createdAt: string
-  endUser?: { name: string | null; email: string | null }
-  assignedTo?: { id: string; fullName: string }
+  endUser?: { name: string | null; email: string | null; avatarUrl: string | null }
+  assignedTo?: { id: string; fullName: string; avatarUrl: string | null }
   messages?: Message[]
 }
 
 interface OrgMember {
   id: string
   role: string
-  user: { id: string; fullName: string; email: string }
+  user: { id: string; fullName: string; email: string; avatarUrl: string | null }
 }
 
 interface Message {

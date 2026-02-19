@@ -60,8 +60,11 @@ export function createChatViewState(org: string, user: any) {
         body: newMessage,
         channel: 'widget',
         endUserId: endUserId ?? undefined,
+        endUserExternalId: user?.id,
+        endUserFirstName: user?.firstName,
+        endUserLastName: user?.lastName,
         endUserEmail: user?.email,
-        endUserName: user?.name,
+        endUserAvatarUrl: user?.avatarUrl,
       })
 
       // Persist the end-user ID for future sessions

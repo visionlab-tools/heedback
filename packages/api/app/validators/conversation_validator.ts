@@ -6,8 +6,11 @@ export const createConversationValidator = vine.compile(
     body: vine.string().trim().minLength(1).maxLength(10000),
     channel: vine.enum(['widget', 'portal', 'email']).optional(),
     endUserId: vine.string().uuid().optional(),
+    endUserExternalId: vine.string().trim().maxLength(255).optional(),
+    endUserFirstName: vine.string().trim().maxLength(255).optional(),
+    endUserLastName: vine.string().trim().maxLength(255).optional(),
     endUserEmail: vine.string().email().optional(),
-    endUserName: vine.string().trim().maxLength(255).optional(),
+    endUserAvatarUrl: vine.string().trim().maxLength(2048).optional(),
   })
 )
 

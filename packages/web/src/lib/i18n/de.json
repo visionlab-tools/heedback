@@ -208,6 +208,9 @@
   "settings_widget.demo_position": "Position",
   "settings_widget.demo_locale": "Sprache",
   "settings_widget.demo_color": "Schaltflächenfarbe",
+  "settings_widget.demo_first_name": "Vorname",
+  "settings_widget.demo_last_name": "Nachname",
+  "settings_widget.demo_avatar_url": "Avatar-URL",
 
   "error.bad_request": "Ungültige Anfrage.",
   "error.unauthorized": "Sitzung abgelaufen. Bitte erneut anmelden.",

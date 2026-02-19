@@ -53,26 +53,27 @@
     <!-- Contact -->
     <div class="p-4 border-b border-slate-200">
       <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">{$_('conversation.contact')}</h3>
-      {#if hasContactInfo}
-        <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3">
+        {#if endUser?.avatarUrl}
+          <img src={endUser.avatarUrl} alt="" class="w-9 h-9 rounded-full object-cover shrink-0" />
+        {:else if hasContactInfo}
           <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold shrink-0">
             {(endUser?.name || endUser?.email || '?')[0].toUpperCase()}
           </div>
-          <div class="min-w-0">
-            {#if endUser?.name}
-              <p class="text-sm font-medium text-slate-900 truncate">{endUser.name}</p>
-            {/if}
-            {#if endUser?.email}
-              <p class="text-xs text-slate-500 truncate">{endUser.email}</p>
-            {/if}
-          </div>
-        </div>
-      {:else}
-        <div class="flex items-center gap-3">
+        {:else}
           <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-sm font-bold shrink-0">?</div>
-          <p class="text-sm text-slate-400">{$_('conversation.anonymous')}</p>
+        {/if}
+        <div class="min-w-0">
+          {#if endUser?.name}
+            <p class="text-sm font-medium text-slate-900 truncate">{endUser.name}</p>
+          {:else if !hasContactInfo}
+            <p class="text-sm text-slate-400">{$_('conversation.anonymous')}</p>
+          {/if}
+          {#if endUser?.email}
+            <p class="text-xs text-slate-500 truncate">{endUser.email}</p>
+          {/if}
         </div>
-      {/if}
+      </div>
     </div>
 
     <!-- Details -->

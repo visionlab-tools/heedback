@@ -208,6 +208,9 @@
   "settings_widget.demo_position": "Positie",
   "settings_widget.demo_locale": "Taal",
   "settings_widget.demo_color": "Knopkleur",
+  "settings_widget.demo_first_name": "Voornaam",
+  "settings_widget.demo_last_name": "Achternaam",
+  "settings_widget.demo_avatar_url": "Avatar-URL",
 
   "error.bad_request": "Ongeldige aanvraag.",
   "error.unauthorized": "Sessie verlopen. Log opnieuw in.",

@@ -9,9 +9,11 @@ interface HeedbackConfig {
 }
 
 interface HeedbackUser {
-  id?: string
+  id: string
+  firstName: string
+  lastName?: string
   email?: string
-  name?: string
+  avatarUrl?: string
   metadata?: Record<string, unknown>
 }
 
@@ -107,15 +109,16 @@ if (script) {
       locale: script.getAttribute('data-locale') || 'en',
     })
 
-    // Auto-identify if user data is provided
-    const userEmail = script.getAttribute('data-user-email')
-    const userName = script.getAttribute('data-user-name')
+    // Auto-identify if user data is provided via data attributes
     const userId = script.getAttribute('data-user-id')
-    if (userEmail || userName || userId) {
+    const userFirstName = script.getAttribute('data-user-first-name')
+    if (userId && userFirstName) {
       Heedback.identify({
-        id: userId || undefined,
-        email: userEmail || undefined,
-        name: userName || undefined,
+        id: userId,
+        firstName: userFirstName,
+        lastName: script.getAttribute('data-user-last-name') || undefined,
+        email: script.getAttribute('data-user-email') || undefined,
+        avatarUrl: script.getAttribute('data-user-avatar-url') || undefined,
       })
     }
   }
