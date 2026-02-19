@@ -49,19 +49,32 @@
                 {state.selectedId === convo.id ? 'bg-indigo-50 border-l-2 border-l-indigo-500' : ''}"
               onclick={() => state.selectConversation(convo.id)}
             >
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between mb-1">
                 <div class="flex items-center gap-2 min-w-0">
                   <Badge variant={state.statusVariant(convo.status)}>{convo.status}</Badge>
                   <span class="text-xs text-slate-400">{state.channelLabel(convo.channel)}</span>
                 </div>
                 <span class="text-xs text-slate-400 shrink-0">{state.timeAgo(convo.lastMessageAt)}</span>
               </div>
-              <p class="mt-1 text-sm font-medium text-slate-900 truncate">
-                {convo.endUser?.name || convo.endUser?.email || $_('common.anonymous')}
-              </p>
-              <p class="mt-0.5 text-xs text-slate-500 truncate">
-                {convo.subject || $_('inbox.no_subject')}
-              </p>
+              <div class="flex items-center gap-2.5">
+                {#if convo.endUser?.avatarUrl}
+                  <img src={convo.endUser.avatarUrl} alt="" class="w-8 h-8 rounded-full object-cover shrink-0" />
+                {:else if convo.endUser?.name || convo.endUser?.email}
+                  <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
+                    {(convo.endUser.name || convo.endUser.email || '?')[0].toUpperCase()}
+                  </div>
+                {:else}
+                  <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0">?</div>
+                {/if}
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    {convo.endUser?.name || convo.endUser?.email || $_('common.anonymous')}
+                  </p>
+                  <p class="text-xs text-slate-500 truncate">
+                    {convo.subject || $_('inbox.no_subject')}
+                  </p>
+                </div>
+              </div>
             </button>
           {/each}
         {/if}
