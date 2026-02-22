@@ -18,7 +18,7 @@ COPY packages/portal/ packages/portal/
 RUN pnpm --filter @heedback/portal build
 
 # Deploy standalone production bundle (flattens workspace)
-RUN pnpm deploy --filter @heedback/portal --prod /deploy
+RUN pnpm deploy --filter @heedback/portal --prod --legacy /deploy
 
 # --- Production stage ---
 FROM node:22-alpine

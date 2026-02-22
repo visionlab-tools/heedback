@@ -13,7 +13,7 @@ COPY packages/api/ packages/api/
 RUN pnpm --filter @heedback/api build
 
 # Deploy standalone production bundle (flattens workspace)
-RUN pnpm deploy --filter @heedback/api --prod /deploy
+RUN pnpm deploy --filter @heedback/api --prod --legacy /deploy
 COPY packages/api/database /deploy/database
 
 # --- Production stage ---
