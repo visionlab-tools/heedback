@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { v4 as uuid } from 'uuid'
 import Organization from '#models/organization'
 import OrgMember from '#models/org_member'
@@ -91,16 +92,22 @@ export default class OrganizationService {
       }
     }
 
+    // Auto-generate webhook secret when git branch is set but secret is missing
+    const mergedSettings = data.settings !== undefined
+      ? { ...(org.settings ?? {}), ...data.settings } as Record<string, unknown>
+      : (org.settings ?? {}) as Record<string, unknown>
+
+    if (mergedSettings.gitProductionBranch && !mergedSettings.gitWebhookSecret) {
+      mergedSettings.gitWebhookSecret = crypto.randomUUID()
+    }
+
     org.merge({
       name: data.name ?? org.name,
       slug: data.slug ?? org.slug,
       logoUrl: data.logoUrl !== undefined ? data.logoUrl : org.logoUrl,
       websiteUrl: data.websiteUrl !== undefined ? data.websiteUrl : org.websiteUrl,
       billingEmail: data.billingEmail !== undefined ? data.billingEmail : org.billingEmail,
-      // Shallow-merge settings so each admin page can send only its own keys
-      settings: data.settings !== undefined
-        ? { ...(org.settings ?? {}), ...data.settings }
-        : org.settings,
+      settings: data.settings !== undefined ? mergedSettings : org.settings,
     })
 
     await org.save()

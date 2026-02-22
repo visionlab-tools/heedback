@@ -17,6 +17,7 @@
 
   let entries = $state<ChangelogEntry[]>([])
   let loading = $state(true)
+  let pendingCommits = $state(0)
 
   onMount(async () => {
     if (!orgId) return
@@ -28,6 +29,12 @@
     } finally {
       loading = false
     }
+
+    // Non-critical — load separately so a failure doesn't block entries
+    try {
+      const data = await api.get<{ count: number }>(`/org/${orgId}/git-commits/pending/count`, { silent: true })
+      pendingCommits = data.count
+    } catch { /* ignore */ }
   })
 
   type BadgeVariant = 'success' | 'info' | 'orange' | 'danger' | 'neutral'
@@ -46,7 +53,14 @@
 <div>
   <PageHeader title={$_('changelog.title')} subtitle={$_('changelog.subtitle')}>
     {#snippet actions()}
-      <Button href="/{orgId}/changelog/new" size="sm">{$_('changelog.new')}</Button>
+      <div class="flex items-center gap-2">
+        {#if pendingCommits > 0}
+          <Badge variant="info">
+            {$_('changelog.pending_commits', { values: { count: pendingCommits } })}
+          </Badge>
+        {/if}
+        <Button href="/{orgId}/changelog/new" size="sm">{$_('changelog.new')}</Button>
+      </div>
     {/snippet}
   </PageHeader>
 

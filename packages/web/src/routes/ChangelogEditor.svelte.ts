@@ -10,6 +10,12 @@ interface TranslationDraft {
   body: string
 }
 
+interface GeneratedChangelog {
+  slug: string
+  labels: string[]
+  translations: Array<{ locale: string; title: string; body: string; excerpt?: string }>
+}
+
 export function createChangelogEditorState(orgId: string, id?: string) {
   let slug = $state('')
   let status = $state<'draft' | 'scheduled' | 'published'>('draft')
@@ -17,6 +23,8 @@ export function createChangelogEditorState(orgId: string, id?: string) {
   let scheduledAt = $state('')
   let saving = $state(false)
   let error = $state('')
+  let generating = $state(false)
+  let pendingCommits = $state(0)
 
   // Multi-locale support — orgLocales come from the store (settings)
   let orgLocales = $state<string[]>(['en'])
@@ -37,6 +45,9 @@ export function createChangelogEditorState(orgId: string, id?: string) {
   // orgId comes from URL (router prop) — always correct
   load()
 
+  // Only fetch pending count in create mode
+  if (!id) loadPendingCommits()
+
   async function load() {
     if (!isEdit) return
     try {
@@ -54,6 +65,39 @@ export function createChangelogEditorState(orgId: string, id?: string) {
       activeLocale = orgLocales[0]
     } catch {
       error = 'Failed to load entry'
+    }
+  }
+
+  async function loadPendingCommits() {
+    try {
+      const data = await api.get<{ count: number }>(`/org/${orgId}/git-commits/pending/count`, { silent: true })
+      pendingCommits = data.count
+    } catch {
+      /* non-critical */
+    }
+  }
+
+  async function generateFromCommits() {
+    generating = true
+    error = ''
+    try {
+      const data = await api.post<{ data: GeneratedChangelog }>(`/org/${orgId}/changelog/generate`, {
+        locales: orgLocales,
+      })
+      const result = data.data
+      slug = result.slug
+      labels = result.labels
+      translations = orgLocales.map((loc) => {
+        const ai = result.translations.find((t) => t.locale === loc)
+        return ai
+          ? { locale: loc, title: ai.title, body: ai.body }
+          : translations.find((t) => t.locale === loc) ?? { locale: loc, title: '', body: '' }
+      })
+      await loadPendingCommits()
+    } catch (err: unknown) {
+      error = err instanceof Error ? err.message : 'Generation failed'
+    } finally {
+      generating = false
     }
   }
 
@@ -127,9 +171,12 @@ export function createChangelogEditorState(orgId: string, id?: string) {
     set body(v: string) {
       translations = translations.map((t) => t.locale === activeLocale ? { ...t, body: v } : t)
     },
+    get generating() { return generating },
+    get pendingCommits() { return pendingCommits },
     setActiveLocale,
     toggleLabel,
     hasLabel,
     handleSubmit,
+    generateFromCommits,
   }
 }

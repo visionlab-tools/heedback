@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  import { Button, Input, MarkdownEditor, Select, Alert, TitleWithSlug } from '@heedback/ui-kit'
+  import { Button, Input, MarkdownEditor, Select, Alert, Badge, TitleWithSlug } from '@heedback/ui-kit'
   import LocaleTabs from '../lib/components/LocaleTabs.svelte'
   import { createChangelogEditorState, allLabels } from './ChangelogEditor.svelte.ts'
 
@@ -13,6 +13,26 @@
   <h1 class="text-2xl font-semibold text-slate-900">
     {state.isEdit ? $_('changelog_editor.edit') : $_('changelog_editor.new')}
   </h1>
+
+  {#if !state.isEdit}
+    <div class="mt-4 flex items-center gap-3">
+      <Button
+        variant="secondary"
+        onclick={state.generateFromCommits}
+        loading={state.generating}
+        disabled={state.pendingCommits === 0}
+      >
+        {state.generating ? $_('changelog_editor.generating') : $_('changelog_editor.generate_from_commits')}
+      </Button>
+      {#if state.pendingCommits > 0}
+        <Badge variant="info">
+          {$_('changelog_editor.pending_commits', { values: { count: state.pendingCommits } })}
+        </Badge>
+      {:else}
+        <span class="text-sm text-slate-500">{$_('changelog_editor.no_pending_commits')}</span>
+      {/if}
+    </div>
+  {/if}
 
   {#if state.error}
     <div class="mt-4">
