@@ -1,0 +1,14 @@
+**/node_modules/
+**/dist/
+**/build/
+**/.svelte-kit/
+**/.adonis/
+**/.pnpm-store/
+**/.claude/
+.git/
+.env
+.env.*
+data/
+uploads/
+coverage/
+*.md

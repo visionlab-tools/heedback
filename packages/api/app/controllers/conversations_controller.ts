@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import {
   createConversationValidator,
   sendMessageValidator,
+  publicReplyValidator,
   updateConversationValidator,
 } from '#validators/conversation_validator'
 import ConversationService from '#services/conversation_service'
@@ -33,7 +34,7 @@ export default class ConversationsController {
     return response.ok({
       data: {
         ...result.conversation.serialize(),
-        messages: result.messages.map((m) => m.serialize()),
+        messages: result.serializedMessages,
       },
     })
   }
@@ -61,7 +62,7 @@ export default class ConversationsController {
       organization.id,
       params.conversationId,
       auth.user!.id,
-      payload,
+      { ...payload, attachments: payload.attachments },
     )
 
     if (!message) {
@@ -84,7 +85,11 @@ export default class ConversationsController {
   async publicStore({ params, request, response }: HttpContext) {
     const payload = await request.validateUsing(createConversationValidator)
 
-    const conversation = await this.conversationService.publicCreate(params.orgId, payload)
+    const conversation = await this.conversationService.publicCreate(params.orgId, {
+      ...payload,
+      attachments: payload.attachments,
+      pageUrl: payload.pageUrl,
+    })
 
     if (!conversation) {
       return response.notFound({ message: 'Organization not found' })
@@ -110,7 +115,7 @@ export default class ConversationsController {
   }
 
   async publicReply({ params, request, response }: HttpContext) {
-    const payload = await request.validateUsing(sendMessageValidator)
+    const payload = await request.validateUsing(publicReplyValidator)
 
     const message = await this.conversationService.publicReply(
       params.orgId,

@@ -5,6 +5,13 @@ import Conversation from '#models/conversation'
 import EndUser from '#models/end_user'
 import AdminUser from '#models/admin_user'
 
+export interface Attachment {
+  key: string
+  name: string
+  type: string
+  size: number
+}
+
 export default class Message extends BaseModel {
   static table = 'messages'
 
@@ -22,6 +29,16 @@ export default class Message extends BaseModel {
 
   @column({ columnName: 'body', serializeAs: 'body' })
   declare body: string
+
+  @column({
+    columnName: 'attachments',
+    serializeAs: 'attachments',
+    prepare: (v: Attachment[]) => JSON.stringify(v ?? []),
+  })
+  declare attachments: Attachment[]
+
+  @column({ columnName: 'page_url', serializeAs: 'pageUrl' })
+  declare pageUrl: string | null
 
   @column({ columnName: 'is_internal', serializeAs: 'isInternal' })
   declare isInternal: boolean

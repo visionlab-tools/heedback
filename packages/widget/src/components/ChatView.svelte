@@ -19,11 +19,38 @@
 
   const state = createChatViewState(org, user)
 
+  // Plain refs — NOT $state, because bind:this + $state triggers a store subscribe path in Svelte 5
+  let newFormFileInput: HTMLInputElement | undefined
+  let replyFileInput: HTMLInputElement | undefined
+
+  function handleFileChange(e: Event) {
+    const input = e.target as HTMLInputElement
+    state.addFiles(input.files, locale, t)
+    input.value = ''
+  }
+
   onMount(() => state.init())
   onDestroy(() => state.cleanup())
 </script>
 
 <div class="hb-chat">
+  <!-- Hidden file inputs (must be inside root element) -->
+  <input
+    bind:this={newFormFileInput}
+    type="file"
+    accept="image/*,video/*"
+    multiple
+    class="hb-hidden"
+    onchange={handleFileChange}
+  />
+  <input
+    bind:this={replyFileInput}
+    type="file"
+    accept="image/*,video/*"
+    multiple
+    class="hb-hidden"
+    onchange={handleFileChange}
+  />
   {#if state.screen === 'loading'}
     <div class="hb-chat-center"><span class="hb-chat-spinner"></span></div>
 
@@ -64,23 +91,53 @@
         rows={4}
         class="hb-chat-textarea"
       ></textarea>
-      <button
-        type="submit"
-        disabled={state.sending || !state.newMessage.trim()}
-        class="hb-chat-send-btn"
-        style="background: {state.sending || !state.newMessage.trim() ? '#d1d5db' : color};"
-      >
-        {#if state.sending}
-          <span class="hb-chat-spinner"></span>
-          {t(locale, 'chat.sending')}
-        {:else}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+
+      {#if state.selectedFiles.length > 0}
+        <div class="hb-file-previews">
+          {#each state.selectedFiles as file, i}
+            <div class="hb-file-preview">
+              {#if state.isImage(file.type)}
+                <img src={URL.createObjectURL(file)} alt={file.name} class="hb-file-thumb" />
+              {:else}
+                <div class="hb-file-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                  <span class="hb-file-name">{file.name}</span>
+                </div>
+              {/if}
+              <button type="button" class="hb-file-remove" onclick={() => state.removeFile(i)}>×</button>
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      {#if state.fileError}
+        <p class="hb-file-error">{state.fileError}</p>
+      {/if}
+
+      <div class="hb-chat-form-actions">
+        <button type="button" class="hb-attach-btn" onclick={() => newFormFileInput?.click()} title={t(locale, 'chat.attach_file')}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
           </svg>
-          {t(locale, 'chat.start')}
-        {/if}
-      </button>
+        </button>
+        <button
+          type="submit"
+          disabled={!state.canSend()}
+          class="hb-chat-send-btn"
+          style="background: {!state.canSend() ? '#d1d5db' : color};"
+        >
+          {#if state.sending || state.uploading}
+            <span class="hb-chat-spinner"></span>
+            {state.uploading ? t(locale, 'chat.uploading') : t(locale, 'chat.sending')}
+          {:else}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            {t(locale, 'chat.start')}
+          {/if}
+        </button>
+      </div>
     </form>
 
   {:else if state.screen === 'thread'}
@@ -110,7 +167,25 @@
               <span class="hb-chat-bubble-sender">{msg.sender?.name || t(locale, 'chat.support')}</span>
             </div>
           {/if}
-          <div class="hb-chat-bubble-body">{@html renderMarkdown(msg.body)}</div>
+          {#if msg.body}
+            <div class="hb-chat-bubble-body">{@html renderMarkdown(msg.body)}</div>
+          {/if}
+          {#if msg.attachments?.length}
+            <div class="hb-chat-attachments">
+              {#each msg.attachments as att}
+                {#if state.isImage(att.type)}
+                  <a href={att.url || att.key} target="_blank" rel="noopener noreferrer">
+                    <img src={att.url || att.key} alt={att.name} class="hb-chat-att-img" />
+                  </a>
+                {:else}
+                  <video controls class="hb-chat-att-video" preload="metadata">
+                    <source src={att.url || att.key} type={att.type} />
+                    <track kind="captions" />
+                  </video>
+                {/if}
+              {/each}
+            </div>
+          {/if}
           <span class="hb-chat-bubble-time">{state.formatTime(msg.createdAt)}</span>
         </div>
       {/each}
@@ -118,7 +193,34 @@
 
     <!-- Reply input -->
     <form onsubmit={state.handleReply} class="hb-chat-reply">
+      {#if state.selectedFiles.length > 0}
+        <div class="hb-file-previews">
+          {#each state.selectedFiles as file, i}
+            <div class="hb-file-preview">
+              {#if state.isImage(file.type)}
+                <img src={URL.createObjectURL(file)} alt={file.name} class="hb-file-thumb" />
+              {:else}
+                <div class="hb-file-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                  <span class="hb-file-name">{file.name}</span>
+                </div>
+              {/if}
+              <button type="button" class="hb-file-remove" onclick={() => state.removeFile(i)}>×</button>
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      {#if state.fileError}
+        <p class="hb-file-error">{state.fileError}</p>
+      {/if}
+
       <div class="hb-chat-reply-row">
+        <button type="button" class="hb-attach-btn" onclick={() => replyFileInput?.click()} title={t(locale, 'chat.attach_file')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+        </button>
         <input
           type="text"
           placeholder={t(locale, 'chat.reply_placeholder')}
@@ -127,14 +229,18 @@
         />
         <button
           type="submit"
-          disabled={state.sending || !state.newMessage.trim()}
+          disabled={!state.canSend()}
           class="hb-chat-reply-btn"
-          style="background: {state.sending || !state.newMessage.trim() ? '#d1d5db' : color};"
+          style="background: {!state.canSend() ? '#d1d5db' : color};"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
+          {#if state.uploading}
+            <span class="hb-chat-spinner hb-chat-spinner-sm"></span>
+          {:else}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          {/if}
         </button>
       </div>
     </form>
@@ -142,6 +248,8 @@
 </div>
 
 <style>
+  .hb-hidden { display: none; }
+
   .hb-chat {
     display: flex;
     flex-direction: column;
@@ -209,6 +317,11 @@
     flex-direction: column;
     gap: 10px;
   }
+  .hb-chat-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
   .hb-chat-textarea {
     width: 100%;
     padding: 10px 14px;
@@ -229,6 +342,7 @@
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
   }
   .hb-chat-send-btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -254,8 +368,88 @@
     border-radius: 50%;
     animation: hb-cspin 0.6s linear infinite;
   }
+  .hb-chat-spinner-sm {
+    width: 12px;
+    height: 12px;
+  }
   @keyframes hb-cspin {
     to { transform: rotate(360deg); }
+  }
+
+  /* Attach button */
+  .hb-attach-btn {
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .hb-attach-btn:hover {
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  /* File previews */
+  .hb-file-previews {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .hb-file-preview {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+  .hb-file-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    display: block;
+  }
+  .hb-file-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    font-size: 11px;
+    color: #6b7280;
+    max-width: 120px;
+  }
+  .hb-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hb-file-remove {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .hb-file-error {
+    font-size: 11px;
+    color: #ef4444;
+    margin: 0;
   }
 
   /* Messages */
@@ -329,10 +523,31 @@
     margin-top: 4px;
   }
 
+  /* Attachments in bubbles */
+  .hb-chat-attachments {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .hb-chat-att-img {
+    max-width: 200px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+  }
+  .hb-chat-att-video {
+    max-width: 220px;
+    border-radius: 8px;
+  }
+
   /* Reply */
   .hb-chat-reply {
     border-top: 1px solid #f3f4f6;
     padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
   .hb-chat-reply-row {
     display: flex;

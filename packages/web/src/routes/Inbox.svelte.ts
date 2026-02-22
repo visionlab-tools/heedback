@@ -21,12 +21,22 @@ interface OrgMember {
   user: { id: string; fullName: string; email: string; avatarUrl: string | null }
 }
 
+interface MessageAttachment {
+  key: string
+  name: string
+  type: string
+  size: number
+  url?: string
+}
+
 interface Message {
   id: string
   body: string
   senderType: string
   isInternal: boolean
   createdAt: string
+  attachments?: MessageAttachment[]
+  pageUrl?: string | null
 }
 
 type BadgeVariant = 'info' | 'warning' | 'success' | 'neutral'

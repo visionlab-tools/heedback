@@ -1,17 +1,28 @@
 # --- Build stage ---
-FROM oven/bun:1 AS builder
+FROM node:22-alpine AS builder
+RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
-COPY packages/web/package.json packages/web/bun.lockb* ./
-RUN bun install --frozen-lockfile
+# Copy monorepo structure for pnpm workspace resolution
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/shared/package.json packages/shared/
+COPY packages/ui-kit/package.json packages/ui-kit/
+COPY packages/web/package.json packages/web/
 
-COPY packages/web/ ./
-RUN bun run build
+RUN pnpm install --frozen-lockfile --filter @heedback/web...
+
+# Build @heedback/shared first (workspace dependency)
+COPY packages/shared/ packages/shared/
+RUN pnpm --filter @heedback/shared build
+
+COPY packages/ui-kit/ packages/ui-kit/
+COPY packages/web/ packages/web/
+RUN pnpm --filter @heedback/web build
 
 # --- Production stage (nginx for SPA) ---
 FROM nginx:alpine
 
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/packages/web/build /usr/share/nginx/html
 COPY packages/web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000

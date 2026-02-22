@@ -2,11 +2,13 @@ import { v4 as uuid } from 'uuid'
 import { DateTime } from 'luxon'
 import Conversation from '#models/conversation'
 import Message from '#models/message'
+import type { Attachment } from '#models/message'
 import EndUser from '#models/end_user'
 import Organization from '#models/organization'
 import WebhookService from '#services/webhook_service'
 import { sseService } from '#services/sse_service'
 import { isUuid } from '#helpers/uuid'
+import { resolveStorageUrl } from '#helpers/storage'
 
 interface ListFilters {
   page?: number
@@ -21,8 +23,9 @@ interface UpdateData {
 }
 
 interface SendMessageData {
-  body: string
+  body?: string
   isInternal?: boolean
+  attachments?: Attachment[]
 }
 
 interface PublicCreateData {
@@ -34,11 +37,15 @@ interface PublicCreateData {
   endUserAvatarUrl?: string
   subject?: string | null
   channel?: 'widget' | 'portal' | 'email'
-  body: string
+  body?: string
+  attachments?: Attachment[]
+  pageUrl?: string
 }
 
 interface PublicReplyData {
-  body: string
+  body?: string
+  attachments?: Attachment[]
+  pageUrl?: string
 }
 
 export default class ConversationService {
@@ -79,7 +86,19 @@ export default class ConversationService {
       .where('conversation_id', conversation.id)
       .orderBy('created_at', 'asc')
 
-    return { conversation, messages }
+    // Resolve attachment S3 keys to full URLs
+    const serializedMessages = messages.map((m) => {
+      const base = m.serialize()
+      return {
+        ...base,
+        attachments: (base.attachments ?? []).map((a: any) => ({
+          ...a,
+          url: resolveStorageUrl(a.key),
+        })),
+      }
+    })
+
+    return { conversation, serializedMessages }
   }
 
   async update(orgId: string, conversationId: string, data: UpdateData) {
@@ -125,13 +144,18 @@ export default class ConversationService {
 
     if (!conversation) return null
 
+    if (!data.body?.trim() && (!data.attachments || data.attachments.length === 0)) {
+      throw new Error('Message must have body or attachments')
+    }
+
     const message = await Message.create({
       id: uuid(),
       conversationId: conversation.id,
       senderType: 'admin',
       senderId: adminUserId,
-      body: data.body,
+      body: data.body ?? '',
       isInternal: data.isInternal ?? false,
+      attachments: data.attachments ?? [],
     })
 
     // Auto-assign admin on first reply
@@ -268,6 +292,10 @@ export default class ConversationService {
   }
 
   async publicCreate(orgIdentifier: string, data: PublicCreateData) {
+    if (!data.body?.trim() && (!data.attachments || data.attachments.length === 0)) {
+      throw new Error('Message must have body or attachments')
+    }
+
     const org = await this.findOrgBySlugOrId(orgIdentifier)
     if (!org) return null
 
@@ -289,8 +317,10 @@ export default class ConversationService {
       conversationId: conversation.id,
       senderType: 'end_user',
       senderId: endUser.id,
-      body: data.body,
+      body: data.body ?? '',
       isInternal: false,
+      attachments: data.attachments ?? [],
+      pageUrl: data.pageUrl ?? null,
     })
 
     await conversation.load('endUser')
@@ -341,6 +371,10 @@ export default class ConversationService {
   }
 
   async publicReply(orgIdentifier: string, conversationId: string, data: PublicReplyData) {
+    if (!data.body?.trim() && (!data.attachments || data.attachments.length === 0)) {
+      throw new Error('Message must have body or attachments')
+    }
+
     const org = await this.findOrgBySlugOrId(orgIdentifier)
     if (!org) return null
 
@@ -356,8 +390,10 @@ export default class ConversationService {
       conversationId: conversation.id,
       senderType: 'end_user',
       senderId: conversation.endUserId,
-      body: data.body,
+      body: data.body ?? '',
       isInternal: false,
+      attachments: data.attachments ?? [],
+      pageUrl: data.pageUrl ?? null,
     })
 
     conversation.messageCount = conversation.messageCount + 1
@@ -367,7 +403,7 @@ export default class ConversationService {
     }
     await conversation.save()
 
-    const serialized = message.serialize()
+    const serialized = this.serializeMessageWithSender(message)
 
     // Fire-and-forget webhooks
     this.webhookService.dispatch(org, {
@@ -406,18 +442,21 @@ export default class ConversationService {
       .limit(50)
   }
 
-  /** Serialize a message with admin sender info for public-facing responses */
+  /** Serialize a message with admin sender info and resolved attachment URLs */
   private serializeMessageWithSender(message: Message) {
     const base = message.serialize()
-    if (message.senderType === 'admin' && message.adminUser) {
-      return {
-        ...base,
-        sender: {
-          name: message.adminUser.fullName,
-          avatarUrl: message.adminUser.avatarUrl,
-        },
-      }
-    }
-    return { ...base, sender: null }
+
+    // Resolve S3 keys to full URLs for each attachment
+    const attachments = (base.attachments ?? []).map((a: any) => ({
+      ...a,
+      url: resolveStorageUrl(a.key),
+    }))
+
+    const sender =
+      message.senderType === 'admin' && message.adminUser
+        ? { name: message.adminUser.fullName, avatarUrl: message.adminUser.avatarUrl }
+        : null
+
+    return { ...base, attachments, sender }
   }
 }

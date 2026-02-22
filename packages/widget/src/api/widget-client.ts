@@ -58,7 +58,7 @@ export const widgetApi = {
   startConversation(
     orgId: string,
     data: {
-      body: string
+      body?: string
       channel?: string
       endUserId?: string
       endUserExternalId?: string
@@ -66,6 +66,8 @@ export const widgetApi = {
       endUserLastName?: string
       endUserEmail?: string
       endUserAvatarUrl?: string
+      attachments?: { key: string; name: string; type: string; size: number }[]
+      pageUrl?: string
     }
   ) {
     return request<{ data: any }>(`/org/${orgId}/public/conversations`, {
@@ -78,7 +80,15 @@ export const widgetApi = {
     return request<{ data: any }>(`/org/${orgId}/public/conversations/${conversationId}`)
   },
 
-  replyToConversation(orgId: string, conversationId: string, data: { body: string }) {
+  replyToConversation(
+    orgId: string,
+    conversationId: string,
+    data: {
+      body?: string
+      attachments?: { key: string; name: string; type: string; size: number }[]
+      pageUrl?: string
+    }
+  ) {
     return request<{ data: any }>(`/org/${orgId}/public/conversations/${conversationId}/messages`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -105,6 +115,18 @@ export const widgetApi = {
   searchArticles(orgId: string, query: string, locale?: string) {
     const localeParam = locale ? `&locale=${locale}` : ''
     return request<{ data: any[] }>(`/org/${orgId}/public/articles/search?q=${encodeURIComponent(query)}${localeParam}`)
+  },
+
+  /** Upload a file to the public upload endpoint (no auth required) */
+  async uploadFile(orgId: string, file: File): Promise<{ key: string }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch(`${apiBase}/api/v1/org/${orgId}/public/uploads`, {
+      method: 'POST',
+      body: formData,
+    })
+    if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
+    return res.json()
   },
 
   sendArticleFeedback(orgId: string, articleId: string, data: { rating: number; comment?: string }) {

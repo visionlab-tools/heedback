@@ -31,7 +31,30 @@
             </div>
             <span class="text-xs text-slate-400">{state.formatTime(msg.createdAt)}</span>
           </div>
-          <div class="mt-1"><Markdown content={msg.body} /></div>
+          {#if msg.body}
+            <div class="mt-1"><Markdown content={msg.body} /></div>
+          {/if}
+          {#if msg.attachments?.length}
+            <div class="mt-2 flex flex-wrap gap-2">
+              {#each msg.attachments as att}
+                {#if att.type?.startsWith('image/')}
+                  <a href={att.url} target="_blank" rel="noopener noreferrer">
+                    <img src={att.url} alt={att.name} class="max-w-[200px] rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
+                  </a>
+                {:else if att.type?.startsWith('video/')}
+                  <video controls preload="metadata" class="max-w-[300px] rounded-lg border border-slate-200">
+                    <source src={att.url} type={att.type} />
+                    <track kind="captions" />
+                  </video>
+                {/if}
+              {/each}
+            </div>
+          {/if}
+          {#if msg.pageUrl && msg.senderType !== 'admin'}
+            <a href={msg.pageUrl} target="_blank" rel="noopener noreferrer" class="block mt-1 text-xs text-slate-400 hover:text-indigo-500 truncate">
+              {$_('conversation.page_url')}: {msg.pageUrl}
+            </a>
+          {/if}
         </div>
       {/each}
     </div>

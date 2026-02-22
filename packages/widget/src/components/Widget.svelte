@@ -18,7 +18,7 @@
     user?: any
   } = $props()
 
-  const state = createWidgetState(org, color)
+  const widget = createWidgetState(org, color)
   let helpArticleOpen = $state(false)
 </script>
 
@@ -27,10 +27,10 @@
   class:hb-left={position === 'bottom-left'}
 >
   <!-- Panel -->
-  {#if state.isOpen}
-    <div class="hb-panel" class:hb-panel-closing={state.animating && !state.isOpen} class:hb-article-open={state.tab === 'help' && helpArticleOpen}>
+  {#if widget.isOpen}
+    <div class="hb-panel" class:hb-panel-closing={widget.animating && !widget.isOpen} class:hb-article-open={widget.tab === 'help' && helpArticleOpen}>
       <!-- Header uses brandColor for consistency with the org identity -->
-      <div class="hb-header" style="background: linear-gradient(135deg, {state.brandColor}, {state.brandColor}dd);">
+      <div class="hb-header" style="background: linear-gradient(135deg, {widget.brandColor}, {widget.brandColor}dd);">
         <div class="hb-header-top">
           <div class="hb-header-brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,7 +38,7 @@
             </svg>
             <span class="hb-header-title">{t(locale, 'header.title')}</span>
           </div>
-          <button class="hb-close-btn" onclick={state.close} aria-label={t(locale, 'trigger.close')}>
+          <button class="hb-close-btn" onclick={widget.close} aria-label={t(locale, 'trigger.close')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -51,8 +51,8 @@
         <div class="hb-tabs">
           <button
             class="hb-tab"
-            class:hb-tab-active={state.tab === 'chat'}
-            onclick={() => state.switchTab('chat')}
+            class:hb-tab-active={widget.tab === 'chat'}
+            onclick={() => widget.switchTab('chat')}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -61,8 +61,8 @@
           </button>
           <button
             class="hb-tab"
-            class:hb-tab-active={state.tab === 'help'}
-            onclick={() => state.switchTab('help')}
+            class:hb-tab-active={widget.tab === 'help'}
+            onclick={() => widget.switchTab('help')}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -76,8 +76,8 @@
 
       <!-- Content -->
       <div class="hb-content">
-        {#if state.tab === 'chat'}
-          <ChatView {org} {user} color={state.brandColor} {locale} />
+        {#if widget.tab === 'chat'}
+          <ChatView {org} {user} color={widget.brandColor} {locale} />
         {:else}
           <HelpView {org} {locale} onviewchange={(v) => helpArticleOpen = v === 'article'} />
         {/if}
@@ -88,12 +88,12 @@
   <!-- Trigger button uses widgetColor (independently customizable) -->
   <button
     class="hb-trigger"
-    class:hb-trigger-open={state.isOpen}
-    style="background: linear-gradient(135deg, {state.widgetColor}, {state.widgetColor}dd);"
-    onclick={state.toggle}
-    aria-label={state.isOpen ? t(locale, 'trigger.close') : t(locale, 'trigger.open')}
+    class:hb-trigger-open={widget.isOpen}
+    style="background: linear-gradient(135deg, {widget.widgetColor}, {widget.widgetColor}dd);"
+    onclick={widget.toggle}
+    aria-label={widget.isOpen ? t(locale, 'trigger.close') : t(locale, 'trigger.open')}
   >
-    {#if state.isOpen}
+    {#if widget.isOpen}
       <svg class="hb-trigger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -146,10 +146,12 @@
     flex-direction: column;
     margin-bottom: 14px;
     animation: hb-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    transition: max-height 0.25s ease;
+    transition: width 0.25s ease, max-height 0.25s ease;
   }
+  /* 1.5x larger when reading an article for better readability */
   .hb-panel.hb-article-open {
-    max-height: min(700px, calc(100vh - 100px));
+    width: 600px;
+    max-height: min(900px, calc(100vh - 80px));
   }
   @keyframes hb-slide-up {
     from {
@@ -244,7 +246,7 @@
     transition: max-height 0.25s ease;
   }
   .hb-article-open .hb-content {
-    max-height: min(520px, calc(100vh - 280px));
+    max-height: min(720px, calc(100vh - 260px));
   }
   .hb-content::-webkit-scrollbar {
     width: 4px;
@@ -301,6 +303,9 @@
     .hb-panel {
       width: calc(100vw - 24px);
       max-height: calc(100vh - 100px);
+    }
+    .hb-panel.hb-article-open {
+      width: calc(100vw - 24px);
     }
   }
 </style>
