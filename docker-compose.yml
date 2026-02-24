@@ -157,3 +157,8 @@ volumes:
   redis_data:
   minio_data:
   kuriyr_data:
+
+networks:
+  default:
+    name: coolify
+    external: true
