@@ -11,7 +11,14 @@ services:
     environment:
       - NODE_ENV=production
       - APP_KEY=${APP_KEY}
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - HOST=0.0.0.0
+      - PORT=3333
+      # Database (individual vars for AdonisJS env validation)
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER:-heedback}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-heedback_secret}
+      - DB_DATABASE=${POSTGRES_DB:-heedback}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - KURIYR_URL=http://kuriyr:4400
