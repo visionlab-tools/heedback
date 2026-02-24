@@ -4,6 +4,17 @@
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
+  "imports": {
+    "#start/*": "./build/start/*.js",
+    "#config/*": "./build/config/*.js",
+    "#controllers/*": "./build/app/controllers/*.js",
+    "#models/*": "./build/app/models/*.js",
+    "#services/*": "./build/app/services/*.js",
+    "#exceptions/*": "./build/app/exceptions/*.js",
+    "#validators/*": "./build/app/validators/*.js",
+    "#middleware/*": "./build/app/middleware/*.js",
+    "#helpers/*": "./build/app/helpers/*.js"
+  },
   "scripts": {
     "dev": "node --import=tsx/esm bin/server.ts --watch",
     "build": "tsc",
