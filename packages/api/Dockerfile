@@ -32,4 +32,5 @@ EXPOSE 3333
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD wget -q --spider http://localhost:3333/health || exit 1
 
-CMD ["node", "build/bin/server.js"]
+# Run migrations then start server
+CMD ["sh", "-c", "node build/bin/console.js migration:run && node build/bin/server.js"]
