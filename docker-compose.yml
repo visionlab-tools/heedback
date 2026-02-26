@@ -8,12 +8,6 @@ services:
       dockerfile: packages/api/Dockerfile
     ports:
       - '${API_PORT:-3333}:3333'
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.heedback-api.rule=Host(`${API_HOST:-api.localhost}`)
-      - traefik.http.routers.heedback-api.entrypoints=http,https
-      - traefik.http.routers.heedback-api.tls.certresolver=letsencrypt
-      - traefik.http.services.heedback-api.loadbalancer.server.port=3333
     environment:
       - NODE_ENV=production
       - APP_KEY=${APP_KEY}
@@ -58,12 +52,6 @@ services:
       dockerfile: packages/web/Dockerfile
     ports:
       - '${WEB_PORT:-3000}:3000'
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.heedback-web.rule=Host(`${WEB_HOST:-app.localhost}`)
-      - traefik.http.routers.heedback-web.entrypoints=http,https
-      - traefik.http.routers.heedback-web.tls.certresolver=letsencrypt
-      - traefik.http.services.heedback-web.loadbalancer.server.port=3000
     environment:
       - NODE_ENV=production
       - API_URL=http://api:3333
@@ -82,12 +70,6 @@ services:
       dockerfile: packages/portal/Dockerfile
     ports:
       - '${PORTAL_PORT:-3001}:3001'
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.heedback-portal.rule=Host(`${PORTAL_HOST:-portal.localhost}`)
-      - traefik.http.routers.heedback-portal.entrypoints=http,https
-      - traefik.http.routers.heedback-portal.tls.certresolver=letsencrypt
-      - traefik.http.services.heedback-portal.loadbalancer.server.port=3001
     environment:
       - NODE_ENV=production
       - API_URL=http://api:3333
