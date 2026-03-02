@@ -1,0 +1,24 @@
+# Nixpacks config — Heedback Portal (SvelteKit SSR)
+# Coolify: create an Application, set build pack to Nixpacks,
+# and paste this TOML in "Custom Nixpacks Config".
+
+providers = ['node']
+
+[phases.setup]
+nixPkgs = ['nodejs_22']
+
+[phases.install]
+cmds = [
+  'corepack enable',
+  'corepack prepare pnpm@10.9.0 --activate',
+  'pnpm install --frozen-lockfile --filter @heedback/portal...',
+]
+
+[phases.build]
+cmds = [
+  'pnpm --filter @heedback/shared build',
+  'pnpm --filter @heedback/portal build',
+]
+
+[start]
+cmd = 'cd packages/portal && node build/index.js'

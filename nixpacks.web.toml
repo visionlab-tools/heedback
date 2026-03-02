@@ -1,0 +1,27 @@
+# Nixpacks config — Heedback Web Dashboard (Svelte 5 SPA)
+# Coolify: create an Application, set build pack to Nixpacks,
+# and paste this TOML in "Custom Nixpacks Config".
+# NOTE: the SPA calls /api/* — configure Coolify's Traefik rules
+# or set VITE_API_URL at build time to point to the API domain.
+
+providers = ['node']
+
+[phases.setup]
+nixPkgs = ['nodejs_22']
+
+[phases.install]
+cmds = [
+  'corepack enable',
+  'corepack prepare pnpm@10.9.0 --activate',
+  'pnpm install --frozen-lockfile --filter @heedback/web...',
+  'npm i -g sirv-cli',
+]
+
+[phases.build]
+cmds = [
+  'pnpm --filter @heedback/shared build',
+  'pnpm --filter @heedback/web build',
+]
+
+[start]
+cmd = 'sirv packages/web/build --host 0.0.0.0 --port 3000 --single'
