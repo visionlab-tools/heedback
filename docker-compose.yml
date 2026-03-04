@@ -63,6 +63,12 @@ services:
       - API_URL=http://api:3333
       - PUBLIC_API_URL=${APP_URL:-http://localhost:3333}
       - ORIGIN=${WEB_URL:-http://localhost:3000}
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000 || exit 1']
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       - api
     restart: unless-stopped
@@ -81,6 +87,12 @@ services:
       - API_URL=http://api:3333
       - PUBLIC_API_URL=${APP_URL:-http://localhost:3333}
       - ORIGIN=${PORTAL_URL:-http://localhost:3001}
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3001 || exit 1']
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       - api
     restart: unless-stopped
