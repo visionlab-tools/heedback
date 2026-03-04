@@ -57,7 +57,7 @@ services:
       context: .
       dockerfile: packages/web/Dockerfile
     ports:
-      - '${WEB_PORT:-3000}:3000'
+      - '${WEB_PORT:-3000}:80'
     environment:
       - NODE_ENV=production
       - API_URL=http://api:3333
