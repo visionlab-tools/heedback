@@ -127,9 +127,10 @@ services:
   # Kuriyr (Transactional Email Service)
   # ---------------------------------------------------------------------------
   kuriyr:
-    image: ghcr.io/visionlab-tools/kuriyr:latest
+    build:
+      context: ./templates/emails
+      dockerfile: Dockerfile
     volumes:
-      - ./templates/emails:/app/templates
       - kuriyr_data:/app/data
     environment:
       - KURIYR_FROM_NAME=${KURIYR_FROM_NAME:-Heedback}
