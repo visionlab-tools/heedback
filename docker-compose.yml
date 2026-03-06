@@ -37,6 +37,7 @@ services:
       - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY:-}
       - VAPID_SUBJECT=${VAPID_SUBJECT:-}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL:-http://localhost:3001}
     healthcheck:
       test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3333/health || exit 1']
       interval: 15s
