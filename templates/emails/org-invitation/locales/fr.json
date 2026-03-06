@@ -1,0 +1,9 @@
+{
+  "subject": "Vous êtes invité(e) à rejoindre {{orgName}}",
+  "preview": "{{inviterName}} vous a invité(e) à rejoindre {{orgName}}",
+  "heading": "Vous êtes invité(e) !",
+  "description": "{{inviterName}} vous a invité(e) à rejoindre {{orgName}} sur Heedback.",
+  "button": "Accepter l'invitation",
+  "expire": "Cette invitation expire dans 7 jours.",
+  "footer": "Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail."
+}
