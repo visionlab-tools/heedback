@@ -27,8 +27,8 @@ export async function initPushNotifications() {
       { endpoint: json.endpoint, keys: json.keys },
       { silent: true },
     )
-  } catch {
-    // User denied permission or push not available — fail silently
+  } catch (err) {
+    console.warn('[Push] Failed to initialize push notifications:', err)
   }
 }
 
@@ -42,8 +42,8 @@ export async function unsubscribePush() {
 
     await api.post('/push-subscriptions/unsubscribe', { endpoint: subscription.endpoint }, { silent: true })
     await subscription.unsubscribe()
-  } catch {
-    // Fail silently
+  } catch (err) {
+    console.warn('[Push] Failed to unsubscribe:', err)
   }
 }
 

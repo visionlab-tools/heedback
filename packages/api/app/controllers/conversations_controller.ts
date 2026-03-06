@@ -10,26 +10,35 @@ import ConversationService from '#services/conversation_service'
 export default class ConversationsController {
   private conversationService = new ConversationService()
 
-  async index({ organization, request, response }: HttpContext) {
+  async index({ organization, auth, request, response }: HttpContext) {
     const conversations = await this.conversationService.list(organization.id, {
       page: request.input('page', 1),
       limit: request.input('limit', 20),
       status: request.input('status'),
       assignedToId: request.input('assignedToId'),
+      adminUserId: auth.user!.id,
     })
 
     return response.ok({
-      data: conversations.all().map((c) => c.serialize()),
+      data: conversations.all().map((c) => {
+        const serialized = c.serialize()
+        // is_unread comes from the raw SQL join — cast to boolean
+        serialized.isUnread = Boolean(c.$extras.is_unread)
+        return serialized
+      }),
       meta: conversations.getMeta(),
     })
   }
 
-  async show({ organization, params, response }: HttpContext) {
+  async show({ organization, auth, params, response }: HttpContext) {
     const result = await this.conversationService.show(organization.id, params.conversationId)
 
     if (!result) {
       return response.notFound({ message: 'Conversation not found' })
     }
+
+    // Mark as read for the current admin
+    await this.conversationService.markAsRead(params.conversationId, auth.user!.id)
 
     return response.ok({
       data: {

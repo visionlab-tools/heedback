@@ -26,11 +26,11 @@ function createInboxStore() {
       currentOrgId = orgId
 
       try {
-        const data = await api.get<{ data: any[]; meta: { total: number } }>(
-          `/org/${orgId}/conversations?status=open&limit=1`,
+        const data = await api.get<{ data: any[] }>(
+          `/org/${orgId}/conversations?limit=100`,
           { silent: true },
         )
-        const count = data.meta?.total ?? data.data.length
+        const count = data.data.filter((c: any) => c.isUnread).length
         set(count)
         updateTitle(count)
       } catch {
@@ -95,11 +95,11 @@ function createInboxStore() {
     /** Force refresh count from API */
     async refresh(orgId: string) {
       try {
-        const data = await api.get<{ data: any[]; meta: { total: number } }>(
-          `/org/${orgId}/conversations?status=open&limit=1`,
+        const data = await api.get<{ data: any[] }>(
+          `/org/${orgId}/conversations?limit=100`,
           { silent: true },
         )
-        const count = data.meta?.total ?? data.data.length
+        const count = data.data.filter((c: any) => c.isUnread).length
         set(count)
         updateTitle(count)
       } catch {

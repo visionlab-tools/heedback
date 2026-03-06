@@ -10,12 +10,14 @@ import PushNotificationService from '#services/push_notification_service'
 import { sseService } from '#services/sse_service'
 import { isUuid } from '#helpers/uuid'
 import { resolveStorageUrl } from '#helpers/storage'
+import db from '@adonisjs/lucid/services/db'
 
 interface ListFilters {
   page?: number
   limit?: number
   status?: string
   assignedToId?: string
+  adminUserId?: string
 }
 
 interface UpdateData {
@@ -69,6 +71,21 @@ export default class ConversationService {
       query.where('assigned_to_id', filters.assignedToId)
     }
 
+    // Left-join read tracking so we can compute isUnread per conversation
+    if (filters.adminUserId) {
+      query.leftJoin('conversation_reads as cr', (join) => {
+        join
+          .on('cr.conversation_id', '=', 'conversations.id')
+          .andOnVal('cr.admin_user_id', '=', filters.adminUserId!)
+      })
+      query.select('conversations.*')
+      query.select(
+        db.rawQuery(
+          `(cr.read_at IS NULL OR conversations.last_message_at > cr.read_at) AS is_unread`,
+        ),
+      )
+    }
+
     query.orderBy('last_message_at', 'desc').orderBy('created_at', 'desc')
 
     return query.paginate(page, limit)
@@ -101,6 +118,16 @@ export default class ConversationService {
     })
 
     return { conversation, serializedMessages }
+  }
+
+  async markAsRead(conversationId: string, adminUserId: string) {
+    await db.rawQuery(
+      `INSERT INTO conversation_reads (admin_user_id, conversation_id, read_at)
+       VALUES (?, ?, NOW())
+       ON CONFLICT (admin_user_id, conversation_id)
+       DO UPDATE SET read_at = NOW()`,
+      [adminUserId, conversationId],
+    )
   }
 
   async update(orgId: string, conversationId: string, data: UpdateData) {

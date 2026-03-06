@@ -10,6 +10,7 @@ interface Conversation {
   messageCount: number
   lastMessageAt: string | null
   createdAt: string
+  isUnread?: boolean
   endUser?: { name: string | null; email: string | null; avatarUrl: string | null }
   assignedTo?: { id: string; fullName: string; avatarUrl: string | null }
   messages?: Message[]
@@ -118,6 +119,12 @@ export function createInboxState(orgId: string) {
 
   function selectConversation(id: string) {
     selectedId = id
+    // Mark as read locally — API marks as read on show()
+    const idx = conversations.findIndex((c) => c.id === id)
+    if (idx >= 0 && conversations[idx].isUnread) {
+      conversations[idx] = { ...conversations[idx], isUnread: false }
+      conversations = [...conversations]
+    }
     navigate(`/${orgId}/inbox/${id}`)
     loadConversation()
   }
@@ -194,16 +201,21 @@ export function createInboxState(orgId: string) {
 
   function handleSseEvent(event: { event: string; data: any }) {
     if (event.event === 'conversation.created') {
-      // Prepend new conversation to the list
-      conversations = [event.data, ...conversations]
+      conversations = [{ ...event.data, isUnread: true }, ...conversations]
     }
 
     if (event.event === 'message.created') {
-      // Bump conversation to top and update preview
       const convId = event.data.conversationId
       const idx = conversations.findIndex((c) => c.id === convId)
+      // Mark unread if the message is from an end user and not currently viewing
+      const isUnread = selectedId !== convId && event.data.senderType === 'end_user'
       if (idx >= 0) {
-        const updated = { ...conversations[idx], lastMessageAt: event.data.createdAt, messageCount: conversations[idx].messageCount + 1 }
+        const updated = {
+          ...conversations[idx],
+          lastMessageAt: event.data.createdAt,
+          messageCount: conversations[idx].messageCount + 1,
+          isUnread: isUnread || conversations[idx].isUnread,
+        }
         conversations = [updated, ...conversations.slice(0, idx), ...conversations.slice(idx + 1)]
       }
 

@@ -46,7 +46,8 @@
             <button
               type="button"
               class="w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors
-                {state.selectedId === convo.id ? 'bg-indigo-50 border-l-2 border-l-indigo-500' : ''}"
+                {state.selectedId === convo.id ? 'bg-indigo-50 border-l-2 border-l-indigo-500' : ''}
+                {convo.isUnread ? 'bg-indigo-50/40' : ''}"
               onclick={() => state.selectConversation(convo.id)}
             >
               <div class="flex items-center justify-between mb-1">
@@ -57,6 +58,9 @@
                 <span class="text-xs text-slate-400 shrink-0">{state.timeAgo(convo.lastMessageAt)}</span>
               </div>
               <div class="flex items-center gap-2.5">
+                {#if convo.isUnread}
+                  <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+                {/if}
                 {#if convo.endUser?.avatarUrl}
                   <img src={convo.endUser.avatarUrl} alt="" class="w-8 h-8 rounded-full object-cover shrink-0" />
                 {:else if convo.endUser?.name || convo.endUser?.email}
@@ -67,10 +71,10 @@
                   <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0">?</div>
                 {/if}
                 <div class="min-w-0">
-                  <p class="text-sm font-medium text-slate-900 truncate">
+                  <p class="text-sm truncate {convo.isUnread ? 'font-semibold text-slate-900' : 'font-medium text-slate-900'}">
                     {convo.endUser?.name || convo.endUser?.email || $_('common.anonymous')}
                   </p>
-                  <p class="text-xs text-slate-500 truncate">
+                  <p class="text-xs truncate {convo.isUnread ? 'text-slate-700 font-medium' : 'text-slate-500'}">
                     {convo.subject || $_('inbox.no_subject')}
                   </p>
                 </div>
