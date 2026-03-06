@@ -7,8 +7,8 @@ const driveConfig = defineConfig({
   services: {
     s3: services.s3({
       credentials: {
-        accessKeyId: env.get('S3_ACCESS_KEY', ''),
-        secretAccessKey: env.get('S3_SECRET_KEY', ''),
+        accessKeyId: env.get('S3_KEY', ''),
+        secretAccessKey: env.get('S3_SECRET', ''),
       },
       region: env.get('S3_REGION', 'us-east-1'),
       bucket: env.get('S3_BUCKET', 'heedback'),
