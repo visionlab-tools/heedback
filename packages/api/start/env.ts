@@ -78,4 +78,13 @@ export default await Env.create(new URL('../', import.meta.url), {
   S3_SECRET: Env.schema.string.optional(),
   S3_REGION: Env.schema.string.optional(),
   S3_PUBLIC_URL: Env.schema.string.optional(),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Web Push (VAPID)
+  |--------------------------------------------------------------------------
+  */
+  VAPID_PUBLIC_KEY: Env.schema.string.optional(),
+  VAPID_PRIVATE_KEY: Env.schema.string.optional(),
+  VAPID_SUBJECT: Env.schema.string.optional(),
 })

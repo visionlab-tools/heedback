@@ -12,11 +12,13 @@
     label,
     icon: Icon,
     active,
+    badge = 0,
   }: {
     href: string
     label: string
     icon: IconComponent
     active: boolean
+    badge?: number
   } = $props()
 </script>
 
@@ -28,5 +30,10 @@
       : 'text-slate-400 hover:bg-white/10 hover:text-white'}"
 >
   <Icon size={18} strokeWidth={active ? 2 : 1.5} />
-  <span>{label}</span>
+  <span class="flex-1">{label}</span>
+  {#if badge > 0}
+    <span class="min-w-5 h-5 flex items-center justify-center rounded-full bg-indigo-500 text-white text-xs font-semibold px-1.5">
+      {badge > 99 ? '99+' : badge}
+    </span>
+  {/if}
 </a>

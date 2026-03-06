@@ -11,7 +11,7 @@
     items,
     activePath,
   }: {
-    items: Array<{ href: string; label: string; icon: IconComponent }>
+    items: Array<{ href: string; label: string; icon: IconComponent; badge?: number }>
     activePath: string
   } = $props()
 
@@ -29,6 +29,7 @@
       label={item.label}
       icon={item.icon}
       active={isActive(item.href)}
+      badge={item.badge}
     />
   {/each}
 </nav>

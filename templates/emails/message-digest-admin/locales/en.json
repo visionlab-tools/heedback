@@ -1,0 +1,7 @@
+{
+  "preview": "{{messageCount}} new message(s) from customers",
+  "heading": "New Messages Digest",
+  "description": "You have {{messageCount}} unread message(s) from customers:",
+  "button": "Open Inbox",
+  "footer": "You received this because you are a team member."
+}

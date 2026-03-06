@@ -1,0 +1,7 @@
+{
+  "preview": "{{orgName}} replied to your conversation",
+  "heading": "New Reply",
+  "description": "You have {{messageCount}} new reply(ies) from {{orgName}}:",
+  "button": "View Conversation",
+  "footer": "You received this from {{orgName}}."
+}

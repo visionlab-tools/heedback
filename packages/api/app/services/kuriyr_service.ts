@@ -22,6 +22,8 @@ export const EmailTemplates = {
   NEW_FEEDBACK: 'new-feedback',
   STATUS_CHANGE: 'status-change',
   ORG_INVITATION: 'org-invitation',
+  MESSAGE_DIGEST_ADMIN: 'message-digest-admin',
+  MESSAGE_DIGEST_USER: 'message-digest-user',
 } as const
 
 export type EmailTemplateName = (typeof EmailTemplates)[keyof typeof EmailTemplates]

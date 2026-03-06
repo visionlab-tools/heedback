@@ -1,0 +1,7 @@
+{
+  "preview": "{{messageCount}} nouveau(x) message(s) de clients",
+  "heading": "Digest des nouveaux messages",
+  "description": "Vous avez {{messageCount}} message(s) non lu(s) de vos clients :",
+  "button": "Ouvrir la boite de reception",
+  "footer": "Vous recevez cet email car vous etes membre de l'equipe."
+}

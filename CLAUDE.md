@@ -16,6 +16,7 @@ Heedback is an open source customer support & product feedback suite. Self-hoste
 - **Cache/Queue/Sessions**: Redis 7
 - **Storage**: S3-compatible (MinIO in dev/self-hosted)
 - **Email**: Kuriyr (self-hosted transactional email service)
+- **Push Notifications**: Web Push API (VAPID) via `web-push` npm package
 
 ## Architecture
 
@@ -108,3 +109,25 @@ Core models with `organization_id`:
 - Board, Post, Vote, Comment, Tag, PostTag
 - ChangelogEntry, ChangelogEntryTranslation, ChangelogLabel, ChangelogPost, ChangelogSubscriber
 - Conversation, Message
+- PushSubscription (per admin user, not org-scoped)
+
+## Notifications
+
+### Browser Push Notifications
+- Org members receive Web Push notifications when end-users send messages
+- VAPID-based — requires `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` env vars
+- Service worker: `packages/web/public/sw.js`
+- Push subscription management: `PushNotificationService`, `PushSubscriptionsController`
+- Subscriptions stored in `push_subscriptions` table (per admin user, not org-scoped)
+
+### Email Digest (every 10 minutes)
+- `DigestService` runs via `setInterval` in `AppProvider.ready()`
+- Redis distributed lock prevents duplicate runs in multi-instance deployments
+- Sends to org admins (new end-user messages) and end-users (new admin replies)
+- Tracks watermark via `last_digest_sent_at` on `org_members` and `end_users`
+- Templates: `message-digest-admin`, `message-digest-user`
+
+### Unread Badge
+- `inboxUnread` store in `packages/web/src/lib/stores/inbox.ts`
+- Tracks open conversation count via API + SSE events
+- Updates sidebar badge and document title `(N) Heedback`

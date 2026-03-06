@@ -7,6 +7,8 @@
   import { onMount, onDestroy, type Snippet } from 'svelte'
   import { getPath, navigate } from '../router.svelte.ts'
   import { auth } from '../stores/auth'
+  import { initPushNotifications } from '../push'
+  import { inboxUnread } from '../stores/inbox'
   import { currentOrg, allOrgs, orgLoading, type Organization } from '../stores/org'
   import { fullWidth } from '../stores/layout'
   import { LoadingSpinner } from '@heedback/ui-kit'
@@ -38,6 +40,7 @@
     unsubLoading()
     unsubFullWidth()
     unsubAuthGuard?.()
+    inboxUnread.disconnect()
   })
 
   // Sync currentOrg from URL org ID whenever path or orgs change
@@ -49,6 +52,10 @@
     if (match && match.id !== org?.id) {
       currentOrg.select(match)
     }
+    // Connect inbox unread counter when org changes
+    if (match) {
+      inboxUnread.connect(match.id)
+    }
   })
 
   onMount(async () => {
@@ -59,6 +66,9 @@
       }
     })
     await currentOrg.load()
+
+    // Subscribe to browser push notifications after auth
+    initPushNotifications()
   })
 </script>
 

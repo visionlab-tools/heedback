@@ -1,0 +1,7 @@
+{
+  "preview": "{{orgName}} a repondu a votre conversation",
+  "heading": "Nouvelle reponse",
+  "description": "Vous avez {{messageCount}} nouvelle(s) reponse(s) de {{orgName}} :",
+  "button": "Voir la conversation",
+  "footer": "Vous recevez cet email de la part de {{orgName}}."
+}

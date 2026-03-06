@@ -6,6 +6,7 @@ import type { Attachment } from '#models/message'
 import EndUser from '#models/end_user'
 import Organization from '#models/organization'
 import WebhookService from '#services/webhook_service'
+import PushNotificationService from '#services/push_notification_service'
 import { sseService } from '#services/sse_service'
 import { isUuid } from '#helpers/uuid'
 import { resolveStorageUrl } from '#helpers/storage'
@@ -50,6 +51,7 @@ interface PublicReplyData {
 
 export default class ConversationService {
   private webhookService = new WebhookService()
+  private pushService = new PushNotificationService()
 
   async list(orgId: string, filters: ListFilters) {
     const page = filters.page || 1
@@ -343,6 +345,14 @@ export default class ConversationService {
       data: conversation.serialize(),
     })
 
+    // Fire-and-forget browser push to all org members
+    this.pushService.sendToOrg(org.id, {
+      title: conversation.subject ?? 'New conversation',
+      body: (data.body ?? '').slice(0, 200),
+      conversationId: conversation.id,
+      orgId: org.id,
+    })
+
     return conversation
   }
 
@@ -424,6 +434,14 @@ export default class ConversationService {
     sseService.publish(`org:${org.id}:inbox`, {
       event: 'message.created',
       data: { ...serialized, conversationId },
+    })
+
+    // Fire-and-forget browser push to all org members
+    this.pushService.sendToOrg(org.id, {
+      title: conversation.subject ?? 'New message',
+      body: (data.body ?? '').slice(0, 200),
+      conversationId: conversation.id,
+      orgId: org.id,
     })
 
     return message

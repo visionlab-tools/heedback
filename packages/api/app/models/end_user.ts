@@ -42,6 +42,9 @@ export default class EndUser extends BaseModel {
   })
   declare updatedAt: DateTime
 
+  @column.dateTime({ columnName: 'last_digest_sent_at', serializeAs: 'lastDigestSentAt' })
+  declare lastDigestSentAt: DateTime | null
+
   /*
   |--------------------------------------------------------------------------
   | Relationships

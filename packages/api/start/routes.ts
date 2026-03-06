@@ -17,6 +17,7 @@ const SseController = () => import('#controllers/sse_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 const GitWebhookController = () => import('#controllers/git_webhook_controller')
 const InvitationsController = () => import('#controllers/invitations_controller')
+const PushSubscriptionsController = () => import('#controllers/push_subscriptions_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,15 @@ router
 
     // Accept invitation — auth-required but not org-scoped
     router.post('/invitations/accept', [InvitationsController, 'accept'])
+
+    /*
+    |--------------------------------------------------------------------------
+    | Push notification subscriptions (user-level, not org-scoped)
+    |--------------------------------------------------------------------------
+    */
+    router.post('/push-subscriptions', [PushSubscriptionsController, 'subscribe'])
+    router.post('/push-subscriptions/unsubscribe', [PushSubscriptionsController, 'unsubscribe'])
+    router.get('/push/vapid-key', [PushSubscriptionsController, 'vapidKey'])
 
     /*
     |--------------------------------------------------------------------------
