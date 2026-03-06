@@ -9,7 +9,9 @@
 
   let { orgId }: { orgId: string } = $props()
 
-  let apiBaseUrl = $state(window.location.origin)
+  let widgetBaseUrl = $state(
+    (window as any).__CONFIG__?.WIDGET_URL || window.location.origin,
+  )
   let widgetColor = $state('#6366f1')
   let saving = $state(false)
 
@@ -35,14 +37,14 @@
 
   let autoInitSnippet = $derived(
     `<script
-  src="${apiBaseUrl}/widget.js"
+  src="${widgetBaseUrl}/widget.js"
   data-org="${orgId}"
   data-position="bottom-right"
   data-locale="en"><\/script>`,
   )
 
   let manualSnippet = $derived(
-    `<script src="${apiBaseUrl}/widget.js"><\/script>
+    `<script src="${widgetBaseUrl}/widget.js"><\/script>
 <script>
   window.Heedback.init({
     org: '${orgId}',

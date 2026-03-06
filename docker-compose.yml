@@ -58,6 +58,7 @@ services:
       - '${WEB_PORT:-3000}:80'
     environment:
       - API_URL=${API_URL:-http://localhost:3333}
+      - WIDGET_URL=${WIDGET_URL:-}
     healthcheck:
       test: ['CMD-SHELL', 'wget -qO /dev/null http://127.0.0.1:80/ || exit 1']
       interval: 15s
