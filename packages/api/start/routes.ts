@@ -31,6 +31,7 @@ router.get('/health', [HealthController, 'check'])
 */
 router
   .group(() => {
+    router.post('/auth/register', [AuthController, 'register'])
     router.post('/auth/login', [AuthController, 'login'])
     router.post('/auth/logout', [AuthController, 'logout']).use(middleware.auth())
     router.get('/auth/me', [AuthController, 'me']).use(middleware.auth())

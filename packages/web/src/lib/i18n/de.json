@@ -31,6 +31,18 @@
   "login.password": "Passwort",
   "login.submit": "Anmelden",
   "login.loading": "Anmeldung...",
+  "login.no_account": "Noch kein Konto?",
+  "login.sign_up": "Registrieren",
+
+  "register.title": "Heedback",
+  "register.subtitle": "Erstellen Sie Ihr Admin-Konto",
+  "register.full_name": "Vollständiger Name",
+  "register.email": "E-Mail",
+  "register.password": "Passwort",
+  "register.submit": "Konto erstellen",
+  "register.loading": "Konto wird erstellt...",
+  "register.has_account": "Bereits ein Konto?",
+  "register.sign_in": "Anmelden",
 
   "dashboard.welcome": "Willkommen in Ihrem Heedback-Dashboard.",
   "dashboard.articles": "Artikel",

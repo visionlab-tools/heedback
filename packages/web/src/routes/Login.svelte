@@ -41,5 +41,12 @@
         {state.loading ? $_('login.loading') : $_('login.submit')}
       </Button>
     </form>
+
+    <p class="mt-6 text-center text-sm text-slate-500">
+      {$_('login.no_account')}
+      <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
+        {$_('login.sign_up')}
+      </a>
+    </p>
   </div>
 </div>

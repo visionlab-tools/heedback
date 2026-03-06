@@ -34,6 +34,16 @@ function createAuthStore() {
       }
     },
 
+    async register(fullName: string, email: string, password: string) {
+      const data = await api.post<{ user: AdminUser }>('/auth/register', {
+        fullName,
+        email,
+        password,
+      })
+      update((state) => ({ ...state, user: data.user }))
+      return data.user
+    },
+
     async login(email: string, password: string) {
       const data = await api.post<{ user: AdminUser }>('/auth/login', { email, password })
       update((state) => ({ ...state, user: data.user }))

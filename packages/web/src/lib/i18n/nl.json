@@ -31,6 +31,18 @@
   "login.password": "Wachtwoord",
   "login.submit": "Inloggen",
   "login.loading": "Bezig met inloggen...",
+  "login.no_account": "Nog geen account?",
+  "login.sign_up": "Registreren",
+
+  "register.title": "Heedback",
+  "register.subtitle": "Maak uw beheerdersaccount aan",
+  "register.full_name": "Volledige naam",
+  "register.email": "E-mail",
+  "register.password": "Wachtwoord",
+  "register.submit": "Account aanmaken",
+  "register.loading": "Account aanmaken...",
+  "register.has_account": "Heeft u al een account?",
+  "register.sign_in": "Inloggen",
 
   "dashboard.welcome": "Welkom op uw Heedback-dashboard.",
   "dashboard.articles": "Artikelen",

@@ -3,6 +3,7 @@
   import type { RouteDefinition } from './lib/components/Router.svelte'
   import Layout from './lib/components/Layout.svelte'
   import Login from './routes/Login.svelte'
+  import Register from './routes/Register.svelte'
   import RootRedirect from './routes/RootRedirect.svelte'
   import Dashboard from './routes/Dashboard.svelte'
   import Articles from './routes/Articles.svelte'
@@ -24,6 +25,7 @@
      always reflects the active organization context. */
   const routes: RouteDefinition[] = [
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     { path: '/', component: RootRedirect },
     { path: '/:orgId', component: Dashboard, layout: Layout },
     { path: '/:orgId/articles', component: Articles, layout: Layout },

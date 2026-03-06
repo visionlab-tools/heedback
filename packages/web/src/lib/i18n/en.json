@@ -31,6 +31,18 @@
   "login.password": "Password",
   "login.submit": "Sign in",
   "login.loading": "Signing in...",
+  "login.no_account": "Don't have an account?",
+  "login.sign_up": "Sign up",
+
+  "register.title": "Heedback",
+  "register.subtitle": "Create your admin account",
+  "register.full_name": "Full name",
+  "register.email": "Email",
+  "register.password": "Password",
+  "register.submit": "Create account",
+  "register.loading": "Creating account...",
+  "register.has_account": "Already have an account?",
+  "register.sign_in": "Sign in",
 
   "dashboard.welcome": "Welcome to your Heedback dashboard.",
   "dashboard.articles": "Articles",

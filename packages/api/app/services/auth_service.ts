@@ -15,6 +15,22 @@ export default class AuthService {
   }
 
   /**
+   * Create a new admin user account.
+   * Throws if the email is already taken (unique constraint).
+   */
+  async register(fullName: string, email: string, password: string): Promise<AdminUser> {
+    const user = await AdminUser.create({
+      fullName,
+      email,
+      password,
+      isSuperAdmin: false,
+      lastLoginAt: DateTime.now(),
+    })
+
+    return user
+  }
+
+  /**
    * Load user with orgMemberships.organization and return it.
    * Returns null if the user is not found.
    */

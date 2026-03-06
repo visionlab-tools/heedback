@@ -31,6 +31,18 @@
   "login.password": "Mot de passe",
   "login.submit": "Se connecter",
   "login.loading": "Connexion...",
+  "login.no_account": "Pas encore de compte ?",
+  "login.sign_up": "S'inscrire",
+
+  "register.title": "Heedback",
+  "register.subtitle": "Créez votre compte administrateur",
+  "register.full_name": "Nom complet",
+  "register.email": "E-mail",
+  "register.password": "Mot de passe",
+  "register.submit": "Créer un compte",
+  "register.loading": "Création du compte...",
+  "register.has_account": "Vous avez déjà un compte ?",
+  "register.sign_in": "Se connecter",
 
   "dashboard.welcome": "Bienvenue sur votre tableau de bord Heedback.",
   "dashboard.articles": "Articles",
