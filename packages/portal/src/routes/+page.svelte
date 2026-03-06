@@ -1,1 +1,1 @@
-<!-- Redirects to /{locale} via +page.server.ts — this page never renders -->
+<!-- Root page — never renders (server throws 404) -->

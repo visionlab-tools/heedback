@@ -37,7 +37,7 @@
         <div class="space-y-3">
           {#each getPostsForStatus(col.status) as post}
             <a
-              href="/{$page.params.locale}/feedback/{post.id}"
+              href="/{$page.params.orgSlug}/{$page.params.locale}/feedback/{post.id}"
               class="block bg-white p-4 rounded-xl border border-gray-200 hover:border-{col.color}-300 transition-colors"
             >
               <h3 class="font-medium text-gray-900 text-sm">{post.title}</h3>

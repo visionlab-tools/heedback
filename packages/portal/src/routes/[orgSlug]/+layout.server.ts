@@ -5,10 +5,10 @@ import type { LayoutServerLoad } from './$types'
 /** Validates the org slug exists — returns 404 for unknown organizations */
 export const load: LayoutServerLoad = async ({ params }) => {
   try {
-    const org = await apiGet<{ data: { slug: string; name: string } }>(
-      `/org/${params.orgSlug}/public/info`
+    const result = await apiGet<{ data: { name: string; brandColor: string } }>(
+      `/org/${params.orgSlug}/public/config`
     )
-    return { org: org.data }
+    return { org: { slug: params.orgSlug, ...result.data } }
   } catch {
     throw error(404, 'Organization not found')
   }

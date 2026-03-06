@@ -17,7 +17,7 @@
   <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {#each data.collections as collection}
       <a
-        href="/{$page.params.locale}/help/{collection.slug}"
+        href="/{$page.params.orgSlug}/{$page.params.locale}/help/{collection.slug}"
         class="block bg-white p-6 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all"
       >
         <div class="flex items-center gap-3">

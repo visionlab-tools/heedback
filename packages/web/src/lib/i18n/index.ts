@@ -1,9 +1,17 @@
-import { register, init, locale } from 'svelte-i18n'
+import { addMessages, init, locale } from 'svelte-i18n'
 import type { SupportedUiLocale } from '@heedback/shared'
 import { UI_LOCALES } from '@heedback/shared'
 
+import en from './en.json'
+import fr from './fr.json'
+import nl from './nl.json'
+import es from './es.json'
+import de from './de.json'
+
+const messages: Record<string, Record<string, unknown>> = { en, fr, nl, es, de }
+
 for (const loc of UI_LOCALES) {
-  register(loc, () => import(`./${loc}.json`))
+  addMessages(loc, messages[loc] ?? {})
 }
 
 export function getStoredLocale(): string {
@@ -17,5 +25,5 @@ export function setUiLocale(newLocale: string) {
 }
 
 export function initI18n() {
-  return init({ fallbackLocale: 'en', initialLocale: getStoredLocale() })
+  init({ fallbackLocale: 'en', initialLocale: getStoredLocale() })
 }

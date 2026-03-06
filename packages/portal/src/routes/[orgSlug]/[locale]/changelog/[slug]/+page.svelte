@@ -15,7 +15,7 @@
 </svelte:head>
 
 <div class="max-w-3xl mx-auto px-4 py-12">
-  <a href="/{$page.params.locale}/changelog" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('changelog.back')}</a>
+  <a href="/{$page.params.orgSlug}/{$page.params.locale}/changelog" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('changelog.back')}</a>
 
   <article class="mt-6">
     {#if data.entry.publishedAt}
@@ -48,7 +48,7 @@
         <ul class="mt-2 space-y-2">
           {#each data.entry.linkedPosts as post}
             <li>
-              <a href="/{$page.params.locale}/feedback/{post.id}" class="text-indigo-600 hover:text-indigo-800 text-sm">
+              <a href="/{$page.params.orgSlug}/{$page.params.locale}/feedback/{post.id}" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 {post.title} ({$_('feedback.votes', { values: { count: post.voteCount } })})
               </a>
             </li>

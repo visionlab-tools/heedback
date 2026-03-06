@@ -7,7 +7,7 @@
 
   let { data }: { data: PageData } = $props()
 
-  const state = createConversationPageState(data)
+  const state = createConversationPageState(data, $page.params.orgSlug)
 </script>
 
 <svelte:head>
@@ -19,7 +19,7 @@
     <div class="text-center py-12 text-gray-400">{$_('contact.conversation_not_found')}</div>
   {:else}
     <div>
-      <a href="/{$page.params.locale}/contact" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('help.back_short')}</a>
+      <a href="/{$page.params.orgSlug}/{$page.params.locale}/contact" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('help.back_short')}</a>
       <h1 class="mt-4 text-2xl font-bold text-gray-900">
         {data.conversation.subject || $_('contact.conversation')}
       </h1>

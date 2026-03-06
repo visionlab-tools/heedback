@@ -23,17 +23,17 @@
   </div>
 
   <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-    <a href="/{$page.params.locale}/help" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
+    <a href="/{$page.params.orgSlug}/{$page.params.locale}/help" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
       <h2 class="text-lg font-semibold text-gray-900">{$_('portal.help_center')}</h2>
       <p class="mt-2 text-sm text-gray-500">{$_('portal.help_center_desc')}</p>
     </a>
 
-    <a href="/{$page.params.locale}/feedback" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
+    <a href="/{$page.params.orgSlug}/{$page.params.locale}/feedback" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
       <h2 class="text-lg font-semibold text-gray-900">{$_('portal.feedback')}</h2>
       <p class="mt-2 text-sm text-gray-500">{$_('portal.feedback_desc')}</p>
     </a>
 
-    <a href="/{$page.params.locale}/changelog" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
+    <a href="/{$page.params.orgSlug}/{$page.params.locale}/changelog" class="block bg-white p-8 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all text-center">
       <h2 class="text-lg font-semibold text-gray-900">{$_('portal.changelog')}</h2>
       <p class="mt-2 text-sm text-gray-500">{$_('portal.changelog_desc')}</p>
     </a>

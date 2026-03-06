@@ -1,4 +1,4 @@
-export function createContactPageState() {
+export function createContactPageState(orgSlug: string) {
   let name = $state('')
   let email = $state('')
   let subject = $state('')
@@ -13,7 +13,7 @@ export function createContactPageState() {
     sending = true
     error = ''
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`/${orgSlug}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

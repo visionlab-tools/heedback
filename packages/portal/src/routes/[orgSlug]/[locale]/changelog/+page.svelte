@@ -45,7 +45,7 @@
           {/each}
         </div>
 
-        <a href="/{$page.params.locale}/changelog/{entry.slug}" class="block mt-2">
+        <a href="/{$page.params.orgSlug}/{$page.params.locale}/changelog/{entry.slug}" class="block mt-2">
           <h2 class="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
             {entry.translations?.[0]?.title || $_('changelog.untitled')}
           </h2>

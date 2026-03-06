@@ -7,7 +7,7 @@
 
   let { data }: { data: PageData } = $props()
 
-  const state = createArticlePageState(data)
+  const state = createArticlePageState(data, $page.params.orgSlug)
 </script>
 
 <svelte:head>
@@ -18,7 +18,7 @@
 </svelte:head>
 
 <div class="max-w-3xl mx-auto px-4 py-12">
-  <a href="/{$page.params.locale}/help/{data.collectionSlug}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('help.back_short')}</a>
+  <a href="/{$page.params.orgSlug}/{$page.params.locale}/help/{data.collectionSlug}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('help.back_short')}</a>
 
   <article class="mt-6">
     <h1 class="text-3xl font-bold text-gray-900">{state.getTitle()}</h1>

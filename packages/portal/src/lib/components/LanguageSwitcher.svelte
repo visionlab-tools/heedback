@@ -6,7 +6,8 @@
   function localeUrl(newLocale: string): string {
     const path = $page.url.pathname
     const segments = path.split('/')
-    segments[1] = newLocale
+    // URL structure: /{orgSlug}/{locale}/...
+    segments[2] = newLocale
     return segments.join('/')
   }
 </script>

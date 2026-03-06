@@ -4,11 +4,10 @@ import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ params, request }) => {
   const body = await request.json()
-  const orgSlug = 'default'
 
   try {
     const data = await apiPost<{ data: any }>(
-      `/org/${orgSlug}/public/conversations/${params.conversationId}/messages`,
+      `/org/${params.orgSlug}/public/conversations/${params.conversationId}/messages`,
       body
     )
     return json(data)

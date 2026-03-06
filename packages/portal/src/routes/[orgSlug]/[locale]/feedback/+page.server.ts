@@ -2,7 +2,6 @@ import { apiGet } from '$lib/api/portal-client'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ url, params }) => {
-  const orgSlug = 'default'
   const status = url.searchParams.get('status') || ''
   const sort = url.searchParams.get('sort') || 'votes'
   const board = url.searchParams.get('board') || ''
@@ -14,8 +13,8 @@ export const load: PageServerLoad = async ({ url, params }) => {
     if (board) searchParams.set('board', board)
 
     const [postsData, boardsData] = await Promise.all([
-      apiGet<{ data: any[] }>(`/org/${orgSlug}/posts?${searchParams}`),
-      apiGet<{ data: any[] }>(`/org/${orgSlug}/boards`),
+      apiGet<{ data: any[] }>(`/org/${params.orgSlug}/posts?${searchParams}`),
+      apiGet<{ data: any[] }>(`/org/${params.orgSlug}/boards`),
     ])
 
     return {

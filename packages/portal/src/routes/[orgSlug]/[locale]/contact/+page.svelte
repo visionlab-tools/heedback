@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
   import { createContactPageState } from './page-state.svelte'
 
-  const state = createContactPageState()
+  const state = createContactPageState($page.params.orgSlug)
 </script>
 
 <svelte:head>
@@ -19,7 +19,7 @@
       <p class="text-green-800 font-medium">{$_('contact.success')}</p>
       <p class="mt-2 text-sm text-green-600">{$_('contact.success_detail')}</p>
       <a
-        href="/{$page.params.locale}/contact/{state.conversationId}"
+        href="/{$page.params.orgSlug}/{$page.params.locale}/contact/{state.conversationId}"
         class="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700"
       >
         {$_('contact.view_conversation')}

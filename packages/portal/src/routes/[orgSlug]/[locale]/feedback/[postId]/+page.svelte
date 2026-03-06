@@ -15,7 +15,7 @@
 </svelte:head>
 
 <div class="max-w-3xl mx-auto px-4 py-12">
-  <a href="/{$page.params.locale}/feedback" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('feedback.back')}</a>
+  <a href="/{$page.params.orgSlug}/{$page.params.locale}/feedback" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; {$_('feedback.back')}</a>
 
   <div class="mt-6 flex items-start gap-6">
     <div class="flex flex-col items-center min-w-[56px] bg-gray-50 rounded-xl py-3 px-2">

@@ -1,4 +1,4 @@
-export function createConversationPageState(data: any) {
+export function createConversationPageState(data: any, orgSlug: string) {
   let newMessage = $state('')
   let sending = $state(false)
   let messages = $state<any[]>(data.conversation?.messages || [])
@@ -8,7 +8,7 @@ export function createConversationPageState(data: any) {
     if (!newMessage.trim() || sending) return
     sending = true
     try {
-      const res = await fetch(`/api/contact/${data.conversation.id}/reply`, {
+      const res = await fetch(`/${orgSlug}/api/contact/${data.conversation.id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ body: newMessage }),

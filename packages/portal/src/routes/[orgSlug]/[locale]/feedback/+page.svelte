@@ -33,14 +33,14 @@
   {#if data.boards.length > 0}
     <div class="mt-6 flex gap-2 flex-wrap">
       <a
-        href="/{$page.params.locale}/feedback"
+        href="/{$page.params.orgSlug}/{$page.params.locale}/feedback"
         class="px-3 py-1.5 text-sm rounded-full border {!data.filters.board ? 'bg-indigo-100 text-indigo-800 border-indigo-300' : 'bg-white text-gray-600 border-gray-300'}"
       >
         {$_('feedback.all')}
       </a>
       {#each data.boards as board}
         <a
-          href="/{$page.params.locale}/feedback?board={board.slug}"
+          href="/{$page.params.orgSlug}/{$page.params.locale}/feedback?board={board.slug}"
           class="px-3 py-1.5 text-sm rounded-full border {data.filters.board === board.slug ? 'bg-indigo-100 text-indigo-800 border-indigo-300' : 'bg-white text-gray-600 border-gray-300'}"
         >
           {board.name}
@@ -52,7 +52,7 @@
   <div class="mt-8 space-y-3">
     {#each data.posts as post}
       <a
-        href="/{$page.params.locale}/feedback/{post.id}"
+        href="/{$page.params.orgSlug}/{$page.params.locale}/feedback/{post.id}"
         class="flex items-start gap-4 bg-white p-5 rounded-xl border border-gray-200 hover:border-indigo-300 transition-colors"
       >
         <div class="flex flex-col items-center min-w-[48px]">

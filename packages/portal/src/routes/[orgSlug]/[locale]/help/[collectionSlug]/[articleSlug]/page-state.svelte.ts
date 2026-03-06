@@ -1,4 +1,4 @@
-export function createArticlePageState(data: any) {
+export function createArticlePageState(data: any, orgSlug: string) {
   let feedbackSent = $state(false)
 
   function getTitle(): string {
@@ -7,7 +7,7 @@ export function createArticlePageState(data: any) {
 
   async function sendFeedback(helpful: boolean) {
     try {
-      await fetch(`/api/v1/org/default/articles/${data.article.id}/feedback`, {
+      await fetch(`/api/v1/org/${orgSlug}/articles/${data.article.id}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ helpful }),

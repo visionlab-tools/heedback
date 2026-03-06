@@ -3,12 +3,10 @@ import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ params }) => {
-  const orgSlug = 'default'
-
   try {
     const [postData, commentsData] = await Promise.all([
-      apiGet<{ data: any }>(`/org/${orgSlug}/posts/${params.postId}`),
-      apiGet<{ data: any[] }>(`/org/${orgSlug}/posts/${params.postId}/comments`),
+      apiGet<{ data: any }>(`/org/${params.orgSlug}/posts/${params.postId}`),
+      apiGet<{ data: any[] }>(`/org/${params.orgSlug}/posts/${params.postId}/comments`),
     ])
 
     return {
