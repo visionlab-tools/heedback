@@ -2,7 +2,8 @@ import { _ } from 'svelte-i18n'
 import { get } from 'svelte/store'
 import { addToast } from '../stores/toast'
 
-const API_BASE = '/api/v1'
+/** Runtime-injected config for Docker deployments, falls back to relative path for dev */
+const API_BASE = `${(window as any).__CONFIG__?.API_URL || ''}/api/v1`
 
 interface RequestOptions {
   method?: string
