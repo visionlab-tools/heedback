@@ -438,6 +438,7 @@ export default class ConversationService {
       .where('organization_id', org.id)
       .where('end_user_id', endUserId)
       .preload('endUser')
+      .preload('messages', (q) => q.where('is_internal', false).orderBy('created_at', 'desc').limit(1))
       .orderBy('last_message_at', 'desc')
       .limit(50)
   }

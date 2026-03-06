@@ -140,6 +140,14 @@ export default class ConversationsController {
       return response.notFound({ message: 'Organization not found' })
     }
 
-    return response.ok({ data: conversations.map((c) => c.serialize()) })
+    return response.ok({
+      data: conversations.map((c) => {
+        const serialized = c.serialize()
+        const lastMsg = c.messages?.[0]
+        serialized.lastMessagePreview = lastMsg?.body?.slice(0, 120) ?? null
+        delete serialized.messages
+        return serialized
+      }),
+    })
   }
 }

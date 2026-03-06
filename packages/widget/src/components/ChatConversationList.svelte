@@ -33,7 +33,7 @@
             {convo.lastMessageAt ? new Date(convo.lastMessageAt).toLocaleDateString() : ''}
           </span>
         </div>
-        <p class="hb-conv-preview">{convo.subject || convo.channel || 'Conversation'}</p>
+        <p class="hb-conv-preview">{convo.lastMessagePreview || convo.subject || t(locale, 'chat.conversation_fallback')}</p>
       </button>
     {/each}
   {/if}
