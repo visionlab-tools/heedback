@@ -25,7 +25,7 @@ FROM nginx:alpine
 COPY --from=builder /app/packages/web/build /usr/share/nginx/html
 COPY packages/web/nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3000
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD wget -qO /dev/null http://127.0.0.1:3000/ || exit 1
+  CMD wget -qO /dev/null http://127.0.0.1:80/ || exit 1
