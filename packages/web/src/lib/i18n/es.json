@@ -185,6 +185,7 @@
   "settings_widget.col_description": "Descripción",
   "settings_widget.desc_org": "Slug de tu organización (obligatorio)",
   "settings_widget.desc_org_id": "Identificador de tu organización (obligatorio)",
+  "settings_widget.desc_api_url": "URL del servidor API (obligatorio si el widget se sirve desde otro dominio)",
   "settings_widget.desc_position": "Posición del widget: bottom-right o bottom-left",
   "settings_widget.desc_locale": "Idioma predeterminado",
   "settings_widget.desc_user_id": "Pre-identificar un usuario conectado",

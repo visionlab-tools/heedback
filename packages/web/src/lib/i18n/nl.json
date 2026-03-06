@@ -185,6 +185,7 @@
   "settings_widget.col_description": "Beschrijving",
   "settings_widget.desc_org": "Uw organisatie-slug (verplicht)",
   "settings_widget.desc_org_id": "Uw organisatie-ID (verplicht)",
+  "settings_widget.desc_api_url": "API-server-URL (vereist als de widget vanaf een ander domein wordt geladen)",
   "settings_widget.desc_position": "Widget-positie: bottom-right of bottom-left",
   "settings_widget.desc_locale": "Standaardtaal",
   "settings_widget.desc_user_id": "Identificeer een ingelogde gebruiker",

@@ -1,7 +1,7 @@
 import { onMount } from 'svelte'
 import { setApiBase, widgetApi } from '../api/widget-client'
 
-export function createWidgetState(org: string, fallbackColor: string) {
+export function createWidgetState(org: string, fallbackColor: string, apiUrl?: string) {
   let isOpen = $state(false)
   let tab = $state<'chat' | 'help'>('chat')
   let boards = $state<any[]>([])
@@ -12,13 +12,18 @@ export function createWidgetState(org: string, fallbackColor: string) {
   let widgetColor = $state(fallbackColor)
 
   onMount(() => {
-    const scripts = document.querySelectorAll('script[data-org]')
-    const script = scripts[scripts.length - 1] as HTMLScriptElement | undefined
-    if (script?.src) {
-      const url = new URL(script.src)
-      setApiBase(url.origin)
+    if (apiUrl) {
+      setApiBase(apiUrl)
     } else {
-      setApiBase(window.location.origin)
+      // Fallback: derive from script src origin (only works when widget is served by the API)
+      const scripts = document.querySelectorAll('script[data-org]')
+      const script = scripts[scripts.length - 1] as HTMLScriptElement | undefined
+      if (script?.src) {
+        const url = new URL(script.src)
+        setApiBase(url.origin)
+      } else {
+        setApiBase(window.location.origin)
+      }
     }
 
     widgetApi.getBoards(org).then((data) => {

@@ -7,6 +7,7 @@
   let { orgId }: { orgId: string } = $props()
 
   let widgetBaseUrl = (window as any).__CONFIG__?.WIDGET_URL || window.location.origin
+  let apiBaseUrl = (window as any).__CONFIG__?.API_URL || ''
 
   // Live-editable demo parameters
   let demoColor = $state('#6366f1')
@@ -99,7 +100,7 @@
     </div>
   </div>
 
-  <script src="${widgetBaseUrl}/widget.js" data-org="${orgId}" data-position="${position}" data-locale="${locale}"${colorAttribute}${userAttributes}><\/script>
+  <script src="${widgetBaseUrl}/widget.js" data-org="${orgId}"${apiBaseUrl ? ` data-api="${apiBaseUrl}"` : ''} data-position="${position}" data-locale="${locale}"${colorAttribute}${userAttributes}><\/script>
 </body>
 </html>`
   }

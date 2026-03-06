@@ -3,6 +3,7 @@ import Widget from './components/Widget.svelte'
 
 interface HeedbackConfig {
   org: string
+  apiUrl?: string
   color?: string
   position?: 'bottom-right' | 'bottom-left'
   locale?: string
@@ -46,6 +47,7 @@ const Heedback: HeedbackInstance = {
       target: container,
       props: {
         org: config.org,
+        apiUrl: config.apiUrl,
         color: config.color || '#6366f1',
         position: config.position || 'bottom-right',
         locale: config.locale || 'en',
@@ -65,6 +67,7 @@ const Heedback: HeedbackInstance = {
         target: container,
         props: {
           org: currentConfig.org,
+          apiUrl: currentConfig.apiUrl,
           color: currentConfig.color || '#6366f1',
           position: currentConfig.position || 'bottom-right',
           locale: currentConfig.locale || 'en',
@@ -104,6 +107,7 @@ if (script) {
   if (org) {
     Heedback.init({
       org,
+      apiUrl: script.getAttribute('data-api') || undefined,
       color: script.getAttribute('data-color') || '#6366f1',
       position: (script.getAttribute('data-position') as HeedbackConfig['position']) || 'bottom-right',
       locale: script.getAttribute('data-locale') || 'en',

@@ -6,19 +6,21 @@
 
   let {
     org,
+    apiUrl,
     color = '#6366f1',
     position = 'bottom-right',
     locale = 'en',
     user = null,
   }: {
     org: string
+    apiUrl?: string
     color?: string
     position?: string
     locale?: string
     user?: any
   } = $props()
 
-  const widget = createWidgetState(org, color)
+  const widget = createWidgetState(org, color, apiUrl)
   let helpArticleOpen = $state(false)
 </script>
 

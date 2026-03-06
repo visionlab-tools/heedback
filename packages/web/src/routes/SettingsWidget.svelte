@@ -12,6 +12,7 @@
   let widgetBaseUrl = $state(
     (window as any).__CONFIG__?.WIDGET_URL || window.location.origin,
   )
+  let apiBaseUrl = (window as any).__CONFIG__?.API_URL || ''
   let widgetColor = $state('#6366f1')
   let saving = $state(false)
 
@@ -35,10 +36,14 @@
     }
   }
 
+  let apiAttr = $derived(apiBaseUrl ? `\n  data-api="${apiBaseUrl}"` : '')
+
+  let colorAttr = $derived(widgetColor ? `\n  data-color="${widgetColor}"` : '')
+
   let autoInitSnippet = $derived(
     `<script
   src="${widgetBaseUrl}/widget.js"
-  data-org="${orgId}"
+  data-org="${orgId}"${apiAttr}${colorAttr}
   data-position="bottom-right"
   data-locale="en"><\/script>`,
   )
@@ -47,7 +52,7 @@
     `<script src="${widgetBaseUrl}/widget.js"><\/script>
 <script>
   window.Heedback.init({
-    org: '${orgId}',
+    org: '${orgId}',${apiBaseUrl ? `\n    apiUrl: '${apiBaseUrl}',` : ''}${widgetColor ? `\n    color: '${widgetColor}',` : ''}
     position: 'bottom-right',
     locale: 'en'
   })
@@ -110,6 +115,11 @@
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-org</td>
             <td class="px-4 py-2.5 text-slate-500">—</td>
             <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_org_id')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-api</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_api_url')}</td>
           </tr>
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-position</td>
