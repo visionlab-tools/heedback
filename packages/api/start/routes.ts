@@ -16,6 +16,7 @@ const ConversationsController = () => import('#controllers/conversations_control
 const SseController = () => import('#controllers/sse_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 const GitWebhookController = () => import('#controllers/git_webhook_controller')
+const InvitationsController = () => import('#controllers/invitations_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +72,24 @@ router
       })
       .prefix('/org/:orgId')
       .use(middleware.org())
+
+    /*
+    |--------------------------------------------------------------------------
+    | Org invitations
+    |--------------------------------------------------------------------------
+    */
+    router
+      .group(() => {
+        router.get('/invitations', [InvitationsController, 'list'])
+        router.post('/invitations', [InvitationsController, 'invite'])
+        router.delete('/invitations/:invitationId', [InvitationsController, 'revoke'])
+      })
+      .prefix('/org/:orgId')
+      .use(middleware.org())
+      .use(middleware.orgRole({ roles: ['owner', 'admin'] }))
+
+    // Accept invitation — auth-required but not org-scoped
+    router.post('/invitations/accept', [InvitationsController, 'accept'])
 
     /*
     |--------------------------------------------------------------------------

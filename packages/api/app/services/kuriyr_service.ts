@@ -31,6 +31,7 @@ export const EmailTemplates = {
   CHANGELOG_PUBLISHED: 'changelog-published',
   NEW_FEEDBACK: 'new-feedback',
   STATUS_CHANGE: 'status-change',
+  ORG_INVITATION: 'org-invitation',
 } as const
 
 export type EmailTemplateName = (typeof EmailTemplates)[keyof typeof EmailTemplates]
@@ -218,6 +219,24 @@ export default class KuriyrService {
       template: EmailTemplates.NEW_FEEDBACK,
       locale,
       props: data,
+    })
+  }
+
+  /**
+   * Send an org invitation email.
+   */
+  async sendInvitation(
+    to: string,
+    url: string,
+    orgName: string,
+    inviterName: string,
+    locale = 'en',
+  ) {
+    return this.sendTemplate({
+      to,
+      template: EmailTemplates.ORG_INVITATION,
+      locale,
+      props: { url, orgName, inviterName },
     })
   }
 

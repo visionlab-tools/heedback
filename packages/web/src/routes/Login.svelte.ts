@@ -14,7 +14,8 @@ export function createLoginState() {
 
     try {
       await auth.login(email, password)
-      navigate('/', { replace: true })
+      const redirect = new URLSearchParams(window.location.search).get('redirect')
+      navigate(redirect || '/', { replace: true })
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : 'Login failed'
     } finally {

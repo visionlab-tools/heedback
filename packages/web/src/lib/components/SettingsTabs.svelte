@@ -10,6 +10,7 @@
 
   let tabs = $derived([
     { href: base, label: $_('settings_tabs.general'), match: base },
+    { href: `${base}/members`, label: $_('settings_tabs.members'), match: `${base}/members` },
     { href: `${base}/widget`, label: $_('settings_tabs.widget'), match: `${base}/widget` },
     { href: `${base}/widget/demo`, label: $_('settings_tabs.widget_demo'), match: `${base}/widget/demo` },
     { href: `${base}/integrations`, label: $_('settings_tabs.integrations'), match: `${base}/integrations` },

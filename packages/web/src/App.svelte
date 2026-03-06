@@ -18,6 +18,8 @@
   import SettingsWidget from './routes/SettingsWidget.svelte'
   import SettingsWidgetDemo from './routes/SettingsWidgetDemo.svelte'
   import SettingsIntegrations from './routes/SettingsIntegrations.svelte'
+  import SettingsMembers from './routes/SettingsMembers.svelte'
+  import AcceptInvitation from './routes/AcceptInvitation.svelte'
   import NotFound from './routes/NotFound.svelte'
 
   /* Routes are matched top-to-bottom; first match wins.
@@ -26,6 +28,7 @@
   const routes: RouteDefinition[] = [
     { path: '/login', component: Login },
     { path: '/register', component: Register },
+    { path: '/invitations/accept', component: AcceptInvitation },
     { path: '/', component: RootRedirect },
     { path: '/:orgId', component: Dashboard, layout: Layout },
     { path: '/:orgId/articles', component: Articles, layout: Layout },
@@ -41,6 +44,7 @@
     { path: '/:orgId/settings', component: Settings, layout: Layout },
     { path: '/:orgId/settings/widget/demo', component: SettingsWidgetDemo, layout: Layout },
     { path: '/:orgId/settings/widget', component: SettingsWidget, layout: Layout },
+    { path: '/:orgId/settings/members', component: SettingsMembers, layout: Layout },
     { path: '/:orgId/settings/integrations', component: SettingsIntegrations, layout: Layout },
     { path: '*', component: NotFound, layout: Layout },
   ]

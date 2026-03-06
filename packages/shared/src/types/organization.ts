@@ -19,7 +19,7 @@ export interface OrganizationSettings {
   helpCenterEnabled: boolean
 }
 
-export type OrgMemberRole = 'owner' | 'admin' | 'agent' | 'viewer'
+export type OrgMemberRole = 'owner' | 'admin' | 'member'
 
 export interface OrgMember {
   id: string
@@ -43,6 +43,21 @@ export interface UpdateOrganizationPayload {
   logoUrl?: string | null
   customDomain?: string | null
   settings?: Partial<OrganizationSettings>
+}
+
+export type InvitationStatus = 'pending' | 'accepted' | 'revoked'
+
+export interface OrgInvitation {
+  id: string
+  organizationId: string
+  email: string
+  role: OrgMemberRole
+  status: InvitationStatus
+  invitedBy?: AdminUser
+  expiresAt: string
+  acceptedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 import type { AdminUser } from './admin-user.js'
