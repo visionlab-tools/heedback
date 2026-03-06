@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { Button, Alert } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
@@ -12,15 +13,19 @@
 
   const token = new URLSearchParams(window.location.search).get('token')
 
-  auth.subscribe((authState) => {
-    if (!authState.initialized) return
-    isAuthenticated = !!authState.user
-    loading = false
+  onMount(async () => {
+    // Auth init lives in Layout, but this page has no Layout
+    await auth.init()
 
-    // Auto-accept when authenticated
-    if (authState.user && token && !accepting) {
-      acceptInvitation()
-    }
+    auth.subscribe((authState) => {
+      if (!authState.initialized) return
+      isAuthenticated = !!authState.user
+      loading = false
+
+      if (authState.user && token && !accepting) {
+        acceptInvitation()
+      }
+    })
   })
 
   async function acceptInvitation() {
