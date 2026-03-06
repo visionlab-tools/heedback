@@ -1,20 +1,10 @@
 import env from '#start/env'
 
-interface SendRawEmailOptions {
-  to: string | string[]
-  subject: string
-  html: string
-  text?: string
-  replyTo?: string
-}
-
 interface SendTemplateEmailOptions {
   to: string | string[]
   template: string
   locale?: string
-  props: Record<string, unknown>
-  subject?: string
-  replyTo?: string
+  variables: Record<string, string>
 }
 
 interface KuriyrResponse {
@@ -37,116 +27,54 @@ export const EmailTemplates = {
 export type EmailTemplateName = (typeof EmailTemplates)[keyof typeof EmailTemplates]
 
 /**
- * KuriyrService provides an HTTP client interface for sending emails
- * via the Kuriyr transactional email API.
- *
- * Supports both raw HTML emails and template-based emails.
- * Template-based emails pass a template name and props to Kuriyr,
- * which renders the React Email component server-side.
+ * HTTP client for the Kuriyr transactional email API.
+ * Sends template-based emails — Kuriyr renders React Email
+ * components server-side with the provided variables and locale.
  */
 export default class KuriyrService {
   private baseUrl: string
   private apiKey: string
-  private fromEmail: string
-  private fromName: string
 
   constructor() {
     this.baseUrl = env.get('KURIYR_API_URL', 'http://localhost:3333')
     this.apiKey = env.get('KURIYR_API_KEY', '')
-    this.fromEmail = env.get('KURIYR_FROM_EMAIL', 'noreply@heedback.com')
-    this.fromName = env.get('KURIYR_FROM_NAME', 'Heedback')
   }
 
   /**
    * Send an email using a Kuriyr template.
-   * Kuriyr renders the React Email component with the provided props and locale.
+   * Kuriyr renders the React Email component with the provided variables and locale.
+   * Sends one request per recipient (Kuriyr accepts a single `to` string).
    */
   async sendTemplate(options: SendTemplateEmailOptions): Promise<KuriyrResponse> {
     const recipients = Array.isArray(options.to) ? options.to : [options.to]
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/v1/emails/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          from: {
-            email: this.fromEmail,
-            name: this.fromName,
+      // Kuriyr only accepts a single recipient per request
+      for (const recipient of recipients) {
+        const response = await fetch(`${this.baseUrl}/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.apiKey}`,
           },
-          to: recipients.map((email) => ({ email })),
-          template: options.template,
-          locale: options.locale ?? 'en',
-          props: options.props,
-          subject: options.subject,
-          replyTo: options.replyTo ? { email: options.replyTo } : undefined,
-        }),
-      })
+          body: JSON.stringify({
+            template: options.template,
+            to: recipient,
+            variables: options.variables,
+            locale: options.locale ?? 'en',
+          }),
+        })
 
-      if (!response.ok) {
-        const errorBody = await response.text()
-        return {
-          success: false,
-          error: `Kuriyr API error (${response.status}): ${errorBody}`,
+        if (!response.ok) {
+          const errorBody = await response.text()
+          return {
+            success: false,
+            error: `Kuriyr API error (${response.status}): ${errorBody}`,
+          }
         }
       }
 
-      const data = (await response.json()) as { messageId?: string }
-
-      return {
-        success: true,
-        messageId: data.messageId,
-      }
-    } catch (error) {
-      return {
-        success: false,
-        error: `Failed to send email: ${error instanceof Error ? error.message : String(error)}`,
-      }
-    }
-  }
-
-  /**
-   * Send a raw HTML email (without template).
-   */
-  async sendRaw(options: SendRawEmailOptions): Promise<KuriyrResponse> {
-    const recipients = Array.isArray(options.to) ? options.to : [options.to]
-
-    try {
-      const response = await fetch(`${this.baseUrl}/api/v1/emails/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          from: {
-            email: this.fromEmail,
-            name: this.fromName,
-          },
-          to: recipients.map((email) => ({ email })),
-          subject: options.subject,
-          html: options.html,
-          text: options.text,
-          replyTo: options.replyTo ? { email: options.replyTo } : undefined,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorBody = await response.text()
-        return {
-          success: false,
-          error: `Kuriyr API error (${response.status}): ${errorBody}`,
-        }
-      }
-
-      const data = (await response.json()) as { messageId?: string }
-
-      return {
-        success: true,
-        messageId: data.messageId,
-      }
+      return { success: true }
     } catch (error) {
       return {
         success: false,
@@ -163,7 +91,7 @@ export default class KuriyrService {
       to,
       template: EmailTemplates.MAGIC_LINK,
       locale,
-      props: { url, orgName },
+      variables: { url, orgName },
     })
   }
 
@@ -188,7 +116,7 @@ export default class KuriyrService {
         to: email,
         template: EmailTemplates.CHANGELOG_PUBLISHED,
         locale,
-        props: {
+        variables: {
           ...data,
           unsubscribeUrl: `${data.unsubscribeUrl}/${encodeURIComponent(email)}`,
         },
@@ -218,7 +146,7 @@ export default class KuriyrService {
       to: adminEmails,
       template: EmailTemplates.NEW_FEEDBACK,
       locale,
-      props: data,
+      variables: data,
     })
   }
 
@@ -236,7 +164,7 @@ export default class KuriyrService {
       to,
       template: EmailTemplates.ORG_INVITATION,
       locale,
-      props: { url, orgName, inviterName },
+      variables: { url, orgName, inviterName },
     })
   }
 
@@ -258,7 +186,7 @@ export default class KuriyrService {
       to,
       template: EmailTemplates.STATUS_CHANGE,
       locale,
-      props: data,
+      variables: data,
     })
   }
 }
