@@ -4,7 +4,6 @@ export default defineConfig({
   commands: [
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
-    () => import('#commands/embed_articles'),
   ],
 
   providers: [
@@ -64,6 +63,7 @@ export default defineConfig({
     exceptions: 'app/exceptions',
     middleware: 'app/middleware',
     validators: 'app/validators',
+    commands: 'commands',
   },
 
   metaFiles: [
