@@ -4,6 +4,7 @@ export default defineConfig({
   commands: [
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
+    () => import('#commands/embed_articles'),
   ],
 
   providers: [

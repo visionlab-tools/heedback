@@ -242,6 +242,7 @@
   "settings_integrations.ai_title": "KI-Konfiguration",
   "settings_integrations.ai_description": "API-Schlüssel für KI-gestützte Funktionen.",
   "settings_integrations.openai_api_key": "OpenAI API-Schlüssel",
+  "settings_integrations.openai_api_key_hint": "Wird auch für Wissensdatenbank-Such-Embeddings verwendet",
   "settings_integrations.anthropic_api_key": "Anthropic API-Schlüssel",
   "settings_integrations.ai_auto_reply_label": "Heedbot-Autoantwort aktivieren",
   "settings_integrations.ai_auto_reply_desc": "Heedbot beantwortet Gespräche anhand Ihrer Hilfeartikel, bis ein Teammitglied übernimmt.",

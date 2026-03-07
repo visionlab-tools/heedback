@@ -3,6 +3,8 @@ import { DateTime } from 'luxon'
 import Article from '#models/article'
 import ArticleTranslation from '#models/article_translation'
 import ArticleFeedback from '#models/article_feedback'
+import Organization from '#models/organization'
+import ArticleEmbeddingSyncService from '#services/article_embedding_sync_service'
 
 interface ArticleFilters {
   collectionId?: string
@@ -19,6 +21,19 @@ interface ArticleSearchParams {
 }
 
 export default class ArticleService {
+  /** Fire-and-forget embedding sync if org has an OpenAI key. */
+  private async maybeSyncEmbeddings(orgId: string, article: Article) {
+    Organization.find(orgId).then((org) => {
+      const key = (org?.settings as Record<string, unknown> | null)?.openaiApiKey as string | undefined
+      if (!key) return
+      for (const t of article.translations) {
+        ArticleEmbeddingSyncService.syncTranslation(t.id, orgId, key).catch((err) => {
+          console.error('[EmbeddingSync] Error:', err)
+        })
+      }
+    }).catch(() => {})
+  }
+
   /**
    * List articles with optional filters and pagination.
    */
@@ -109,6 +124,8 @@ export default class ArticleService {
     await article.load('translations')
     await article.load('author')
     await article.load('tags')
+
+    this.maybeSyncEmbeddings(orgId, article)
 
     return article
   }
@@ -223,6 +240,8 @@ export default class ArticleService {
     await article.load('author')
     await article.load('tags')
 
+    this.maybeSyncEmbeddings(orgId, article)
+
     return article
   }
 
@@ -239,6 +258,11 @@ export default class ArticleService {
     if (!article) {
       return null
     }
+
+    // Clean up embeddings before deleting the article
+    ArticleEmbeddingSyncService.deleteForArticle(article.id).catch((err) => {
+      console.error('[EmbeddingSync] Cleanup error:', err)
+    })
 
     await article.delete()
 

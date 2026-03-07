@@ -242,6 +242,7 @@
   "settings_integrations.ai_title": "AI Configuration",
   "settings_integrations.ai_description": "API keys used for AI-powered features.",
   "settings_integrations.openai_api_key": "OpenAI API Key",
+  "settings_integrations.openai_api_key_hint": "Also used for knowledge base search embeddings",
   "settings_integrations.anthropic_api_key": "Anthropic API Key",
   "settings_integrations.ai_auto_reply_label": "Enable Heedbot auto-reply",
   "settings_integrations.ai_auto_reply_desc": "Heedbot will answer conversations using your help center articles until a team member takes over.",

@@ -242,6 +242,7 @@
   "settings_integrations.ai_title": "AI-configuratie",
   "settings_integrations.ai_description": "API-sleutels voor AI-functies.",
   "settings_integrations.openai_api_key": "OpenAI API-sleutel",
+  "settings_integrations.openai_api_key_hint": "Wordt ook gebruikt voor kennisbank zoek-embeddings",
   "settings_integrations.anthropic_api_key": "Anthropic API-sleutel",
   "settings_integrations.ai_auto_reply_label": "Heedbot automatisch antwoord inschakelen",
   "settings_integrations.ai_auto_reply_desc": "Heedbot beantwoordt gesprekken met behulp van uw helpartikelen totdat een teamlid het overneemt.",

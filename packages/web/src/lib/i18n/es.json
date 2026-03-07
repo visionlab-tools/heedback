@@ -242,6 +242,7 @@
   "settings_integrations.ai_title": "Configuración de IA",
   "settings_integrations.ai_description": "Claves API utilizadas para funciones con IA.",
   "settings_integrations.openai_api_key": "Clave API de OpenAI",
+  "settings_integrations.openai_api_key_hint": "También se usa para los embeddings de búsqueda en la base de conocimiento",
   "settings_integrations.anthropic_api_key": "Clave API de Anthropic",
   "settings_integrations.ai_auto_reply_label": "Activar respuesta automática de Heedbot",
   "settings_integrations.ai_auto_reply_desc": "Heedbot responderá a las conversaciones usando los artículos de ayuda hasta que un miembro del equipo intervenga.",

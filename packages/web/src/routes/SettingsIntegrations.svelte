@@ -231,6 +231,7 @@
           label={$_('settings_integrations.openai_api_key')}
           placeholder="sk-..."
           bind:value={openaiApiKey}
+          help={$_('settings_integrations.openai_api_key_hint')}
         />
         <Input
           id="anthropicApiKey"

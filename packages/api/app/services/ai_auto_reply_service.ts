@@ -4,12 +4,11 @@ import redis from '@adonisjs/redis/services/main'
 import Conversation from '#models/conversation'
 import Message from '#models/message'
 import Organization from '#models/organization'
-import Article from '#models/article'
 import EndUser from '#models/end_user'
 import { sseService } from '#services/sse_service'
+import KnowledgeRetrievalService from '#services/knowledge_retrieval_service'
 
 const LOCK_TTL = 30
-const KNOWLEDGE_BASE_CHAR_LIMIT = 50_000
 const REPLY_DELAY_MS = 1500
 
 const HANDOFF_TOOL = {
@@ -94,7 +93,21 @@ export default class AiAutoReplyService {
     if (lastMsg.senderType !== 'end_user') return
 
     const endUser = await EndUser.find(conversation.endUserId)
-    const knowledgeBase = await AiAutoReplyService.buildKnowledgeBase(org, endUser)
+    const settings = (org.settings ?? {}) as Record<string, unknown>
+    const preferredLocale = endUser?.language
+      || (settings.defaultLocale as string | undefined)
+      || 'en'
+
+    const userTexts = allMessages
+      .filter((m) => m.senderType === 'end_user')
+      .map((m) => m.body)
+
+    const knowledgeBase = await KnowledgeRetrievalService.retrieve(
+      org.id,
+      userTexts,
+      preferredLocale,
+      openaiKey,
+    )
     const systemPrompt = AiAutoReplyService.buildSystemPrompt(org.name, knowledgeBase)
 
     const chatMessages = allMessages.map((m) => ({
@@ -206,37 +219,6 @@ export default class AiAutoReplyService {
     const text = choice?.content ?? ''
 
     return { text, handoff }
-  }
-
-  private static async buildKnowledgeBase(
-    org: Organization,
-    endUser: EndUser | null,
-  ): Promise<string> {
-    const articles = await Article.query()
-      .where('organization_id', org.id)
-      .where('status', 'published')
-      .preload('translations')
-
-    const settings = (org.settings ?? {}) as Record<string, unknown>
-    const preferredLocale = endUser?.language
-      || (settings.defaultLocale as string | undefined)
-      || 'en'
-
-    let result = ''
-    for (const article of articles) {
-      const translation =
-        article.translations.find((t) => t.locale === preferredLocale)
-        || article.translations.find((t) => t.locale === 'en')
-        || article.translations[0]
-
-      if (!translation?.body) continue
-
-      const section = `## ${translation.title}\n${translation.body}\n\n`
-      if (result.length + section.length > KNOWLEDGE_BASE_CHAR_LIMIT) break
-      result += section
-    }
-
-    return result
   }
 
   private static buildSystemPrompt(orgName: string, knowledgeBase: string): string {
