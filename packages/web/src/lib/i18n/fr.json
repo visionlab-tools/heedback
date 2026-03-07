@@ -68,6 +68,13 @@
   "articles.col_title": "Titre",
   "articles.col_status": "Statut",
   "articles.col_collection": "Collection",
+  "articles.col_embedding": "Index IA",
+  "articles.embedded": "Indexé",
+  "articles.not_embedded": "Non indexé",
+  "articles.embed_action": "Indexer",
+  "articles.embedding_in_progress": "Indexation...",
+  "articles.embed_success": "Article indexé avec succès",
+  "articles.embed_error": "Échec de l'indexation. Vérifiez votre clé API OpenAI.",
 
   "article_editor.new": "Nouvel article",
   "article_editor.edit": "Modifier l'article",

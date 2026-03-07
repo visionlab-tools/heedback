@@ -9,6 +9,7 @@
     id: string
     slug: string
     status: string
+    embedded: boolean
     translations: Array<{ locale: string; title: string }>
     tags?: Array<{ id: string; name: string; color: string | null }>
     createdAt: string
@@ -19,6 +20,7 @@
   let articles = $state<Article[]>([])
   let loading = $state(true)
   let showImportModal = $state(false)
+  let embeddingIds = $state(new Set<string>())
 
   async function fetchArticles() {
     if (!orgId) return
@@ -47,10 +49,24 @@
     return map[status] || 'neutral'
   }
 
-  // Reactive so column headers update when locale changes
+  async function embedArticle(articleId: string) {
+    embeddingIds = new Set([...embeddingIds, articleId])
+    try {
+      await api.post(`/org/${orgId}/articles/${articleId}/embed`)
+      articles = articles.map((a) =>
+        a.id === articleId ? { ...a, embedded: true } : a,
+      )
+    } catch {
+      alert($_('articles.embed_error'))
+    } finally {
+      embeddingIds = new Set([...embeddingIds].filter((id) => id !== articleId))
+    }
+  }
+
   let columns = $derived([
     { label: $_('articles.col_title') },
     { label: $_('articles.col_status') },
+    { label: $_('articles.col_embedding') },
     { label: $_('article_editor.tags') },
     { label: $_('common.actions'), align: 'right' as const },
   ])
@@ -79,6 +95,23 @@
           <td class="px-6 py-4 text-sm font-medium text-slate-900">{getTitle(article)}</td>
           <td class="px-6 py-4">
             <Badge variant={statusVariant(article.status)}>{article.status}</Badge>
+          </td>
+          <td class="px-6 py-4">
+            {#if article.embedded}
+              <Badge variant="success">{$_('articles.embedded')}</Badge>
+            {:else}
+              <div class="flex items-center gap-2">
+                <Badge variant="neutral">{$_('articles.not_embedded')}</Badge>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={embeddingIds.has(article.id)}
+                  onclick={() => embedArticle(article.id)}
+                >
+                  {embeddingIds.has(article.id) ? $_('articles.embedding_in_progress') : $_('articles.embed_action')}
+                </Button>
+              </div>
+            {/if}
           </td>
           <td class="px-6 py-4 text-sm text-slate-500">
             {#if article.tags?.length}

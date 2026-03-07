@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { DateTime } from 'luxon'
+import db from '@adonisjs/lucid/services/db'
 import Article from '#models/article'
 import ArticleTranslation from '#models/article_translation'
 import ArticleFeedback from '#models/article_feedback'
@@ -344,6 +345,49 @@ export default class ArticleService {
     }
 
     return query.limit(100)
+  }
+
+  /**
+   * Returns a set of article IDs that have at least one embedding.
+   */
+  async embeddedArticleIds(orgId: string): Promise<Set<string>> {
+    try {
+      const rows = await db.rawQuery<{ rows: Array<{ article_id: string }> }>(`
+        SELECT DISTINCT at.article_id
+        FROM article_embeddings ae
+        INNER JOIN article_translations at ON at.id = ae.article_translation_id
+        WHERE ae.organization_id = ?
+      `, [orgId])
+      return new Set(rows.rows.map((r) => r.article_id))
+    } catch {
+      // pgvector table may not exist
+      return new Set()
+    }
+  }
+
+  /**
+   * Trigger embedding sync for a single article.
+   * Returns false if the org has no OpenAI key configured.
+   */
+  async embedArticle(orgId: string, articleId: string): Promise<boolean> {
+    const article = await Article.query()
+      .where('id', articleId)
+      .where('organization_id', orgId)
+      .preload('translations')
+      .first()
+
+    if (!article) return false
+
+    const org = await Organization.find(orgId)
+    const key = (org?.settings as Record<string, unknown> | null)?.openaiApiKey as string | undefined
+    if (!key) return false
+
+    for (const t of article.translations) {
+      if (!t.body) continue
+      await ArticleEmbeddingSyncService.syncTranslation(t.id, orgId, key)
+    }
+
+    return true
   }
 
   /**

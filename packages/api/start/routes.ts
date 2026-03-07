@@ -132,6 +132,7 @@ router
         router.put('/articles/:articleId', [ArticlesController, 'update'])
         router.delete('/articles/:articleId', [ArticlesController, 'destroy'])
         router.post('/articles/:articleId/feedback', [ArticlesController, 'feedback'])
+        router.post('/articles/:articleId/embed', [ArticlesController, 'embed'])
       })
       .prefix('/org/:orgId')
       .use(middleware.org())

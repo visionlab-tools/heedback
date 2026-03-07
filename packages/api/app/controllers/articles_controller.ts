@@ -15,15 +15,24 @@ export default class ArticlesController {
   async index({ organization, request, response }: HttpContext) {
     const qs = request.qs()
 
-    const articles = await this.articleService.list(organization.id, {
-      collectionId: qs.collectionId,
-      status: qs.status,
-      tagId: qs.tagId,
-      page: Number(qs.page) || 1,
-      limit: Number(qs.limit) || 20,
-    })
+    const [articles, embeddedIds] = await Promise.all([
+      this.articleService.list(organization.id, {
+        collectionId: qs.collectionId,
+        status: qs.status,
+        tagId: qs.tagId,
+        page: Number(qs.page) || 1,
+        limit: Number(qs.limit) || 20,
+      }),
+      this.articleService.embeddedArticleIds(organization.id),
+    ])
 
-    return response.ok(articles.serialize())
+    const serialized = articles.serialize()
+    serialized.data = serialized.data.map((a: any) => ({
+      ...a,
+      embedded: embeddedIds.has(a.id),
+    }))
+
+    return response.ok(serialized)
   }
 
   async store({ organization, auth, request, response }: HttpContext) {
@@ -77,6 +86,18 @@ export default class ArticlesController {
     }
 
     return response.ok({ message: 'Article deleted successfully' })
+  }
+
+  async embed({ organization, params, response }: HttpContext) {
+    const success = await this.articleService.embedArticle(organization.id, params.articleId)
+
+    if (!success) {
+      return response.unprocessableEntity({
+        message: 'Embedding failed. Ensure an OpenAI API key is configured and the article exists.',
+      })
+    }
+
+    return response.ok({ message: 'Embedding complete' })
   }
 
   async feedback({ params, request, response }: HttpContext) {

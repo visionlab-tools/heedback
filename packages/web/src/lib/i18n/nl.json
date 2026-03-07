@@ -68,6 +68,13 @@
   "articles.col_title": "Titel",
   "articles.col_status": "Status",
   "articles.col_collection": "Collectie",
+  "articles.col_embedding": "AI-index",
+  "articles.embedded": "Geïndexeerd",
+  "articles.not_embedded": "Niet geïndexeerd",
+  "articles.embed_action": "Indexeren",
+  "articles.embedding_in_progress": "Indexeren...",
+  "articles.embed_success": "Artikel succesvol geïndexeerd",
+  "articles.embed_error": "Indexering mislukt. Controleer uw OpenAI API-sleutel.",
 
   "article_editor.new": "Nieuw artikel",
   "article_editor.edit": "Artikel bewerken",

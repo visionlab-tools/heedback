@@ -68,6 +68,13 @@
   "articles.col_title": "Title",
   "articles.col_status": "Status",
   "articles.col_collection": "Collection",
+  "articles.col_embedding": "AI Index",
+  "articles.embedded": "Indexed",
+  "articles.not_embedded": "Not indexed",
+  "articles.embed_action": "Index",
+  "articles.embedding_in_progress": "Indexing...",
+  "articles.embed_success": "Article indexed successfully",
+  "articles.embed_error": "Indexing failed. Check your OpenAI API key.",
 
   "article_editor.new": "New Article",
   "article_editor.edit": "Edit Article",
