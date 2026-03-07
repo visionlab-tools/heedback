@@ -1,4 +1,5 @@
 {
+  "subject": "{{messageCount}} nouvelle(s) reponse(s) — {{orgName}}",
   "preview": "{{orgName}} a repondu a votre conversation",
   "heading": "Nouvelle reponse",
   "description": "Vous avez {{messageCount}} nouvelle(s) reponse(s) de {{orgName}} :",

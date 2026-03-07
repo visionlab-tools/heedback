@@ -1,4 +1,5 @@
 {
+  "subject": "{{messageCount}} nouveau(x) message(s) — {{orgName}}",
   "preview": "{{messageCount}} nouveau(x) message(s) de clients",
   "heading": "Digest des nouveaux messages",
   "description": "Vous avez {{messageCount}} message(s) non lu(s) de vos clients :",

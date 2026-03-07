@@ -3,6 +3,7 @@ import env from '#start/env'
 interface SendTemplateEmailOptions {
   to: string | string[]
   template: string
+  subject?: string
   locale?: string
   variables: Record<string, string>
 }
@@ -62,6 +63,7 @@ export default class KuriyrService {
           body: JSON.stringify({
             template: options.template,
             to: recipient,
+            subject: options.subject,
             variables: options.variables,
             locale: options.locale ?? 'en',
           }),

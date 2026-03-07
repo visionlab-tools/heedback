@@ -1,4 +1,5 @@
 {
+  "subject": "{{messageCount}} new reply(ies) — {{orgName}}",
   "preview": "{{orgName}} replied to your conversation",
   "heading": "New Reply",
   "description": "You have {{messageCount}} new reply(ies) from {{orgName}}:",
