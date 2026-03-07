@@ -332,7 +332,10 @@ export default class ArticleService {
   /**
    * List all published articles for a public endpoint (flat list with tags).
    */
-  async listPublished(orgId: string, params: { locale?: string; tagId?: string }) {
+  async listPublished(
+    orgId: string,
+    params: { locale?: string; tagId?: string; collectionId?: string; page?: number; limit?: number },
+  ) {
     const query = Article.query()
       .where('organization_id', orgId)
       .where('status', 'published')
@@ -340,11 +343,18 @@ export default class ArticleService {
       .preload('tags')
       .orderBy('sort_order', 'asc')
 
+    if (params.collectionId) {
+      query.where('collection_id', params.collectionId)
+    }
+
     if (params.tagId) {
       query.whereHas('tags', (q) => q.where('tags.id', params.tagId!))
     }
 
-    return query.limit(100)
+    const page = params.page || 1
+    const limit = Math.min(params.limit || 20, 100)
+
+    return query.paginate(page, limit)
   }
 
   /**

@@ -129,11 +129,18 @@ export default class ArticlesController {
 
     const qs = request.qs()
     const locale = qs.locale as string | undefined
-    const articles = await this.articleService.listPublished(org.id, { locale, tagId: qs.tagId })
-
-    return response.ok({
-      data: articles.map((a) => this.serializePublicArticle(a, locale)),
+    const articles = await this.articleService.listPublished(org.id, {
+      locale,
+      tagId: qs.tagId,
+      collectionId: qs.collection,
+      page: Number(qs.page) || 1,
+      limit: Number(qs.limit) || 20,
     })
+
+    const serialized = articles.serialize()
+    serialized.data = serialized.data.map((a: any) => this.serializePublicArticle(a, locale))
+
+    return response.ok(serialized)
   }
 
   async publicShow({ params, request, response }: HttpContext) {

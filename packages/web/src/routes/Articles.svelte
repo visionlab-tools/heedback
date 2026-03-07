@@ -15,25 +15,69 @@
     createdAt: string
   }
 
+  interface PaginationMeta {
+    total: number
+    perPage: number
+    currentPage: number
+    lastPage: number
+  }
+
   let { orgId }: { orgId: string } = $props()
 
   let articles = $state<Article[]>([])
   let loading = $state(true)
+  let loadingMore = $state(false)
   let showImportModal = $state(false)
   let embeddingIds = $state(new Set<string>())
+  let currentPage = $state(1)
+  let lastPage = $state(1)
+  let hasMore = $derived(currentPage < lastPage)
+  let sentinel: HTMLDivElement | undefined = $state()
 
   async function fetchArticles() {
     if (!orgId) return
     loading = true
     try {
-      const data = await api.get<{ data: Article[] }>(`/org/${orgId}/articles`)
+      const data = await api.get<{ data: Article[]; meta: PaginationMeta }>(`/org/${orgId}/articles?page=1&limit=20`)
       articles = data.data
+      lastPage = data.meta.lastPage
+      currentPage = 1
     } finally {
       loading = false
     }
   }
 
+  async function loadMore() {
+    if (loadingMore || !hasMore) return
+    loadingMore = true
+    try {
+      const nextPage = currentPage + 1
+      const data = await api.get<{ data: Article[]; meta: PaginationMeta }>(
+        `/org/${orgId}/articles?page=${nextPage}&limit=20`,
+      )
+      articles = [...articles, ...data.data]
+      currentPage = nextPage
+      lastPage = data.meta.lastPage
+    } finally {
+      loadingMore = false
+    }
+  }
+
   onMount(fetchArticles)
+
+  $effect(() => {
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore()
+      },
+      { rootMargin: '200px' },
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  })
 
   function getTitle(article: Article): string {
     return article.translations[0]?.title || $_('common.untitled')
@@ -133,5 +177,15 @@
         </tr>
       {/each}
     </DataTable>
+
+    {#if loadingMore}
+      <div class="py-4 text-center">
+        <LoadingSpinner />
+      </div>
+    {/if}
+
+    {#if hasMore}
+      <div bind:this={sentinel} class="h-1"></div>
+    {/if}
   {/if}
 </div>
