@@ -59,9 +59,16 @@
 
   // Optional: identify logged-in users
   window.Heedback.identify({
-    id: 'user-id',
-    email: 'user@example.com',
-    name: 'Jane Doe'
+    id: 'user-123',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    email: 'jane@example.com',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    position: 'CTO',
+    company: 'Acme Inc.',
+    pricingPlan: 'pro',
+    language: 'en',
+    metadata: { plan_id: 42, signup_source: 'referral' }
   })
 <\/script>`,
   )
@@ -137,14 +144,39 @@
             <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_id')}</td>
           </tr>
           <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-first-name</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_first_name')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-last-name</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_last_name')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-email</td>
             <td class="px-4 py-2.5 text-slate-500">—</td>
             <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_email')}</td>
           </tr>
           <tr class="hover:bg-slate-50 transition-colors">
-            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-name</td>
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-position</td>
             <td class="px-4 py-2.5 text-slate-500">—</td>
-            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_name')}</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_position')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-company</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_company')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-pricing-plan</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_pricing_plan')}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-4 py-2.5 font-mono text-xs text-indigo-600">data-user-language</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 text-slate-700">{$_('settings_widget.desc_user_language')}</td>
           </tr>
         </tbody>
       </table>
