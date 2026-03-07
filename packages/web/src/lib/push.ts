@@ -10,7 +10,16 @@ export async function initPushNotifications() {
   try {
     const registration = await navigator.serviceWorker.register('/sw.js')
     const existing = await registration.pushManager.getSubscription()
-    if (existing) return // Already subscribed
+    if (existing) {
+      // Always re-sync with backend — DB record may have been lost (e.g. after DB wipe)
+      const json = existing.toJSON()
+      await api.post(
+        '/push-subscriptions',
+        { endpoint: json.endpoint, keys: json.keys },
+        { silent: true },
+      )
+      return
+    }
 
     const { vapidPublicKey } = await api.get<{ vapidPublicKey: string }>('/push/vapid-key', {
       silent: true,

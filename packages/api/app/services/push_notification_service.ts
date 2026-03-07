@@ -26,6 +26,8 @@ export default class PushNotificationService {
 
     if (this.configured) {
       webpush.setVapidDetails(subject, publicKey, privateKey)
+    } else {
+      console.info('[PushNotification] VAPID not configured — push notifications disabled')
     }
   }
 
@@ -37,14 +39,24 @@ export default class PushNotificationService {
         .where('organization_id', orgId)
         .select('admin_user_id')
 
-      if (memberIds.length === 0) return
+      if (memberIds.length === 0) {
+        console.info(`[PushNotification] No members found for org ${orgId}`)
+        return
+      }
 
       const subscriptions = await PushSubscription.query().whereIn(
         'admin_user_id',
         memberIds.map((m) => m.adminUserId),
       )
 
+      if (subscriptions.length === 0) {
+        console.info(`[PushNotification] No push subscriptions for org ${orgId} (${memberIds.length} members)`)
+        return
+      }
+
       const jsonPayload = JSON.stringify(payload)
+
+      console.info(`[PushNotification] Sending to ${subscriptions.length} subscription(s) for org ${orgId}`)
 
       await Promise.allSettled(
         subscriptions.map((sub) => this.sendToSubscription(sub, jsonPayload)),
@@ -60,9 +72,10 @@ export default class PushNotificationService {
         { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
         payload,
       )
+      console.info(`[PushNotification] Sent to subscription ${sub.id}`)
     } catch (error: any) {
-      // Remove stale subscriptions (browser unsubscribed or expired)
       if (error.statusCode === 410 || error.statusCode === 404) {
+        console.info(`[PushNotification] Removing stale subscription ${sub.id} (${error.statusCode})`)
         await sub.delete()
       }
     }
