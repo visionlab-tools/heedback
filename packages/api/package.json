@@ -14,7 +14,8 @@
     "#exceptions/*": "./build/app/exceptions/*.js",
     "#validators/*": "./build/app/validators/*.js",
     "#middleware/*": "./build/app/middleware/*.js",
-    "#helpers/*": "./build/app/helpers/*.js"
+    "#helpers/*": "./build/app/helpers/*.js",
+    "#commands/*": "./build/commands/*.js"
   },
   "scripts": {
     "dev": "node --import=tsx/esm bin/server.ts --watch",

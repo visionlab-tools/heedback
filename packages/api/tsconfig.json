@@ -15,7 +15,8 @@
       "#config/*": ["./config/*.js"],
       "#start/*": ["./start/*.js"],
       "#database/*": ["./database/*.js"],
-      "#tests/*": ["./tests/*.js"]
+      "#tests/*": ["./tests/*.js"],
+      "#commands/*": ["./commands/*.js"]
     }
   },
   "include": [

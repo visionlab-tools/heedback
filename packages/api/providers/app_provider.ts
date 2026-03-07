@@ -1,10 +1,6 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 
-const DIGEST_INTERVAL_MS = 10 * 60 * 1000
-
 export default class AppProvider {
-  private digestTimer?: ReturnType<typeof setInterval>
-
   constructor(protected app: ApplicationService) {}
 
   /**
@@ -28,31 +24,13 @@ export default class AppProvider {
   async ready() {
     if (this.app.getEnvironment() === 'web') {
       await this.seedSuperAdmin()
-      this.startDigestScheduler()
     }
   }
 
   /**
    * Preparing to shutdown the app
    */
-  async shutdown() {
-    if (this.digestTimer) {
-      clearInterval(this.digestTimer)
-    }
-  }
-
-  /** Run email digests every 10 minutes (Redis-locked for multi-instance safety) */
-  private startDigestScheduler() {
-    this.digestTimer = setInterval(async () => {
-      try {
-        const { default: DigestService } = await import('#services/digest_service')
-        const digest = new DigestService()
-        await digest.run()
-      } catch (error) {
-        console.warn('[Digest] Scheduler error:', (error as Error).message)
-      }
-    }, DIGEST_INTERVAL_MS)
-  }
+  async shutdown() {}
 
   /**
    * Seeds the super admin user if SUPER_ADMIN_EMAIL and

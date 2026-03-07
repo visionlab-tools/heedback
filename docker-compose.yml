@@ -52,6 +52,39 @@ services:
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
+  # Background Scheduler (digest emails every 10 min)
+  # ---------------------------------------------------------------------------
+  scheduler:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    command: ['node', 'build/bin/console.js', 'scheduler:run']
+    environment:
+      - NODE_ENV=production
+      - APP_KEY=${APP_KEY}
+      - HOST=0.0.0.0
+      - PORT=3333
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER:-heedback}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-heedback_secret}
+      - DB_DATABASE=${POSTGRES_DB:-heedback}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KURIYR_API_URL=http://kuriyr:4400
+      - KURIYR_API_KEY=${KURIYR_API_TOKEN}
+      - KURIYR_FROM_NAME=${KURIYR_FROM_NAME:-Heedback}
+      - KURIYR_FROM_EMAIL=${KURIYR_FROM_EMAIL:-noreply@heedback.example.com}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL:-http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
   # SvelteKit Admin Dashboard
   # ---------------------------------------------------------------------------
   web:
