@@ -28,7 +28,7 @@
   }
 </script>
 
-<div class="relative px-5 py-4 border-b border-white/10">
+<div class="relative px-5 py-4 border-b border-slate-200">
   <button
     onclick={() => (showDropdown = !showDropdown)}
     class="flex items-center justify-between w-full text-left group"
@@ -40,24 +40,24 @@
         {:else}
           <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
         {/if}
-        <h1 class="text-xl font-bold tracking-tight text-white truncate">
+        <h1 class="text-xl font-bold tracking-tight text-slate-900 truncate">
           {current?.name ?? $_('login.title')}
         </h1>
       </div>
     </div>
     <ChevronDown
       size={16}
-      class="text-slate-400 group-hover:text-slate-200 transition-colors shrink-0"
+      class="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0"
     />
   </button>
 
   {#if showDropdown}
-    <div class="absolute left-3 right-3 top-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-lg overflow-hidden z-50">
+    <div class="absolute left-3 right-3 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden z-50">
       {#each orgs as org}
         <button
           onclick={() => selectOrg(org)}
           class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm transition-colors
-            {org.id === current?.id ? 'text-indigo-400 bg-white/5 font-medium' : 'text-slate-300 hover:bg-white/5'}"
+            {org.id === current?.id ? 'text-indigo-600 bg-indigo-50 font-medium' : 'text-slate-700 hover:bg-slate-50'}"
         >
           {#if org.logoUrl}
             <img src={org.logoUrl} alt="" class="w-4 h-4 rounded object-cover" />
@@ -70,7 +70,7 @@
 
       <button
         onclick={openCreateModal}
-        class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-slate-400 hover:text-slate-200 hover:bg-white/5 border-t border-slate-700 transition-colors"
+        class="flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-t border-slate-200 transition-colors"
       >
         <Plus size={14} />
         <span>{$_('create_org.new')}</span>

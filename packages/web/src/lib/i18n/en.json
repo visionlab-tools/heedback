@@ -6,6 +6,7 @@
   "nav.boards": "Boards",
   "nav.posts": "Posts",
   "nav.changelog": "Changelog",
+  "nav.contacts": "Contacts",
   "nav.settings": "Settings",
 
   "common.edit": "Edit",
@@ -349,5 +350,25 @@
   "accept_invitation.sign_up": "Create an account",
   "accept_invitation.success": "You have joined the organization!",
   "accept_invitation.error": "Could not accept the invitation.",
-  "accept_invitation.no_token": "No invitation token found."
+  "accept_invitation.no_token": "No invitation token found.",
+
+  "contacts.title": "Contacts",
+  "contacts.subtitle": "All end users who have interacted with your organization.",
+  "contacts.empty": "No contacts yet.",
+  "contacts.search_placeholder": "Search by name or email...",
+  "contacts.col_name": "Name",
+  "contacts.col_email": "Email",
+  "contacts.col_company": "Company",
+  "contacts.col_plan": "Plan",
+  "contacts.col_created": "Created",
+  "contacts.col_conversations": "Conversations",
+
+  "contact_detail.back": "Back to contacts",
+  "contact_detail.profile": "Profile",
+  "contact_detail.conversations": "Conversations",
+  "contact_detail.no_conversations": "No conversations yet.",
+  "contact_detail.col_subject": "Subject",
+  "contact_detail.col_status": "Status",
+  "contact_detail.col_messages": "Messages",
+  "contact_detail.col_created": "Created"
 }

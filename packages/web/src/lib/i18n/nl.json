@@ -6,6 +6,7 @@
   "nav.boards": "Borden",
   "nav.posts": "Berichten",
   "nav.changelog": "Changelog",
+  "nav.contacts": "Contacten",
   "nav.settings": "Instellingen",
 
   "common.edit": "Bewerken",
@@ -349,5 +350,25 @@
   "accept_invitation.sign_up": "Account aanmaken",
   "accept_invitation.success": "U bent lid geworden van de organisatie!",
   "accept_invitation.error": "Kan de uitnodiging niet accepteren.",
-  "accept_invitation.no_token": "Geen uitnodigingstoken gevonden."
+  "accept_invitation.no_token": "Geen uitnodigingstoken gevonden.",
+
+  "contacts.title": "Contacten",
+  "contacts.subtitle": "Alle eindgebruikers die met uw organisatie hebben gecommuniceerd.",
+  "contacts.empty": "Nog geen contacten.",
+  "contacts.search_placeholder": "Zoeken op naam of e-mail...",
+  "contacts.col_name": "Naam",
+  "contacts.col_email": "E-mail",
+  "contacts.col_company": "Bedrijf",
+  "contacts.col_plan": "Plan",
+  "contacts.col_created": "Aangemaakt",
+  "contacts.col_conversations": "Gesprekken",
+
+  "contact_detail.back": "Terug naar contacten",
+  "contact_detail.profile": "Profiel",
+  "contact_detail.conversations": "Gesprekken",
+  "contact_detail.no_conversations": "Nog geen gesprekken.",
+  "contact_detail.col_subject": "Onderwerp",
+  "contact_detail.col_status": "Status",
+  "contact_detail.col_messages": "Berichten",
+  "contact_detail.col_created": "Aangemaakt"
 }

@@ -13,6 +13,7 @@ const TagsController = () => import('#controllers/tags_controller')
 const RoadmapController = () => import('#controllers/roadmap_controller')
 const ChangelogController = () => import('#controllers/changelog_controller')
 const ConversationsController = () => import('#controllers/conversations_controller')
+const EndUsersController = () => import('#controllers/end_users_controller')
 const SseController = () => import('#controllers/sse_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 const GitWebhookController = () => import('#controllers/git_webhook_controller')
@@ -242,6 +243,19 @@ router
       .group(() => {
         router.get('/git-commits/pending/count', [GitWebhookController, 'pendingCount'])
         router.post('/changelog/generate', [GitWebhookController, 'generate'])
+      })
+      .prefix('/org/:orgId')
+      .use(middleware.org())
+
+    /*
+    |--------------------------------------------------------------------------
+    | End users (contacts)
+    |--------------------------------------------------------------------------
+    */
+    router
+      .group(() => {
+        router.get('/end-users', [EndUsersController, 'index'])
+        router.get('/end-users/:id', [EndUsersController, 'show'])
       })
       .prefix('/org/:orgId')
       .use(middleware.org())

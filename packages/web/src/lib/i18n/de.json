@@ -6,6 +6,7 @@
   "nav.boards": "Boards",
   "nav.posts": "Beiträge",
   "nav.changelog": "Changelog",
+  "nav.contacts": "Kontakte",
   "nav.settings": "Einstellungen",
 
   "common.edit": "Bearbeiten",
@@ -349,5 +350,25 @@
   "accept_invitation.sign_up": "Konto erstellen",
   "accept_invitation.success": "Sie sind der Organisation beigetreten!",
   "accept_invitation.error": "Die Einladung konnte nicht angenommen werden.",
-  "accept_invitation.no_token": "Kein Einladungstoken gefunden."
+  "accept_invitation.no_token": "Kein Einladungstoken gefunden.",
+
+  "contacts.title": "Kontakte",
+  "contacts.subtitle": "Alle Endbenutzer, die mit Ihrer Organisation interagiert haben.",
+  "contacts.empty": "Noch keine Kontakte.",
+  "contacts.search_placeholder": "Nach Name oder E-Mail suchen...",
+  "contacts.col_name": "Name",
+  "contacts.col_email": "E-Mail",
+  "contacts.col_company": "Unternehmen",
+  "contacts.col_plan": "Plan",
+  "contacts.col_created": "Erstellt",
+  "contacts.col_conversations": "Gespräche",
+
+  "contact_detail.back": "Zurück zu Kontakten",
+  "contact_detail.profile": "Profil",
+  "contact_detail.conversations": "Gespräche",
+  "contact_detail.no_conversations": "Noch keine Gespräche.",
+  "contact_detail.col_subject": "Betreff",
+  "contact_detail.col_status": "Status",
+  "contact_detail.col_messages": "Nachrichten",
+  "contact_detail.col_created": "Erstellt"
 }

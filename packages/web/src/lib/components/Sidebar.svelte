@@ -24,7 +24,7 @@
   let orgId = $derived(org?.id ?? '')
 </script>
 
-<aside class="w-64 bg-slate-950 flex flex-col shrink-0">
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
   <OrgSwitcher />
   <SidebarNav {activePath} {orgId} />
 

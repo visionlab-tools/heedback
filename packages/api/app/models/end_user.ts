@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, computed, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Organization from '#models/organization'
+import Conversation from '#models/conversation'
 import Post from '#models/post'
 import Vote from '#models/vote'
 import Comment from '#models/comment'
@@ -74,6 +75,9 @@ export default class EndUser extends BaseModel {
 
   @belongsTo(() => Organization, { foreignKey: 'organizationId' })
   declare organization: BelongsTo<typeof Organization>
+
+  @hasMany(() => Conversation, { foreignKey: 'endUserId' })
+  declare conversations: HasMany<typeof Conversation>
 
   @hasMany(() => Post, { foreignKey: 'endUserId' })
   declare posts: HasMany<typeof Post>

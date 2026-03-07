@@ -26,8 +26,8 @@
   {href}
   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors
     {active
-      ? 'bg-white/10 text-white'
-      : 'text-slate-400 hover:bg-white/10 hover:text-white'}"
+      ? 'bg-slate-100 text-slate-900'
+      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}"
 >
   <Icon size={18} strokeWidth={active ? 2 : 1.5} />
   <span class="flex-1">{label}</span>

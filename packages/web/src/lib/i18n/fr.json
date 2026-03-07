@@ -6,6 +6,7 @@
   "nav.boards": "Tableaux",
   "nav.posts": "Publications",
   "nav.changelog": "Changelog",
+  "nav.contacts": "Contacts",
   "nav.settings": "Paramètres",
 
   "common.edit": "Modifier",
@@ -349,5 +350,25 @@
   "accept_invitation.sign_up": "Créer un compte",
   "accept_invitation.success": "Vous avez rejoint l'organisation !",
   "accept_invitation.error": "Impossible d'accepter l'invitation.",
-  "accept_invitation.no_token": "Aucun jeton d'invitation trouvé."
+  "accept_invitation.no_token": "Aucun jeton d'invitation trouvé.",
+
+  "contacts.title": "Contacts",
+  "contacts.subtitle": "Tous les utilisateurs ayant interagi avec votre organisation.",
+  "contacts.empty": "Aucun contact.",
+  "contacts.search_placeholder": "Rechercher par nom ou e-mail...",
+  "contacts.col_name": "Nom",
+  "contacts.col_email": "E-mail",
+  "contacts.col_company": "Entreprise",
+  "contacts.col_plan": "Plan",
+  "contacts.col_created": "Créé le",
+  "contacts.col_conversations": "Conversations",
+
+  "contact_detail.back": "Retour aux contacts",
+  "contact_detail.profile": "Profil",
+  "contact_detail.conversations": "Conversations",
+  "contact_detail.no_conversations": "Aucune conversation.",
+  "contact_detail.col_subject": "Sujet",
+  "contact_detail.col_status": "Statut",
+  "contact_detail.col_messages": "Messages",
+  "contact_detail.col_created": "Créé le"
 }

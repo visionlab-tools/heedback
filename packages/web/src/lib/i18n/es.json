@@ -6,6 +6,7 @@
   "nav.boards": "Tableros",
   "nav.posts": "Publicaciones",
   "nav.changelog": "Changelog",
+  "nav.contacts": "Contactos",
   "nav.settings": "Configuración",
 
   "common.edit": "Editar",
@@ -349,5 +350,25 @@
   "accept_invitation.sign_up": "Crear una cuenta",
   "accept_invitation.success": "¡Te has unido a la organización!",
   "accept_invitation.error": "No se pudo aceptar la invitación.",
-  "accept_invitation.no_token": "No se encontró token de invitación."
+  "accept_invitation.no_token": "No se encontró token de invitación.",
+
+  "contacts.title": "Contactos",
+  "contacts.subtitle": "Todos los usuarios que han interactuado con tu organización.",
+  "contacts.empty": "Aún no hay contactos.",
+  "contacts.search_placeholder": "Buscar por nombre o correo...",
+  "contacts.col_name": "Nombre",
+  "contacts.col_email": "Correo",
+  "contacts.col_company": "Empresa",
+  "contacts.col_plan": "Plan",
+  "contacts.col_created": "Creado",
+  "contacts.col_conversations": "Conversaciones",
+
+  "contact_detail.back": "Volver a contactos",
+  "contact_detail.profile": "Perfil",
+  "contact_detail.conversations": "Conversaciones",
+  "contact_detail.no_conversations": "Aún no hay conversaciones.",
+  "contact_detail.col_subject": "Asunto",
+  "contact_detail.col_status": "Estado",
+  "contact_detail.col_messages": "Mensajes",
+  "contact_detail.col_created": "Creado"
 }
