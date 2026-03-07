@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
   import { Copy, Check } from 'lucide-svelte'
-  import { Button, Input, PageHeader } from '@heedback/ui-kit'
+  import { Button, Input, PageHeader, Checkbox } from '@heedback/ui-kit'
   import SettingsTabs from '../lib/components/SettingsTabs.svelte'
   import { currentOrg } from '../lib/stores/org'
   import { api } from '../lib/api/client'
@@ -13,6 +13,7 @@
   let slackWebhookUrl = $state('')
   let openaiApiKey = $state('')
   let anthropicApiKey = $state('')
+  let aiAutoReplyEnabled = $state(false)
   let gitProductionBranch = $state('main')
   let gitWebhookSecret = $state('')
   let saving = $state(false)
@@ -53,6 +54,7 @@
       anthropicMasked = maskApiKey((settings?.anthropicApiKey as string) || '')
       openaiApiKey = openaiMasked
       anthropicApiKey = anthropicMasked
+      aiAutoReplyEnabled = (settings?.aiAutoReplyEnabled as boolean) || false
       gitProductionBranch = (settings?.gitProductionBranch as string) || 'main'
       gitWebhookSecret = (settings?.gitWebhookSecret as string) || ''
     }
@@ -62,9 +64,10 @@
     e.preventDefault()
     saving = true
     try {
-      const settings: Record<string, string | null> = {
+      const settings: Record<string, string | boolean | null> = {
         webhookUrl: webhookUrl || null,
         slackWebhookUrl: slackWebhookUrl || null,
+        aiAutoReplyEnabled,
         gitProductionBranch: gitProductionBranch || 'main',
       }
       // Only send keys the user actually changed — not the masked placeholder
@@ -218,6 +221,10 @@
       <h2 class="text-lg font-semibold text-slate-900">{$_('settings_integrations.ai_title')}</h2>
       <p class="mt-1 text-sm text-slate-600">{$_('settings_integrations.ai_description')}</p>
       <div class="mt-4 space-y-4">
+        <div>
+          <Checkbox label={$_('settings_integrations.ai_auto_reply_label')} bind:checked={aiAutoReplyEnabled} />
+          <p class="mt-1 ml-6 text-xs text-slate-500">{$_('settings_integrations.ai_auto_reply_desc')}</p>
+        </div>
         <Input
           id="openaiApiKey"
           type="password"

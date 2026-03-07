@@ -159,20 +159,26 @@
       {#each state.messages as msg}
         <div
           class="hb-chat-bubble"
-          class:hb-chat-bubble-user={msg.senderType !== 'admin'}
-          class:hb-chat-bubble-admin={msg.senderType === 'admin'}
-          style={msg.senderType !== 'admin' ? `background: ${color}; color: white;` : ''}
+          class:hb-chat-bubble-user={msg.senderType === 'end_user'}
+          class:hb-chat-bubble-admin={msg.senderType !== 'end_user'}
+          style={msg.senderType === 'end_user' ? `background: ${color}; color: white;` : ''}
         >
-          {#if msg.senderType === 'admin'}
+          {#if msg.senderType === 'admin' || msg.senderType === 'system'}
             <div class="hb-chat-sender-row">
-              {#if msg.sender?.avatarUrl}
+              {#if msg.senderType === 'system'}
+                <span class="hb-chat-avatar-placeholder hb-chat-ai-icon" style="background: {color}30; color: {color};">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2m0 14v2m-7-9H3m18 0h-2M5.6 5.6l1.4 1.4m10 10 1.4 1.4M5.6 18.4l1.4-1.4m10-10 1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>
+                </span>
+              {:else if msg.sender?.avatarUrl}
                 <img class="hb-chat-avatar" src={msg.sender.avatarUrl} alt="" />
               {:else}
                 <span class="hb-chat-avatar-placeholder" style="background: {color}30; color: {color};">
                   {(msg.sender?.name || 'S')[0]}
                 </span>
               {/if}
-              <span class="hb-chat-bubble-sender">{msg.sender?.name || t(locale, 'chat.support')}</span>
+              <span class="hb-chat-bubble-sender">
+                {msg.senderType === 'system' ? (msg.sender?.name || t(locale, 'chat.ai_assistant')) : (msg.sender?.name || t(locale, 'chat.support'))}
+              </span>
             </div>
           {/if}
           {#if msg.body}
@@ -515,6 +521,11 @@
     justify-content: center;
     font-size: 10px;
     font-weight: 700;
+  }
+  .hb-chat-ai-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .hb-chat-bubble-sender {
     font-size: 11px;

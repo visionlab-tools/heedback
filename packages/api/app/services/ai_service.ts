@@ -61,14 +61,19 @@ export default class AiService {
 
     const userPrompt = `Generate a changelog entry from these commits:${note}\n\n${commitList}\n\nLocales to generate: ${locales.join(', ')}`
 
+    const messages = [{ role: 'user' as const, content: userPrompt }]
     const raw = anthropicKey
-      ? await AiService.callAnthropic(anthropicKey, userPrompt)
-      : await AiService.callOpenAI(openaiKey!, userPrompt)
+      ? await AiService.callAnthropic(anthropicKey, SYSTEM_PROMPT, messages)
+      : await AiService.callOpenAI(openaiKey!, SYSTEM_PROMPT, messages, { jsonResponse: true })
 
     return AiService.parseResponse(raw)
   }
 
-  private static async callAnthropic(apiKey: string, userPrompt: string): Promise<string> {
+  static async callAnthropic(
+    apiKey: string,
+    systemPrompt: string,
+    messages: { role: 'user' | 'assistant'; content: string }[],
+  ): Promise<string> {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -79,8 +84,8 @@ export default class AiService {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userPrompt }],
+        system: systemPrompt,
+        messages,
       }),
       signal: AbortSignal.timeout(60_000),
     })
@@ -94,7 +99,12 @@ export default class AiService {
     return data.content?.[0]?.text ?? ''
   }
 
-  private static async callOpenAI(apiKey: string, userPrompt: string): Promise<string> {
+  static async callOpenAI(
+    apiKey: string,
+    systemPrompt: string,
+    messages: { role: 'user' | 'assistant'; content: string }[],
+    options?: { jsonResponse?: boolean },
+  ): Promise<string> {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -104,10 +114,10 @@ export default class AiService {
       body: JSON.stringify({
         model: 'gpt-4o',
         temperature: 0.3,
-        response_format: { type: 'json_object' },
+        ...(options?.jsonResponse && { response_format: { type: 'json_object' } }),
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userPrompt },
+          { role: 'system', content: systemPrompt },
+          ...messages,
         ],
       }),
       signal: AbortSignal.timeout(60_000),

@@ -69,6 +69,7 @@
   "contact.reply_placeholder": "Tapez votre reponse...",
   "contact.send_reply": "Envoyer la reponse",
   "contact.closed": "Cette conversation est fermee.",
+  "contact.ai_assistant": "Heedbot",
 
   "roadmap.title": "Feuille de route",
   "roadmap.subtitle": "Decouvrez ce sur quoi nous travaillons et ce qui arrive.",

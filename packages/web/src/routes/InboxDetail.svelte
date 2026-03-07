@@ -16,17 +16,17 @@
     <!-- Messages thread -->
     <div class="flex-1 overflow-y-auto p-4 space-y-3">
       {#each state.messages as msg}
-        <div class="p-3 rounded-lg border {msg.isInternal ? 'border-amber-200 bg-amber-50' : msg.senderType === 'admin' ? 'border-indigo-100 bg-indigo-50 ml-8' : 'border-slate-200 bg-white mr-8'}">
+        <div class="p-3 rounded-lg border {msg.isInternal ? 'border-amber-200 bg-amber-50' : msg.senderType === 'admin' || msg.senderType === 'system' ? 'border-indigo-100 bg-indigo-50 ml-8' : 'border-slate-200 bg-white mr-8'}">
           <div class="flex items-center justify-between text-sm text-slate-500">
             <div class="flex items-center gap-2">
-              <span class="font-medium {msg.senderType === 'admin' ? 'text-indigo-700' : 'text-slate-900'}">
-                {msg.senderType === 'admin' ? $_('conversation.you') : endUser?.displayName || $_('conversation.user')}
+              <span class="font-medium {msg.senderType === 'admin' || msg.senderType === 'system' ? 'text-indigo-700' : 'text-slate-900'}">
+                {msg.senderType === 'system' ? $_('conversation.ai_assistant') : msg.senderType === 'admin' ? $_('conversation.you') : endUser?.displayName || $_('conversation.user')}
               </span>
               {#if msg.isInternal}
                 <Badge variant="warning">{$_('conversation.internal')}</Badge>
               {/if}
               {#if msg.senderType === 'system'}
-                <Badge variant="neutral">{$_('conversation.system')}</Badge>
+                <Badge variant="neutral">{$_('conversation.ai_assistant')}</Badge>
               {/if}
             </div>
             <span class="text-xs text-slate-400">{state.formatTime(msg.createdAt)}</span>

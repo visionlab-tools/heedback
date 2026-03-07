@@ -30,10 +30,10 @@
 
     <div class="mt-8 space-y-4">
       {#each state.messages as msg}
-        <div class="p-4 rounded-xl border {msg.senderType === 'admin' ? 'border-indigo-200 bg-indigo-50 ml-8' : 'border-gray-200 bg-white mr-8'}">
+        <div class="p-4 rounded-xl border {msg.senderType !== 'end_user' ? 'border-indigo-200 bg-indigo-50 ml-8' : 'border-gray-200 bg-white mr-8'}">
           <div class="flex items-center justify-between">
-            <span class="text-sm font-medium {msg.senderType === 'admin' ? 'text-indigo-700' : 'text-gray-900'}">
-              {msg.senderType === 'admin' ? $_('contact.support') : $_('contact.you')}
+            <span class="text-sm font-medium {msg.senderType !== 'end_user' ? 'text-indigo-700' : 'text-gray-900'}">
+              {msg.senderType === 'system' ? $_('contact.ai_assistant') : msg.senderType === 'admin' ? $_('contact.support') : $_('contact.you')}
             </span>
             <span class="text-xs text-gray-400">{state.formatTime(msg.createdAt)}</span>
           </div>

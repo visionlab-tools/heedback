@@ -7,6 +7,7 @@ import EndUser from '#models/end_user'
 import Organization from '#models/organization'
 import WebhookService from '#services/webhook_service'
 import PushNotificationService from '#services/push_notification_service'
+import AiAutoReplyService from '#services/ai_auto_reply_service'
 import { sseService } from '#services/sse_service'
 import { isUuid } from '#helpers/uuid'
 import { resolveStorageUrl } from '#helpers/storage'
@@ -417,6 +418,8 @@ export default class ConversationService {
       orgId: org.id,
     })
 
+    AiAutoReplyService.maybeReply(org.id, conversation.id)
+
     return conversation
   }
 
@@ -508,6 +511,8 @@ export default class ConversationService {
       orgId: org.id,
     })
 
+    AiAutoReplyService.maybeReply(org.id, conversation.id)
+
     return message
   }
 
@@ -535,10 +540,12 @@ export default class ConversationService {
       url: resolveStorageUrl(a.key),
     }))
 
-    const sender =
-      message.senderType === 'admin' && message.adminUser
-        ? { name: message.adminUser.fullName, avatarUrl: message.adminUser.avatarUrl }
-        : null
+    let sender: { name: string; avatarUrl: string | null } | null = null
+    if (message.senderType === 'admin' && message.adminUser) {
+      sender = { name: message.adminUser.fullName, avatarUrl: message.adminUser.avatarUrl }
+    } else if (message.senderType === 'system') {
+      sender = { name: 'Heedbot', avatarUrl: null }
+    }
 
     return { ...base, attachments, sender }
   }

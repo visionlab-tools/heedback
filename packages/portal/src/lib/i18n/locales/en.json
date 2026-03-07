@@ -69,6 +69,7 @@
   "contact.reply_placeholder": "Type your reply...",
   "contact.send_reply": "Send Reply",
   "contact.closed": "This conversation is closed.",
+  "contact.ai_assistant": "Heedbot",
 
   "roadmap.title": "Roadmap",
   "roadmap.subtitle": "See what we're working on and what's coming next.",
