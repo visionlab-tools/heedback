@@ -289,13 +289,13 @@ export default class ChangelogService {
     return entries
   }
 
-  async showPublished(orgIdentifier: string, entryId: string, locale?: string) {
+  async showPublished(orgIdentifier: string, slugOrId: string, locale?: string) {
     const org = await Organization.query().where('slug', orgIdentifier).first()
 
     if (!org) return null
 
     const entry = await ChangelogEntry.query()
-      .where('id', entryId)
+      .where('slug', slugOrId)
       .where('organization_id', org.id)
       .where('status', 'published')
       .preload('translations', (q) => {
