@@ -10,11 +10,13 @@
     user = null,
     color = '#6366f1',
     locale = 'en',
+    onunreadchange,
   }: {
     org: string
     user?: any
     color?: string
     locale?: string
+    onunreadchange?: (count: number) => void
   } = $props()
 
   const state = createChatViewState(org, user)
@@ -28,6 +30,11 @@
     state.addFiles(input.files, locale, t)
     input.value = ''
   }
+
+  // Notify parent whenever unread count changes
+  $effect(() => {
+    onunreadchange?.(state.unreadCount)
+  })
 
   onMount(() => state.init())
   onDestroy(() => state.cleanup())
@@ -62,6 +69,7 @@
       conversations={state.conversations}
       {locale}
       {color}
+      isUnread={state.isUnread}
       onSelect={state.openConversation}
       onNew={state.goToNew}
     />

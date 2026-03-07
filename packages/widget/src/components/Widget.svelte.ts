@@ -1,11 +1,28 @@
 import { onMount } from 'svelte'
 import { setApiBase, widgetApi } from '../api/widget-client'
 
+/** Check unread count from localStorage without fetching API */
+function computeInitialUnread(org: string, conversations: any[]): number {
+  try {
+    const seen: Record<string, string> = JSON.parse(
+      localStorage.getItem(`heedback:${org}:seen`) || '{}'
+    )
+    return conversations.filter((c) => {
+      if (c.lastMessageSenderType !== 'admin') return false
+      const seenAt = seen[c.id]
+      return !seenAt || c.lastMessageAt > seenAt
+    }).length
+  } catch {
+    return 0
+  }
+}
+
 export function createWidgetState(org: string, fallbackColor: string, apiUrl?: string) {
   let isOpen = $state(false)
   let tab = $state<'chat' | 'help'>('chat')
   let boards = $state<any[]>([])
   let animating = $state(false)
+  let initialUnreadCount = $state(0)
 
   // Colors fetched from the org config API, with prop as fallback
   let brandColor = $state(fallbackColor)
@@ -35,6 +52,14 @@ export function createWidgetState(org: string, fallbackColor: string, apiUrl?: s
       brandColor = data.data.brandColor
       widgetColor = data.data.widgetColor
     }).catch(() => {})
+
+    // Pre-fetch unread count so badge shows before panel is opened
+    const endUserId = localStorage.getItem(`heedback:${org}:endUserId`)
+    if (endUserId) {
+      widgetApi.listConversations(org, endUserId).then((data) => {
+        initialUnreadCount = computeInitialUnread(org, data.data)
+      }).catch(() => {})
+    }
   })
 
   function open() {
@@ -67,6 +92,7 @@ export function createWidgetState(org: string, fallbackColor: string, apiUrl?: s
     get animating() { return animating },
     get brandColor() { return brandColor },
     get widgetColor() { return widgetColor },
+    get initialUnreadCount() { return initialUnreadCount },
     open,
     close,
     toggle,

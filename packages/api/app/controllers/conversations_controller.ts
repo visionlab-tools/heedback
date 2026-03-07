@@ -154,6 +154,7 @@ export default class ConversationsController {
         const serialized = c.serialize()
         const lastMsg = c.messages?.[0]
         serialized.lastMessagePreview = lastMsg?.body?.slice(0, 120) ?? null
+        serialized.lastMessageSenderType = lastMsg?.senderType ?? null
         delete serialized.messages
         return serialized
       }),

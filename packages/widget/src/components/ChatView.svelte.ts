@@ -17,6 +17,27 @@ function storageKey(org: string) {
   return `heedback:${org}:endUserId`
 }
 
+/** localStorage key for tracking when each conversation was last viewed */
+function seenKey(org: string) {
+  return `heedback:${org}:seen`
+}
+
+/** Read the per-conversation "last seen" timestamps from localStorage */
+function getSeenMap(org: string): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(seenKey(org)) || '{}')
+  } catch {
+    return {}
+  }
+}
+
+/** Mark a conversation as seen right now */
+function markSeen(org: string, conversationId: string) {
+  const map = getSeenMap(org)
+  map[conversationId] = new Date().toISOString()
+  localStorage.setItem(seenKey(org), JSON.stringify(map))
+}
+
 export function createChatViewState(org: string, user: any) {
   let screen = $state<Screen>('loading')
   let endUserId = $state<string | null>(null)
@@ -31,6 +52,26 @@ export function createChatViewState(org: string, user: any) {
   let selectedFiles = $state<File[]>([])
   let uploading = $state(false)
   let fileError = $state<string | null>(null)
+
+  /** How many conversations have an unread admin reply */
+  let unreadCount = $state(0)
+
+  /** Recompute unread count from conversations + seen map */
+  function refreshUnreadCount() {
+    const seen = getSeenMap(org)
+    unreadCount = conversations.filter((c) => {
+      if (c.lastMessageSenderType !== 'admin') return false
+      const seenAt = seen[c.id]
+      return !seenAt || c.lastMessageAt > seenAt
+    }).length
+  }
+
+  /** Check if a single conversation has unread admin messages */
+  function isUnread(convo: any): boolean {
+    if (convo.lastMessageSenderType !== 'admin') return false
+    const seenAt = getSeenMap(org)[convo.id]
+    return !seenAt || convo.lastMessageAt > seenAt
+  }
 
   /** Bootstrap: check localStorage for existing end user */
   async function init() {
@@ -52,6 +93,7 @@ export function createChatViewState(org: string, user: any) {
     } catch {
       conversations = []
     }
+    refreshUnreadCount()
   }
 
   function connectToConversation(id: string) {
@@ -163,6 +205,8 @@ export function createChatViewState(org: string, user: any) {
   async function openConversation(id: string) {
     conversationId = id
     screen = 'thread'
+    markSeen(org, id)
+    refreshUnreadCount()
     try {
       const data = await widgetApi.getConversation(org, id)
       messages = data.data.messages || []
@@ -245,6 +289,8 @@ export function createChatViewState(org: string, user: any) {
     get uploading() { return uploading },
     get selectedFiles() { return selectedFiles },
     get fileError() { return fileError },
+    get unreadCount() { return unreadCount },
+    isUnread,
     init,
     handleStart,
     handleReply,

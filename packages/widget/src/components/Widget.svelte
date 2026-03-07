@@ -22,6 +22,8 @@
 
   const widget = createWidgetState(org, color, apiUrl)
   let helpArticleOpen = $state(false)
+  let chatUnreadCount = $state(0)
+  let badgeCount = $derived(chatUnreadCount || widget.initialUnreadCount)
 </script>
 
 <div
@@ -79,7 +81,7 @@
       <!-- Content -->
       <div class="hb-content">
         {#if widget.tab === 'chat'}
-          <ChatView {org} {user} color={widget.brandColor} {locale} />
+          <ChatView {org} {user} color={widget.brandColor} {locale} onunreadchange={(n) => chatUnreadCount = n} />
         {:else}
           <HelpView {org} {locale} onviewchange={(v) => helpArticleOpen = v === 'article'} />
         {/if}
@@ -104,6 +106,10 @@
       <svg class="hb-trigger-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
       </svg>
+    {/if}
+
+    {#if badgeCount > 0 && !widget.isOpen}
+      <span class="hb-trigger-badge">{badgeCount > 9 ? '9+' : badgeCount}</span>
     {/if}
   </button>
 </div>
@@ -263,6 +269,7 @@
 
   /* Trigger button */
   .hb-trigger {
+    position: relative;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -291,6 +298,29 @@
   }
   .hb-trigger-open .hb-trigger-icon {
     transform: rotate(90deg);
+  }
+
+  /* Unread badge on trigger button */
+  .hb-trigger-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: hb-badge-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes hb-badge-pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
   }
 
   /* Mobile responsive */
