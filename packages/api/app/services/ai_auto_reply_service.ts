@@ -108,6 +108,8 @@ export default class AiAutoReplyService {
       preferredLocale,
       openaiKey,
     )
+    console.log('[AiAutoReply] Knowledge base length: %d chars, preview: %s',
+      knowledgeBase.length, knowledgeBase.slice(0, 300))
     const systemPrompt = AiAutoReplyService.buildSystemPrompt(org.name, knowledgeBase)
 
     const chatMessages = allMessages.map((m) => ({
