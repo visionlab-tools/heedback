@@ -5,6 +5,7 @@ import EmbeddingService from '#services/embedding_service'
 const MAX_ARTICLES = 10
 const SEMANTIC_MAX_CHUNKS = 20
 const CHAR_BUDGET = 30_000
+const ARTICLE_CHAR_LIMIT = 8_000
 
 interface RetrievedArticle {
   title: string
@@ -23,11 +24,7 @@ export default class KnowledgeRetrievalService {
     openaiKey?: string,
   ): Promise<string> {
     const query = KnowledgeRetrievalService.extractSearchQuery(userMessages)
-    console.log('[KnowledgeRetrieval] orgId=%s locale=%s hasOpenAI=%s query="%s"',
-      orgId, locale, !!openaiKey, query?.slice(0, 100))
-
     if (!query) {
-      console.log('[KnowledgeRetrieval] Empty query, using recent articles fallback')
       return KnowledgeRetrievalService.recentArticlesFallback(orgId, locale)
     }
 
@@ -36,7 +33,6 @@ export default class KnowledgeRetrievalService {
       const semantic = await KnowledgeRetrievalService.semanticSearch(
         orgId, query, locale, openaiKey,
       )
-      console.log('[KnowledgeRetrieval] Semantic search returned %d articles', semantic.length)
       if (semantic.length) {
         return KnowledgeRetrievalService.formatArticles(semantic)
       }
@@ -44,12 +40,10 @@ export default class KnowledgeRetrievalService {
 
     // Full-text search fallback
     const fts = await KnowledgeRetrievalService.fullTextSearch(orgId, query, locale)
-    console.log('[KnowledgeRetrieval] FTS returned %d articles', fts.length)
     if (fts.length) {
       return KnowledgeRetrievalService.formatArticles(fts)
     }
 
-    console.log('[KnowledgeRetrieval] All searches empty, using recent articles fallback')
     return KnowledgeRetrievalService.recentArticlesFallback(orgId, locale)
   }
 
@@ -200,8 +194,6 @@ export default class KnowledgeRetrievalService {
       .orderBy('published_at', 'desc')
       .limit(MAX_ARTICLES)
 
-    console.log('[KnowledgeRetrieval] Fallback: %d published articles found', articles.length)
-
     const results: RetrievedArticle[] = []
     for (const article of articles) {
       const t =
@@ -211,9 +203,6 @@ export default class KnowledgeRetrievalService {
 
       if (t?.body) {
         results.push({ title: t.title, body: t.body })
-      } else {
-        console.log('[KnowledgeRetrieval] Article %s has no body for locale=%s (translation locales: %s)',
-          article.id, locale, article.translations.map((tr) => tr.locale).join(','))
       }
     }
 
@@ -224,9 +213,10 @@ export default class KnowledgeRetrievalService {
   private static formatArticles(articles: RetrievedArticle[]): string {
     let result = ''
     for (const a of articles) {
-      const section = `## ${a.title}\n${a.body}\n\n`
-      console.log('[KnowledgeRetrieval] Article "%s" body length: %d, starts with: %s',
-        a.title, a.body.length, a.body.slice(0, 100))
+      const body = a.body.length > ARTICLE_CHAR_LIMIT
+        ? a.body.slice(0, ARTICLE_CHAR_LIMIT) + '\n[…]'
+        : a.body
+      const section = `## ${a.title}\n${body}\n\n`
       if (result.length + section.length > CHAR_BUDGET) break
       result += section
     }
