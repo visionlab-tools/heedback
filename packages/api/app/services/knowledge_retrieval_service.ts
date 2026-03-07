@@ -225,6 +225,8 @@ export default class KnowledgeRetrievalService {
     let result = ''
     for (const a of articles) {
       const section = `## ${a.title}\n${a.body}\n\n`
+      console.log('[KnowledgeRetrieval] Article "%s" body length: %d, starts with: %s',
+        a.title, a.body.length, a.body.slice(0, 100))
       if (result.length + section.length > CHAR_BUDGET) break
       result += section
     }
