@@ -5,7 +5,6 @@ export default defineConfig({
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
     () => import('#commands/run_digest'),
-    () => import('#commands/scheduler'),
   ],
 
   providers: [

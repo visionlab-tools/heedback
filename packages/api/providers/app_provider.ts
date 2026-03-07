@@ -1,6 +1,9 @@
 import type { ApplicationService } from '@adonisjs/core/types'
+import type { ScheduledTask } from 'node-cron'
 
 export default class AppProvider {
+  private digestTask?: ScheduledTask
+
   constructor(protected app: ApplicationService) {}
 
   /**
@@ -24,13 +27,37 @@ export default class AppProvider {
   async ready() {
     if (this.app.getEnvironment() === 'web') {
       await this.seedSuperAdmin()
+      await this.startDigestCron()
     }
   }
 
   /**
    * Preparing to shutdown the app
    */
-  async shutdown() {}
+  async shutdown() {
+    this.digestTask?.stop()
+  }
+
+  /**
+   * Schedules digest emails every 10 minutes via node-cron.
+   * Uses a Redis distributed lock inside DigestService to
+   * prevent duplicate runs in multi-instance deployments.
+   */
+  private async startDigestCron() {
+    const cron = await import('node-cron')
+    const { default: DigestService } = await import('#services/digest_service')
+    const digest = new DigestService()
+
+    this.digestTask = cron.schedule('*/10 * * * *', async () => {
+      try {
+        await digest.run()
+      } catch (error) {
+        console.error('Digest run failed:', (error as Error).message)
+      }
+    })
+
+    console.log('Digest cron scheduled (every 10 min)')
+  }
 
   /**
    * Seeds the super admin user if SUPER_ADMIN_EMAIL and
