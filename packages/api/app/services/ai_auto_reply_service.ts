@@ -115,6 +115,12 @@ export default class AiAutoReplyService {
       content: m.body,
     }))
 
+    // Let the widget show a typing indicator while the AI generates a response
+    sseService.publish(`conversation:${conversation.id}`, {
+      event: 'typing.started',
+      data: { senderType: 'system' },
+    })
+
     const result = anthropicKey
       ? await AiAutoReplyService.callAnthropicWithTools(anthropicKey, systemPrompt, chatMessages)
       : await AiAutoReplyService.callOpenAIWithTools(openaiKey!, systemPrompt, chatMessages)

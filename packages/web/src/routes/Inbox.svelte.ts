@@ -76,6 +76,9 @@ export function createInboxState(orgId: string) {
   // SSE — plain variable, not reactive (never read in templates)
   let eventSource: EventSource | null = null
 
+  // Throttle typing notifications — at most 1 every 3s
+  let lastTypingNotifiedAt = 0
+
   // Load immediately — orgId comes from the URL, always available
   loadConversations()
   loadMembers()
@@ -181,6 +184,15 @@ export function createInboxState(orgId: string) {
     loadConversations()
   }
 
+  /** Notify the widget that the admin is typing (throttled to 1 per 3s) */
+  function notifyTyping() {
+    if (!selectedId) return
+    const now = Date.now()
+    if (now - lastTypingNotifiedAt < 3000) return
+    lastTypingNotifiedAt = now
+    api.post(`/org/${orgId}/conversations/${selectedId}/typing`, {}).catch(() => {})
+  }
+
   function connectInboxSse() {
     disconnectInboxSse()
     if (!orgId) return
@@ -281,6 +293,7 @@ export function createInboxState(orgId: string) {
     handleAssign,
     handleSend,
     handleDelete,
+    notifyTyping,
     cleanup,
     statusVariant: (status: string): BadgeVariant => STATUS_VARIANTS[status] || 'neutral',
     channelLabel: (channel: string): string => CHANNEL_LABELS[channel] || channel,

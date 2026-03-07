@@ -24,6 +24,20 @@
   // Plain refs — NOT $state, because bind:this + $state triggers a store subscribe path in Svelte 5
   let newFormFileInput: HTMLInputElement | undefined
   let replyFileInput: HTMLInputElement | undefined
+  let messagesContainer: HTMLDivElement | undefined
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' })
+    })
+  }
+
+  // Auto-scroll when new messages arrive or typing indicator shows
+  $effect(() => {
+    state.messages.length
+    state.typing
+    scrollToBottom()
+  })
 
   function handleFileChange(e: Event) {
     const input = e.target as HTMLInputElement
@@ -155,7 +169,7 @@
     </button>
 
     <!-- Message thread -->
-    <div class="hb-chat-messages">
+    <div class="hb-chat-messages" bind:this={messagesContainer}>
       {#each state.messages as msg}
         <div
           class="hb-chat-bubble"
@@ -205,6 +219,25 @@
           <span class="hb-chat-bubble-time">{state.formatTime(msg.createdAt)}</span>
         </div>
       {/each}
+
+      {#if state.typing}
+        <div class="hb-chat-bubble hb-chat-bubble-admin hb-chat-bubble-typing"
+          class:hb-chat-bubble-ai={state.typingSenderType === 'system'}
+        >
+          <div class="hb-chat-sender-row">
+            {#if state.typingSenderType === 'system'}
+              <span class="hb-chat-ai-icon" style="background: {color}20; color: {color};">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+              </span>
+            {/if}
+          </div>
+          <div class="hb-typing-dots">
+            <span style="background: {state.typingSenderType === 'system' ? color : '#6b7280'};"></span>
+            <span style="background: {state.typingSenderType === 'system' ? color : '#6b7280'};"></span>
+            <span style="background: {state.typingSenderType === 'system' ? color : '#6b7280'};"></span>
+          </div>
+        </div>
+      {/if}
     </div>
 
     <!-- Reply input -->
@@ -499,6 +532,30 @@
   .hb-chat-bubble-ai {
     background: #f0f0ff;
     border: 1px solid #e0e0f6;
+  }
+
+  /* Typing indicator */
+  .hb-chat-bubble-typing {
+    padding: 10px 14px 8px;
+  }
+  .hb-typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 16px;
+  }
+  .hb-typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: hb-typing-bounce 1.2s ease-in-out infinite;
+  }
+  .hb-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .hb-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes hb-typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-4px); }
   }
   .hb-chat-bubble-user {
     align-self: flex-end;

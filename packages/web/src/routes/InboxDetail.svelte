@@ -61,7 +61,7 @@
 
     <!-- Reply form -->
     <form onsubmit={state.handleSend} class="p-4 border-t border-slate-200">
-      <Textarea bind:value={state.newMessage} rows={3} placeholder={$_('conversation.reply_placeholder')} />
+      <Textarea bind:value={state.newMessage} rows={3} placeholder={$_('conversation.reply_placeholder')} oninput={state.notifyTyping} />
       <div class="mt-2 flex items-center gap-4">
         <Button type="submit" disabled={state.sending || !state.newMessage.trim()} size="sm">
           {state.sending ? $_('conversation.sending') : $_('conversation.send_reply')}

@@ -7,7 +7,9 @@ import {
 } from '#validators/conversation_validator'
 import ConversationService from '#services/conversation_service'
 import EndUser from '#models/end_user'
+import Conversation from '#models/conversation'
 import { setEndUserCookie, readEndUserCookie } from '#helpers/end_user_cookie'
+import { sseService } from '#services/sse_service'
 
 export default class ConversationsController {
   private conversationService = new ConversationService()
@@ -91,6 +93,29 @@ export default class ConversationsController {
     }
 
     return response.ok({ message: 'Conversation deleted successfully' })
+  }
+
+  /** Broadcast a typing indicator so the widget shows "agent is typing" */
+  async notifyTyping({ organization, auth, params, response }: HttpContext) {
+    const conversation = await Conversation.query()
+      .where('organization_id', organization.id)
+      .where('id', params.conversationId)
+      .first()
+
+    if (!conversation) {
+      return response.notFound({ message: 'Conversation not found' })
+    }
+
+    const user = auth.user!
+    sseService.publish(`conversation:${conversation.id}`, {
+      event: 'typing.started',
+      data: {
+        senderType: 'admin',
+        sender: { name: user.fullName, avatarUrl: user.avatarUrl },
+      },
+    })
+
+    return response.noContent()
   }
 
   /** Resolve an end user by external ID — enables cross-domain widget continuity */

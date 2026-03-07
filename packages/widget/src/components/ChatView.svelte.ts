@@ -53,6 +53,11 @@ export function createChatViewState(org: string, user: any) {
   let uploading = $state(false)
   let fileError = $state<string | null>(null)
 
+  // Typing indicator state
+  let typing = $state(false)
+  let typingSenderType = $state<string | null>(null)
+  let typingTimeout: ReturnType<typeof setTimeout> | null = null
+
   /** How many conversations have an unread admin reply */
   let unreadCount = $state(0)
 
@@ -123,10 +128,31 @@ export function createChatViewState(org: string, user: any) {
     refreshUnreadCount()
   }
 
+  function showTyping(senderType: string) {
+    typing = true
+    typingSenderType = senderType
+    // Safety timeout — auto-clear if no message arrives within 10s
+    if (typingTimeout) clearTimeout(typingTimeout)
+    typingTimeout = setTimeout(hideTyping, 10_000)
+  }
+
+  function hideTyping() {
+    typing = false
+    typingSenderType = null
+    if (typingTimeout) {
+      clearTimeout(typingTimeout)
+      typingTimeout = null
+    }
+  }
+
   function connectToConversation(id: string) {
     disconnectSse?.()
     disconnectSse = connectSSE(org, id, (event) => {
+      if (event.event === 'typing.started') {
+        showTyping(event.data.senderType)
+      }
       if (event.event === 'message.created') {
+        hideTyping()
         if (!messages.some((m) => m.id === event.data.id)) {
           messages = [...messages, event.data]
         }
@@ -298,6 +324,7 @@ export function createChatViewState(org: string, user: any) {
 
   function cleanup() {
     disconnectSse?.()
+    if (typingTimeout) clearTimeout(typingTimeout)
   }
 
   function formatTime(dateStr: string): string {
@@ -322,6 +349,8 @@ export function createChatViewState(org: string, user: any) {
     get selectedFiles() { return selectedFiles },
     get fileError() { return fileError },
     get unreadCount() { return unreadCount },
+    get typing() { return typing },
+    get typingSenderType() { return typingSenderType },
     isUnread,
     init,
     handleStart,

@@ -261,6 +261,10 @@ router
           ConversationsController,
           'sendMessage',
         ])
+        router.post('/conversations/:conversationId/typing', [
+          ConversationsController,
+          'notifyTyping',
+        ])
       })
       .prefix('/org/:orgId')
       .use(middleware.org())
