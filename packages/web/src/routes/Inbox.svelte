@@ -63,16 +63,16 @@
                 {/if}
                 {#if convo.endUser?.avatarUrl}
                   <img src={convo.endUser.avatarUrl} alt="" class="w-8 h-8 rounded-full object-cover shrink-0" />
-                {:else if convo.endUser?.name || convo.endUser?.email}
+                {:else if convo.endUser?.displayName || convo.endUser?.email}
                   <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-                    {(convo.endUser.name || convo.endUser.email || '?')[0].toUpperCase()}
+                    {(convo.endUser.displayName || convo.endUser.email || '?')[0].toUpperCase()}
                   </div>
                 {:else}
                   <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0">?</div>
                 {/if}
                 <div class="min-w-0">
                   <p class="text-sm truncate {convo.isUnread ? 'font-semibold text-slate-900' : 'font-medium text-slate-900'}">
-                    {convo.endUser?.name || convo.endUser?.email || $_('common.anonymous')}
+                    {convo.endUser?.displayName || convo.endUser?.email || $_('common.anonymous')}
                   </p>
                   <p class="text-xs truncate {convo.isUnread ? 'text-slate-700 font-medium' : 'text-slate-500'}">
                     {convo.subject || $_('inbox.no_subject')}

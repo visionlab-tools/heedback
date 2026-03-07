@@ -7,7 +7,7 @@
   let { state }: { state: ReturnType<typeof createInboxState> } = $props()
 
   const endUser = $derived(state.conversation?.endUser)
-  const hasContactInfo = $derived(endUser?.name || endUser?.email)
+  const hasContactInfo = $derived(endUser?.displayName || endUser?.email)
 </script>
 
 <div class="flex flex-1 min-h-0">
@@ -20,7 +20,7 @@
           <div class="flex items-center justify-between text-sm text-slate-500">
             <div class="flex items-center gap-2">
               <span class="font-medium {msg.senderType === 'admin' ? 'text-indigo-700' : 'text-slate-900'}">
-                {msg.senderType === 'admin' ? $_('conversation.you') : endUser?.name || $_('conversation.user')}
+                {msg.senderType === 'admin' ? $_('conversation.you') : endUser?.displayName || $_('conversation.user')}
               </span>
               {#if msg.isInternal}
                 <Badge variant="warning">{$_('conversation.internal')}</Badge>
@@ -81,14 +81,14 @@
           <img src={endUser.avatarUrl} alt="" class="w-9 h-9 rounded-full object-cover shrink-0" />
         {:else if hasContactInfo}
           <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold shrink-0">
-            {(endUser?.name || endUser?.email || '?')[0].toUpperCase()}
+            {(endUser?.displayName || endUser?.email || '?')[0].toUpperCase()}
           </div>
         {:else}
           <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-sm font-bold shrink-0">?</div>
         {/if}
         <div class="min-w-0">
-          {#if endUser?.name}
-            <p class="text-sm font-medium text-slate-900 truncate">{endUser.name}</p>
+          {#if endUser?.displayName}
+            <p class="text-sm font-medium text-slate-900 truncate">{endUser.displayName}</p>
           {:else if !hasContactInfo}
             <p class="text-sm text-slate-400">{$_('conversation.anonymous')}</p>
           {/if}
@@ -97,6 +97,34 @@
           {/if}
         </div>
       </div>
+
+      <!-- Profile fields -->
+      {#if endUser?.position || endUser?.company || endUser?.pricingPlan || endUser?.language}
+        <div class="mt-3 space-y-1.5 text-xs">
+          {#if endUser.position}
+            <div class="flex justify-between"><span class="text-slate-500">{$_('conversation.position')}</span><span class="text-slate-700">{endUser.position}</span></div>
+          {/if}
+          {#if endUser.company}
+            <div class="flex justify-between"><span class="text-slate-500">{$_('conversation.company')}</span><span class="text-slate-700">{endUser.company}</span></div>
+          {/if}
+          {#if endUser.pricingPlan}
+            <div class="flex justify-between"><span class="text-slate-500">{$_('conversation.pricing_plan')}</span><span class="text-slate-700">{endUser.pricingPlan}</span></div>
+          {/if}
+          {#if endUser.language}
+            <div class="flex justify-between"><span class="text-slate-500">{$_('conversation.language')}</span><span class="text-slate-700">{endUser.language}</span></div>
+          {/if}
+        </div>
+      {/if}
+
+      <!-- Metadata key/value pairs -->
+      {#if endUser?.metadata && Object.keys(endUser.metadata).length > 0}
+        <div class="mt-3 space-y-1.5 text-xs">
+          <span class="text-slate-400 uppercase tracking-wide font-semibold">{$_('conversation.metadata')}</span>
+          {#each Object.entries(endUser.metadata) as [key, value]}
+            <div class="flex justify-between"><span class="text-slate-500">{key}</span><span class="text-slate-700">{value}</span></div>
+          {/each}
+        </div>
+      {/if}
     </div>
 
     <!-- Details -->

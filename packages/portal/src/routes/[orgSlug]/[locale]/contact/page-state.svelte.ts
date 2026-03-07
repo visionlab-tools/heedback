@@ -20,7 +20,7 @@ export function createContactPageState(orgSlug: string) {
           subject: subject || null,
           body,
           endUserEmail: email || undefined,
-          endUserName: name || undefined,
+          endUserFirstName: name || undefined,
           channel: 'portal',
         }),
       })

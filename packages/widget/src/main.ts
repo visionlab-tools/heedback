@@ -15,7 +15,11 @@ interface HeedbackUser {
   lastName?: string
   email?: string
   avatarUrl?: string
-  metadata?: Record<string, unknown>
+  position?: string
+  company?: string
+  pricingPlan?: string
+  language?: string
+  metadata?: Record<string, string | number>
 }
 
 interface HeedbackInstance {
@@ -123,6 +127,10 @@ if (script) {
         lastName: script.getAttribute('data-user-last-name') || undefined,
         email: script.getAttribute('data-user-email') || undefined,
         avatarUrl: script.getAttribute('data-user-avatar-url') || undefined,
+        position: script.getAttribute('data-user-position') || undefined,
+        company: script.getAttribute('data-user-company') || undefined,
+        pricingPlan: script.getAttribute('data-user-pricing-plan') || undefined,
+        language: script.getAttribute('data-user-language') || undefined,
       })
     }
   }

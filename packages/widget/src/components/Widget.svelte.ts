@@ -17,7 +17,7 @@ function computeInitialUnread(org: string, conversations: any[]): number {
   }
 }
 
-export function createWidgetState(org: string, fallbackColor: string, apiUrl?: string) {
+export function createWidgetState(org: string, fallbackColor: string, apiUrl?: string, user?: any) {
   let isOpen = $state(false)
   let tab = $state<'chat' | 'help'>('chat')
   let boards = $state<any[]>([])
@@ -54,13 +54,31 @@ export function createWidgetState(org: string, fallbackColor: string, apiUrl?: s
     }).catch(() => {})
 
     // Pre-fetch unread count so badge shows before panel is opened
-    const endUserId = localStorage.getItem(`heedback:${org}:endUserId`)
-    if (endUserId) {
-      widgetApi.listConversations(org, endUserId).then((data) => {
-        initialUnreadCount = computeInitialUnread(org, data.data)
-      }).catch(() => {})
-    }
+    prefetchUnread()
   })
+
+  /** Resolve endUserId (localStorage or cross-domain) then fetch unread count */
+  async function prefetchUnread() {
+    let endUserId = localStorage.getItem(`heedback:${org}:endUserId`)
+
+    // Cross-domain: resolve by external ID when no local endUserId
+    if (!endUserId && user?.id) {
+      try {
+        const res = await widgetApi.resolveEndUser(org, user.id)
+        endUserId = res.data.id
+        localStorage.setItem(`heedback:${org}:endUserId`, endUserId)
+      } catch {
+        // 404 — user not yet created
+      }
+    }
+
+    if (endUserId) {
+      try {
+        const data = await widgetApi.listConversations(org, endUserId)
+        initialUnreadCount = computeInitialUnread(org, data.data)
+      } catch {}
+    }
+  }
 
   function open() {
     if (animating) return

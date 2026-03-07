@@ -6,6 +6,7 @@ import {
   updateConversationValidator,
 } from '#validators/conversation_validator'
 import ConversationService from '#services/conversation_service'
+import EndUser from '#models/end_user'
 
 export default class ConversationsController {
   private conversationService = new ConversationService()
@@ -89,6 +90,25 @@ export default class ConversationsController {
     }
 
     return response.ok({ message: 'Conversation deleted successfully' })
+  }
+
+  /** Resolve an end user by external ID — enables cross-domain widget continuity */
+  async resolveEndUser({ params, request, response }: HttpContext) {
+    const externalId = request.input('externalId')
+    if (!externalId) {
+      return response.badRequest({ message: 'externalId query param is required' })
+    }
+
+    const endUser = await EndUser.query()
+      .where('organization_id', params.orgId)
+      .where('external_id', externalId)
+      .first()
+
+    if (!endUser) {
+      return response.notFound({ message: 'End user not found' })
+    }
+
+    return response.ok({ data: { id: endUser.id, externalId: endUser.externalId } })
   }
 
   async publicStore({ params, request, response }: HttpContext) {

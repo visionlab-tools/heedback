@@ -320,6 +320,11 @@ router
     router.post('/org/:orgId/public/uploads', [UploadsController, 'publicStore'])
 
     /*
+    | Public end-user resolution (cross-domain continuity)
+    */
+    router.get('/org/:orgId/public/end-users/resolve', [ConversationsController, 'resolveEndUser'])
+
+    /*
     | Public chat / conversations
     */
     router.post('/org/:orgId/public/conversations', [ConversationsController, 'publicStore'])

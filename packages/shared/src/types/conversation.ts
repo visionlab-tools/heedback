@@ -18,9 +18,16 @@ export interface Conversation {
   updatedAt: string
   endUser?: {
     id: string
-    name: string | null
+    firstName: string | null
+    lastName: string | null
+    displayName: string | null
     email: string | null
     avatarUrl: string | null
+    position: string | null
+    company: string | null
+    pricingPlan: string | null
+    language: string | null
+    metadata: Record<string, string | number> | null
   }
   assignedTo?: {
     id: string
@@ -52,7 +59,8 @@ export interface CreateConversationPayload {
   body: string
   channel?: ConversationChannel
   endUserEmail?: string
-  endUserName?: string
+  endUserFirstName?: string
+  endUserLastName?: string
 }
 
 export interface SendMessagePayload {

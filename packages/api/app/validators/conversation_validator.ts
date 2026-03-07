@@ -18,6 +18,11 @@ export const createConversationValidator = vine.compile(
     endUserLastName: vine.string().trim().maxLength(255).optional(),
     endUserEmail: vine.string().email().optional(),
     endUserAvatarUrl: vine.string().trim().maxLength(2048).optional(),
+    endUserPosition: vine.string().trim().maxLength(255).optional(),
+    endUserCompany: vine.string().trim().maxLength(255).optional(),
+    endUserPricingPlan: vine.string().trim().maxLength(255).optional(),
+    endUserLanguage: vine.string().trim().maxLength(10).optional(),
+    endUserMetadata: vine.record(vine.any()).optional(),
     attachments: vine.array(attachmentSchema).optional(),
     pageUrl: vine.string().trim().maxLength(2048).optional(),
   })

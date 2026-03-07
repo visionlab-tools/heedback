@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, computed, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Organization from '#models/organization'
 import Post from '#models/post'
@@ -22,14 +22,35 @@ export default class EndUser extends BaseModel {
   @column({ columnName: 'email', serializeAs: 'email' })
   declare email: string | null
 
-  @column({ columnName: 'name', serializeAs: 'name' })
-  declare name: string | null
+  @column({ columnName: 'first_name', serializeAs: 'firstName' })
+  declare firstName: string | null
+
+  @column({ columnName: 'last_name', serializeAs: 'lastName' })
+  declare lastName: string | null
 
   @column({ columnName: 'avatar_url', serializeAs: 'avatarUrl' })
   declare avatarUrl: string | null
 
+  @column({ columnName: 'position', serializeAs: 'position' })
+  declare position: string | null
+
+  @column({ columnName: 'company', serializeAs: 'company' })
+  declare company: string | null
+
+  @column({ columnName: 'pricing_plan', serializeAs: 'pricingPlan' })
+  declare pricingPlan: string | null
+
+  @column({ columnName: 'language', serializeAs: 'language' })
+  declare language: string | null
+
   @column({ columnName: 'metadata', serializeAs: 'metadata' })
-  declare metadata: Record<string, unknown> | null
+  declare metadata: Record<string, string | number> | null
+
+  @computed()
+  get displayName(): string | null {
+    if (!this.firstName) return null
+    return this.lastName ? `${this.firstName} ${this.lastName}` : this.firstName
+  }
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'createdAt' })
   declare createdAt: DateTime

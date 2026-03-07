@@ -3,9 +3,15 @@ export interface EndUser {
   organizationId: string
   externalId: string | null
   email: string | null
-  name: string | null
+  firstName: string | null
+  lastName: string | null
+  displayName: string | null
   avatarUrl: string | null
-  metadata: Record<string, unknown>
+  position: string | null
+  company: string | null
+  pricingPlan: string | null
+  language: string | null
+  metadata: Record<string, string | number>
   lastSeenAt: string | null
   createdAt: string
   updatedAt: string
@@ -14,7 +20,12 @@ export interface EndUser {
 export interface IdentifyEndUserPayload {
   externalId?: string
   email?: string
-  name?: string
+  firstName?: string
+  lastName?: string
   avatarUrl?: string
-  metadata?: Record<string, unknown>
+  position?: string
+  company?: string
+  pricingPlan?: string
+  language?: string
+  metadata?: Record<string, string | number>
 }

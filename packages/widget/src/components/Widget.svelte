@@ -20,7 +20,7 @@
     user?: any
   } = $props()
 
-  const widget = createWidgetState(org, color, apiUrl)
+  const widget = createWidgetState(org, color, apiUrl, user)
   let helpArticleOpen = $state(false)
   let chatUnreadCount = $state(0)
   let badgeCount = $derived(chatUnreadCount || widget.initialUnreadCount)

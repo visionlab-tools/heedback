@@ -14,7 +14,7 @@ export const actions: Actions = {
         subject: subject || undefined,
         body,
         endUserEmail: email || undefined,
-        endUserName: name || undefined,
+        endUserFirstName: name || undefined,
         channel: 'portal',
       })
 

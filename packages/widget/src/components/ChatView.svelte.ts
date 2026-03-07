@@ -73,16 +73,31 @@ export function createChatViewState(org: string, user: any) {
     return !seenAt || convo.lastMessageAt > seenAt
   }
 
-  /** Bootstrap: check localStorage for existing end user */
+  /** Bootstrap: check localStorage or resolve by external ID for cross-domain continuity */
   async function init() {
     const stored = localStorage.getItem(storageKey(org))
     if (stored) {
       endUserId = stored
       await refreshConversations()
       screen = conversations.length > 0 ? 'list' : 'new'
-    } else {
-      screen = 'new'
+      return
     }
+
+    // Cross-domain: resolve by external ID when no local endUserId
+    if (user?.id) {
+      try {
+        const res = await widgetApi.resolveEndUser(org, user.id)
+        endUserId = res.data.id
+        localStorage.setItem(storageKey(org), endUserId!)
+        await refreshConversations()
+        screen = conversations.length > 0 ? 'list' : 'new'
+        return
+      } catch {
+        // 404 — user not yet created, continue normally
+      }
+    }
+
+    screen = 'new'
   }
 
   async function refreshConversations() {
@@ -172,6 +187,11 @@ export function createChatViewState(org: string, user: any) {
         endUserLastName: user?.lastName,
         endUserEmail: user?.email,
         endUserAvatarUrl: user?.avatarUrl,
+        endUserPosition: user?.position,
+        endUserCompany: user?.company,
+        endUserPricingPlan: user?.pricingPlan,
+        endUserLanguage: user?.language,
+        endUserMetadata: user?.metadata,
         attachments: attachments.length > 0 ? attachments : undefined,
         pageUrl: window.location.href,
       })

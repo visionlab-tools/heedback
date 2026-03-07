@@ -76,7 +76,7 @@ export default class DigestService {
       .select(
         'conversations.id as conversationId',
         'conversations.subject',
-        'end_users.name as senderName',
+        db.raw("CONCAT_WS(' ', end_users.first_name, end_users.last_name) as \"senderName\""),
         'messages.body',
         'messages.created_at as createdAt',
       )

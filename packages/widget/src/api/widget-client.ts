@@ -66,6 +66,11 @@ export const widgetApi = {
       endUserLastName?: string
       endUserEmail?: string
       endUserAvatarUrl?: string
+      endUserPosition?: string
+      endUserCompany?: string
+      endUserPricingPlan?: string
+      endUserLanguage?: string
+      endUserMetadata?: Record<string, string | number>
       attachments?: { key: string; name: string; type: string; size: number }[]
       pageUrl?: string
     }
@@ -127,6 +132,13 @@ export const widgetApi = {
     })
     if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
     return res.json()
+  },
+
+  /** Resolve an end user by external ID — enables cross-domain continuity */
+  resolveEndUser(orgId: string, externalId: string) {
+    return request<{ data: { id: string; externalId: string } }>(
+      `/org/${orgId}/public/end-users/resolve?externalId=${encodeURIComponent(externalId)}`
+    )
   },
 
   sendArticleFeedback(orgId: string, articleId: string, data: { rating: number; comment?: string }) {

@@ -38,6 +38,11 @@ interface PublicCreateData {
   endUserLastName?: string
   endUserEmail?: string
   endUserAvatarUrl?: string
+  endUserPosition?: string
+  endUserCompany?: string
+  endUserPricingPlan?: string
+  endUserLanguage?: string
+  endUserMetadata?: Record<string, string | number>
   subject?: string | null
   channel?: 'widget' | 'portal' | 'email'
   body?: string
@@ -238,8 +243,6 @@ export default class ConversationService {
    * Priority: existing by internal ID → by externalId → by email → new.
    */
   private async resolveOrCreateEndUser(orgId: string, data: PublicCreateData) {
-    const fullName = this.buildFullName(data.endUserFirstName, data.endUserLastName)
-
     // 1. Reuse existing end user by internal UUID (localStorage persistence)
     if (data.endUserId) {
       const existing = await EndUser.query()
@@ -247,7 +250,7 @@ export default class ConversationService {
         .where('organization_id', orgId)
         .first()
       if (existing) {
-        await this.syncEndUserFields(existing, fullName, data)
+        await this.syncEndUserFields(existing, data)
         return existing
       }
     }
@@ -260,7 +263,7 @@ export default class ConversationService {
         .first()
 
       if (byExternal) {
-        await this.syncEndUserFields(byExternal, fullName, data)
+        await this.syncEndUserFields(byExternal, data)
         return byExternal
       }
 
@@ -269,8 +272,14 @@ export default class ConversationService {
         organizationId: orgId,
         externalId: data.endUserExternalId,
         email: data.endUserEmail ?? null,
-        name: fullName,
+        firstName: data.endUserFirstName ?? null,
+        lastName: data.endUserLastName ?? null,
         avatarUrl: data.endUserAvatarUrl ?? null,
+        position: data.endUserPosition ?? null,
+        company: data.endUserCompany ?? null,
+        pricingPlan: data.endUserPricingPlan ?? null,
+        language: data.endUserLanguage ?? null,
+        metadata: data.endUserMetadata ?? null,
       })
     }
 
@@ -282,7 +291,7 @@ export default class ConversationService {
         .first()
 
       if (byEmail) {
-        await this.syncEndUserFields(byEmail, fullName, data)
+        await this.syncEndUserFields(byEmail, data)
         return byEmail
       }
 
@@ -290,8 +299,14 @@ export default class ConversationService {
         id: uuid(),
         organizationId: orgId,
         email: data.endUserEmail,
-        name: fullName,
+        firstName: data.endUserFirstName ?? null,
+        lastName: data.endUserLastName ?? null,
         avatarUrl: data.endUserAvatarUrl ?? null,
+        position: data.endUserPosition ?? null,
+        company: data.endUserCompany ?? null,
+        pricingPlan: data.endUserPricingPlan ?? null,
+        language: data.endUserLanguage ?? null,
+        metadata: data.endUserMetadata ?? null,
       })
     }
 
@@ -300,23 +315,44 @@ export default class ConversationService {
       id: uuid(),
       organizationId: orgId,
       email: null,
-      name: fullName,
+      firstName: data.endUserFirstName ?? null,
+      lastName: data.endUserLastName ?? null,
       avatarUrl: data.endUserAvatarUrl ?? null,
+      position: data.endUserPosition ?? null,
+      company: data.endUserCompany ?? null,
+      pricingPlan: data.endUserPricingPlan ?? null,
+      language: data.endUserLanguage ?? null,
+      metadata: data.endUserMetadata ?? null,
     })
   }
 
-  private buildFullName(firstName?: string, lastName?: string): string | null {
-    if (!firstName) return null
-    return lastName ? `${firstName} ${lastName}` : firstName
-  }
-
   /** Keep end user profile in sync with latest identify data */
-  private async syncEndUserFields(endUser: EndUser, fullName: string | null, data: PublicCreateData) {
+  private async syncEndUserFields(endUser: EndUser, data: PublicCreateData) {
     let dirty = false
-    if (fullName && endUser.name !== fullName) { endUser.name = fullName; dirty = true }
-    if (data.endUserEmail && endUser.email !== data.endUserEmail) { endUser.email = data.endUserEmail; dirty = true }
-    if (data.endUserAvatarUrl && endUser.avatarUrl !== data.endUserAvatarUrl) { endUser.avatarUrl = data.endUserAvatarUrl; dirty = true }
-    if (data.endUserExternalId && endUser.externalId !== data.endUserExternalId) { endUser.externalId = data.endUserExternalId; dirty = true }
+
+    const sync = <K extends keyof EndUser>(field: K, value: EndUser[K] | undefined) => {
+      if (value !== undefined && endUser[field] !== value) {
+        ;(endUser as any)[field] = value
+        dirty = true
+      }
+    }
+
+    sync('firstName', data.endUserFirstName)
+    sync('lastName', data.endUserLastName)
+    sync('email', data.endUserEmail)
+    sync('avatarUrl', data.endUserAvatarUrl)
+    sync('externalId', data.endUserExternalId)
+    sync('position', data.endUserPosition)
+    sync('company', data.endUserCompany)
+    sync('pricingPlan', data.endUserPricingPlan)
+    sync('language', data.endUserLanguage)
+
+    // Shallow-merge metadata
+    if (data.endUserMetadata) {
+      endUser.metadata = { ...endUser.metadata, ...data.endUserMetadata }
+      dirty = true
+    }
+
     if (dirty) await endUser.save()
   }
 
@@ -363,7 +399,8 @@ export default class ConversationService {
         body: data.body,
         channel: conversation.channel,
         endUserEmail: data.endUserEmail,
-        endUserName: this.buildFullName(data.endUserFirstName, data.endUserLastName),
+        endUserFirstName: data.endUserFirstName,
+        endUserLastName: data.endUserLastName,
       },
     })
 
