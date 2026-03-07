@@ -32,9 +32,9 @@ services:
       - KURIYR_API_KEY=dev-secret-key-minimum-32-chars!!
       - KURIYR_FROM_EMAIL=noreply@heedback.local
       - KURIYR_FROM_NAME=Heedback Dev
-      - VAPID_PUBLIC_KEY=BAy5cmCRP4CxPUHDNaLY5he4RVlSQ00mfbgxWmu0Ghv_Cn1iBRKbvLgPbrQBCu9-48O8N7d1YV8VF0z395eRCHU
-      - VAPID_PRIVATE_KEY=Y7eH0KSb7vYFziO8_kQ66Jql2Ozm67XI9SKH2uNZDM0
-      - VAPID_SUBJECT=mailto:dev@heedback.local
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY:-}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY:-}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-mailto:dev@heedback.local}
       - FRONTEND_URL=http://localhost:3000
       - PUBLIC_SITE_URL=http://localhost:3001
       - SUPER_ADMIN_EMAIL=admin@heedback.local
