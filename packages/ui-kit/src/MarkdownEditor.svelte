@@ -46,6 +46,9 @@
       check ? (editor?.isActive(check, attrs) ?? false) : false
   })
 
+  // Tracks whether the last content change came from user typing (vs external prop update)
+  let updatingFromProp = false
+
   onMount(() => {
     editor = new Editor({
       element,
@@ -55,11 +58,23 @@
       ],
       content: value,
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
+        if (updatingFromProp) return
         const md = (ed.storage as any).markdown.getMarkdown() as string
         onchange?.(md)
       },
       onTransaction: () => { txVersion++ },
     })
+  })
+
+  // Sync external value changes into TipTap (e.g. async data load)
+  $effect(() => {
+    if (!editor) return
+    const currentMd = (editor.storage as any).markdown.getMarkdown() as string
+    if (value !== currentMd) {
+      updatingFromProp = true
+      editor.commands.setContent(value)
+      updatingFromProp = false
+    }
   })
 
   onDestroy(() => editor?.destroy())
