@@ -3,6 +3,7 @@
   import { _ } from 'svelte-i18n'
   import { Button, Badge, PageHeader, EmptyState, DataTable, LoadingSpinner } from '@heedback/ui-kit'
   import { api } from '../lib/api/client'
+  import ArticleImportModal from '../lib/components/ArticleImportModal.svelte'
 
   interface Article {
     id: string
@@ -17,16 +18,20 @@
 
   let articles = $state<Article[]>([])
   let loading = $state(true)
+  let showImportModal = $state(false)
 
-  onMount(async () => {
+  async function fetchArticles() {
     if (!orgId) return
+    loading = true
     try {
       const data = await api.get<{ data: Article[] }>(`/org/${orgId}/articles`)
       articles = data.data
     } finally {
       loading = false
     }
-  })
+  }
+
+  onMount(fetchArticles)
 
   function getTitle(article: Article): string {
     return article.translations[0]?.title || $_('common.untitled')
@@ -54,9 +59,14 @@
 <div>
   <PageHeader title={$_('articles.title')} subtitle={$_('articles.subtitle')}>
     {#snippet actions()}
+      <Button variant="ghost" size="sm" onclick={() => showImportModal = true}>
+        {$_('articles.import')}
+      </Button>
       <Button href="/{orgId}/articles/new" size="sm">{$_('articles.new')}</Button>
     {/snippet}
   </PageHeader>
+
+  <ArticleImportModal {orgId} bind:open={showImportModal} onimported={fetchArticles} />
 
   {#if loading}
     <LoadingSpinner />
