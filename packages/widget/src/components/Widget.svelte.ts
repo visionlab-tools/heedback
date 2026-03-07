@@ -72,6 +72,17 @@ export function createWidgetState(org: string, fallbackColor: string, apiUrl?: s
       }
     }
 
+    // Cookie-based cross-domain fallback (works in Chromium browsers)
+    if (!endUserId) {
+      try {
+        const res = await widgetApi.whoami(org)
+        endUserId = res.data.id
+        localStorage.setItem(`heedback:${org}:endUserId`, endUserId)
+      } catch {
+        // No cookie or blocked by browser (Safari/Firefox)
+      }
+    }
+
     if (endUserId) {
       try {
         const data = await widgetApi.listConversations(org, endUserId)

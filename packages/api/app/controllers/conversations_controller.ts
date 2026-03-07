@@ -7,6 +7,7 @@ import {
 } from '#validators/conversation_validator'
 import ConversationService from '#services/conversation_service'
 import EndUser from '#models/end_user'
+import { setEndUserCookie, readEndUserCookie } from '#helpers/end_user_cookie'
 
 export default class ConversationsController {
   private conversationService = new ConversationService()
@@ -108,11 +109,39 @@ export default class ConversationsController {
       return response.notFound({ message: 'End user not found' })
     }
 
+    setEndUserCookie(response, endUser.id, params.orgId)
     return response.ok({ data: { id: endUser.id, externalId: endUser.externalId } })
+  }
+
+  /** Cookie-based end-user resolution — enables cross-domain session sharing */
+  async whoami({ params, request, response }: HttpContext) {
+    const endUserId = readEndUserCookie(request)
+    if (!endUserId) {
+      return response.notFound({ message: 'No session cookie' })
+    }
+
+    const endUser = await EndUser.query()
+      .where('id', endUserId)
+      .where('organization_id', params.orgId)
+      .first()
+
+    if (!endUser) {
+      return response.notFound({ message: 'End user not found' })
+    }
+
+    return response.ok({ data: { id: endUser.id } })
   }
 
   async publicStore({ params, request, response }: HttpContext) {
     const payload = await request.validateUsing(createConversationValidator)
+
+    // Cookie-based fallback: reuse end-user from cross-domain cookie
+    if (!payload.endUserId) {
+      const cookieEndUserId = readEndUserCookie(request)
+      if (cookieEndUserId) {
+        payload.endUserId = cookieEndUserId
+      }
+    }
 
     const conversation = await this.conversationService.publicCreate(params.orgId, {
       ...payload,
@@ -124,6 +153,9 @@ export default class ConversationsController {
       return response.notFound({ message: 'Organization not found' })
     }
 
+    if (conversation.endUserId) {
+      setEndUserCookie(response, conversation.endUserId, params.orgId)
+    }
     return response.created({ data: conversation.serialize() })
   }
 
@@ -154,6 +186,12 @@ export default class ConversationsController {
 
     if (!message) {
       return response.notFound({ message: 'Conversation not found' })
+    }
+
+    // Refresh cookie to extend expiry on every interaction
+    const cookieEndUserId = readEndUserCookie(request)
+    if (cookieEndUserId) {
+      setEndUserCookie(response, cookieEndUserId, params.orgId)
     }
 
     return response.created({ data: message.serialize() })

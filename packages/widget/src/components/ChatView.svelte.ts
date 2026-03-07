@@ -97,6 +97,18 @@ export function createChatViewState(org: string, user: any) {
       }
     }
 
+    // Cross-domain: try cookie-based resolution (works in Chromium browsers)
+    try {
+      const res = await widgetApi.whoami(org)
+      endUserId = res.data.id
+      localStorage.setItem(storageKey(org), endUserId!)
+      await refreshConversations()
+      screen = conversations.length > 0 ? 'list' : 'new'
+      return
+    } catch {
+      // 404 — no cookie or blocked by browser (Safari/Firefox)
+    }
+
     screen = 'new'
   }
 

@@ -7,6 +7,7 @@ export function setApiBase(base: string) {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${apiBase}/api/v1${path}`, {
     ...options,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -128,6 +129,7 @@ export const widgetApi = {
     formData.append('file', file)
     const res = await fetch(`${apiBase}/api/v1/org/${orgId}/public/uploads`, {
       method: 'POST',
+      credentials: 'include',
       body: formData,
     })
     if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
@@ -139,6 +141,11 @@ export const widgetApi = {
     return request<{ data: { id: string; externalId: string } }>(
       `/org/${orgId}/public/end-users/resolve?externalId=${encodeURIComponent(externalId)}`
     )
+  },
+
+  /** Cookie-based end-user resolution — cross-domain session sharing */
+  whoami(orgId: string) {
+    return request<{ data: { id: string } }>(`/org/${orgId}/public/end-users/me`)
   },
 
   sendArticleFeedback(orgId: string, articleId: string, data: { rating: number; comment?: string }) {
@@ -156,7 +163,7 @@ export function connectSSE(
   onMessage: (event: { event: string; data: any }) => void,
 ): () => void {
   const url = `${apiBase}/api/v1/org/${orgId}/public/conversations/${conversationId}/sse`
-  const es = new EventSource(url)
+  const es = new EventSource(url, { withCredentials: true })
 
   es.onmessage = (e) => {
     try {

@@ -323,6 +323,7 @@ router
     | Public end-user resolution (cross-domain continuity)
     */
     router.get('/org/:orgId/public/end-users/resolve', [ConversationsController, 'resolveEndUser'])
+    router.get('/org/:orgId/public/end-users/me', [ConversationsController, 'whoami'])
 
     /*
     | Public chat / conversations
